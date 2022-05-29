@@ -37,6 +37,50 @@
     - [Polar order](#polar-order)
   - [Stability](#stability)
 - [Quicksort](#quicksort)
+  - [Mergesort vs. Quicksort](#mergesort-vs-quicksort)
+  - [Quicksort implementation](#quicksort-implementation)
+  - [Performance](#performance)
+  - [Quicksort: practical improvements](#quicksort-practical-improvements)
+  - [Selection](#selection)
+    - [Quickselect](#quickselect)
+  - [Duplicate keys](#duplicate-keys)
+    - [Quicksort with 3-way partitioning](#quicksort-with-3-way-partitioning)
+  - [Sorting applications](#sorting-applications)
+  - [Java system sorts](#java-system-sorts)
+- [Priority Queues](#priority-queues)
+  - [Priority queue API](#priority-queue-api)
+  - [Priority queue applications](#priority-queue-applications)
+  - [Priority queue client example](#priority-queue-client-example)
+  - [Priority queue: unordered array implementation](#priority-queue-unordered-array-implementation)
+  - [Binary heaps](#binary-heaps)
+    - [Binary heap representations](#binary-heap-representations)
+      - [Promotion in a heap](#promotion-in-a-heap)
+      - [Insertion in a heap](#insertion-in-a-heap)
+      - [Demotion in a heap](#demotion-in-a-heap)
+      - [Delete the maximum in a heap](#delete-the-maximum-in-a-heap)
+    - [Binary heap: Java implementation](#binary-heap-java-implementation)
+  - [Priority queues implementation cost summary](#priority-queues-implementation-cost-summary)
+  - [Immutability](#immutability)
+- [Heapsort](#heapsort)
+  - [Heapsort: Java implementation](#heapsort-java-implementation)
+  - [Heapsort: mathematical analysis](#heapsort-mathematical-analysis)
+  - [Sorting algorithms: summary](#sorting-algorithms-summary)
+- [Symbol Tables (Searching)](#symbol-tables-searching)
+  - [Basic symbol table API](#basic-symbol-table-api)
+  - [Ordered symbol tables](#ordered-symbol-tables)
+    - [Ordered symbol table API](#ordered-symbol-table-api)
+    - [Binary search: ordered symbol table operations summary](#binary-search-ordered-symbol-table-operations-summary)
+- [Binary search trees](#binary-search-trees)
+  - [BST implementation](#bst-implementation)
+  - [Ordered operations](#ordered-operations)
+    - [Minimum and maximum](#minimum-and-maximum)
+    - [Floor and ceiling](#floor-and-ceiling)
+    - [Selection](#selection-1)
+    - [Rank](#rank)
+    - [Inorder traversal](#inorder-traversal)
+    - [BST: ordered symbol table operations summary](#bst-ordered-symbol-table-operations-summary)
+    - [Deletion](#deletion)
+  - [ST implementations: summary](#st-implementations-summary)
 
 
 ## Introduction
@@ -1269,7 +1313,11 @@ A stable sort preserves the relative order of items with equal keys.
 
 ## Quicksort
 
-Quicksort honored as one of top 10 algorithms of 20th century in science and engineering.
+[<img src="res/Sorting_quicksort_anim.gif" alt="Quicksort animation" width="280">](https://en.wikipedia.org/wiki/Quicksort "Wikipedia: Quicksort")
+
+*via* [Wikipedia: Quicksort](https://en.wikipedia.org/wiki/Quicksort)
+
+*Quicksort* is honored as one of top 10 algorithms of 20th century in science and engineering.
 
 - Java sort for primitive types.
 - C qsort, Unix, Visual C++, Python, Matlab, Chrome JavaScript, ...
@@ -1283,12 +1331,1144 @@ Quicksort honored as one of top 10 algorithms of 20th century in science and eng
 - *Sort* each piece recursively.
 
 
-**Repeat until `i` and `j` pointers cross**.
-- Scan `i` from left to right so long as (`a[i]` < `a[lo]`).
-- Scan `j` from right to left so long as (`a[j] > a[lo]`).
-- Exchange `a[i]` with `a[j]`.
+*Partitioning process*
 
-**When pointers cross**.
-- Exchange `a[lo]` with `a[j]`.
+- Repeat until `i` and `j` pointers cross**.
+  - Scan `i` from left to right so long as (`a[i]` < `a[lo]`).
+  - Scan `j` from right to left so long as (`a[j] > a[lo]`).
+  - Exchange `a[i]` with `a[j]`.
+- When pointers cross.
+  - Exchange `a[lo]` with `a[j]`.
+
+### Mergesort vs. Quicksort
+- For mergesort, we break the array into two subarrays to be sorted and then combine the ordered subarrays to make the whole ordered array.
+  - Do the two recursive calls before working on the whole array.
+  - The array is divided in half.
+- For quicksort, we rearrange the array such that, when the two subarrays are sorted, the whole array is ordered. 
+  - Do the two recursive calls after working on the whole array.
+  - The position of the partition depends on the contents of the array.
+
+
+### Quicksort implementation
+
+ALGORITHM 2.5 Quicksort
+
+```java
+public class Quick
+{
+    public static void sort(Comparable[] a)
+    {
+        StdRandom.shuffle(a);           // Eliminate dependence on input.
+        sort(a, 0, a.length - 1);
+    }
+
+    private static void sort(Comparable[] a, int lo, int hi)
+    {
+        if (hi <= lo) return;
+        int j = partition(a, lo, hi);   // Partition 
+        sort(a, lo, j-1);               // Sort left part a[lo .. j-1].
+        sort(a, j+1, hi);               // Sort right part a[j+1 .. hi].
+    }
+
+    private static int partition(Comparable[] a, int lo, int hi)
+    {       // Partition into a[lo..i-1], a[i], a[i+1..hi].
+        int i = lo, j = hi+1;           // left and right scan indices
+        Comparable v = a[lo];           // partitioning item
+        while (true)
+        {   // Scan right, scan left, check for scan complete, and exchange.
+            while (less(a[++i], v)) if (i == hi) break;
+            while (less(v, a[--j])) if (j == lo) break;
+            if (i >= j) break;
+            exch(a, i, j);
+        }
+        exch(a, lo, j);                 // Put v = a[j] into position
+        return j;                       // with a[lo..j-1] <= a[j] <= a[j+1..hi].
+    }
+}
+```
+
+### Performance
+
+- Worst-case performance: *O(N<sup>2</sup>)*
+- Best-case performance: 
+  - *O(NlogN)* (simple partition)
+  - *O(N)* (three-way partition and equal keys)
+- Average performance: *O(NlogN)* (Number of compares is ~ 1.39 *NlogN*.)
+  - 39% more compares than mergesort.
+  - But faster than mergesort in practice because of less data movement.
+- Worst-case space complexity 
+  - *O(N)* auxiliary (naive)
+  - *O(logN)* auxiliary (Hoare 1962)
+
+*Proposition*. Quicksort is not stable.
+
+### Quicksort: practical improvements
+
+*Insertion sort small subarrays.*
+- Even quicksort has too much overhead for tiny subarrays.
+- Cutoff to insertion sort for ≈ 10 items.
+- Note: could delay insertion sort until one pass at end.
+
+
+```java
+private static void sort(Comparable[] a, int lo, int hi)
+{
+    if (hi <= lo + CUTOFF - 1)
+    {
+        Insertion.sort(a, lo, hi);
+        return;
+    }
+    int j = partition(a, lo, hi);
+    sort(a, lo, j-1);
+    sort(a, j+1, hi);
+}
+```
+
+*Median of sample.*
+- Best choice of pivot item = median.
+- Estimate true median by taking median of sample.
+- Median-of-3 (random) items.
+
+```java
+private static void sort(Comparable[] a, int lo, int hi)
+{
+    if (hi <= lo) return;
+    int m = medianOf3(a, lo, lo + (hi - lo)/2, hi);
+    swap(a, lo, m);
+    int j = partition(a, lo, hi);
+    sort(a, lo, j-1);
+    sort(a, j+1, hi);
+}
+```
+
+### Selection
+
+*Goal*. Given an array of *N* items, find a `kth` smallest item.  
+Ex. Min (`k = 0`), max (`k = N - 1`), median (`k = N / 2`).
+
+*Applications*.
+- Order statistics.
+- Find the "top k."
+
+#### Quickselect
+
+[Quickselect](https://en.wikipedia.org/wiki/Quickselect) is a selection algorithm to find the `kth` smallest element in an unordered list. It is related to the quicksort algorithm.
+
+- Partition array so that:
+  - Entry `a[j]` is in place.
+  - No larger entry to the left of `j`.
+  - No smaller entry to the right of `j`.
+- Repeat in one subarray, depending on `j`; finished when `j` equals `k`.
+
+```java
+public static Comparable select(Comparable[] a, int k)
+{
+    StdRandom.shuffle(a);
+    int lo = 0, hi = a.length - 1;
+    while (hi > lo)
+    {
+        int j = partition(a, lo, hi);
+        if (j < k) lo = j + 1;
+        else if (j > k) hi = j - 1;
+        else return a[k];
+    }
+    return a[k];
+}
+```
+
+*Proposition*. Quick-select takes **linear** time on average.
+
+### Duplicate keys
+
+Often, purpose of sort is to bring items with equal keys together.
+- Sort population by age.
+- Remove duplicates from mailing list.
+- Sort job applicants by college attended.
+
+Typical characteristics of such applications.
+- Huge array.
+- Small number of key values.
+
+#### Quicksort with 3-way partitioning
+
+One straightforward idea is to partition the array into three parts, one each for items with keys smaller than, equal to, and larger than the partitioning item’s key. 
+
+It was a classical programming exercise popularized by E. W. Dijkstra as the [Dutch National Flag](https://users.monash.edu/~lloyd/tildeAlgDS/Sort/Flag/) problem, because it is like sorting an array with three possible key values, which might correspond to the three colors on the flag.
+
+**Dijkstra 3-way partitioning**
+
+- Let v be partitioning item `a[lo]`.
+- Scan `i` from left to right.
+  - `(a[i] < v)`: exchange `a[lt]` with `a[i]`; increment both `lt` and `i`
+  - `(a[i] > v)`: exchange `a[gt]` with `a[i]`; decrement `gt`
+  - `(a[i] == v)`: increment `i`
+
+*Java implementation*:
+
+```java
+public class Quick3way
+{
+    private static void sort(Comparable[] a, int lo, int hi)
+    {
+        if (hi <= lo) return;
+        int lt = lo, i = lo+1, gt = hi;
+        Comparable v = a[lo];
+        while (i <= gt)
+        {
+            int cmp = a[i].compareTo(v);
+            if (cmp < 0) exch(a, lt++, i++);
+            else if (cmp > 0) exch(a, i, gt--);
+            else i++;
+        } // Now a[lo..lt-1] < v = a[lt..gt] < a[gt+1..hi].
+        sort(a, lo, lt - 1);
+        sort(a, gt + 1, hi);
+    }
+}
+```
+
+**Proposition**. [Sedgewick-Bentley, 1997] Quicksort with 3-way partitioning is **entropy-optimal**.
+
+Randomized quicksort with 3-way partitioning reduces running time from *linearithmic* to *linear* in broad class of applications.
+
+### Sorting applications
+
+Sorting algorithms are essential in a broad variety of applications:
+- obvious applications:
+  - Sort a list of names.
+  - Organize an MP3 library.
+  - Display Google PageRank results.
+  - List RSS feed in reverse chronological order.
+- problems become easy once items are in sorted order:
+  - Find the median.
+  - Identify statistical outliers.
+  - Binary search in a database.
+  - Find duplicates in a mailing list.
+- non-obvious applications:
+  - Data compression.
+  - Computer graphics.
+  - Computational biology.
+  - Load balancing on a parallel computer.
+
+### Java system sorts
+
+***Arrays.sort()***
+- Has different method for each primitive type.
+- Has a method for data types that implement Comparable.
+- Has a method that uses a Comparator.
+- Uses tuned quicksort for primitive types; tuned mergesort for objects.
+  - Why? read [discussion on stackoverflow](https://stackoverflow.com/questions/3707190/why-does-javas-arrays-sort-method-use-two-different-sorting-algorithms-for-diff).
+
+**Engineering a system sort**
+
+Basic algorithm = quicksort.
+- Cutoff to insertion sort for small subarrays.
+- Partitioning scheme: Bentley-McIlroy 3-way partitioning.
+- Partitioning item.
+  - small arrays: middle entry
+  - medium arrays: median of 3
+  - large arrays: Tukey's ninther
+
+**Tukey's ninther**. (Better partitioning than random shuffle and less costly.)
+
+Median of the median of 3 samples, each of 3 entries.
+- Approximates the median of 9.
+- Uses at most 12 compares.
+
+
+## Priority Queues
+
+Many applications require that we process items having keys in order, but not necessarily in full sorted order and not necessarily all at once. Often, we collect a set of items, then process the one with the largest key, then perhaps collect more items, then process the one with the current largest key, and so forth.
+
+An appropriate data type in such an environment supports two operations: **remove the maximum** and **insert**. Such a data type is called a priority queue. Using priority queues is similar to using queues (remove the oldest) and stacks (remove the newest), but implementing them efficiently is more challenging.
+
+*Collections*. Insert and delete items. Which item to delete?
+- Stack. Remove the item most recently added.
+- Queue. Remove the item least recently added.
+- Randomized queue. Remove a random item.
+- **Priority queue**. Remove the *largest* (or *smallest*) item.
+
+### Priority queue API
+
+| `public class MaxPQ<Key extends Comparable<Key>>` | Key must be Comparable (bounded type parameter) | 
+| :--: | :--: | 
+| `MaxPQ()` | create an empty priority queue | 
+| `MaxPQ(Key[] a)` | create a priority queue with given keys | 
+| `Key delMax()` | return and remove the largest key | 
+| `boolean isEmpty()` | is the priority queue empty? | 
+| `Key max()` | return the largest key | 
+| `int size()` | number of entries in the priority queue | 
+
+### Priority queue applications
+
+- Event-driven simulation. [customers in a line, colliding particles]
+- Numerical computation. [reducing roundoff error]
+- Data compression. [Huffman codes]
+- Graph searching. [Dijkstra's algorithm, Prim's algorithm]
+- Number theory. [sum of powers]
+- Artificial intelligence. [A* search]
+- Statistics. [maintain largest M values in a sequence]
+- Operating systems. [load balancing, interrupt handling]
+- Discrete optimization. [bin packing, scheduling]
+- Spam filtering. [Bayesian spam filter]
+
+### Priority queue client example
+
+*Challenge*. Find the largest `M` items in a stream of `N` items.
+- Fraud detection: isolate $$ transactions.
+- File maintenance: find biggest files or directories.
+
+*Constraint*. Not enough memory to store `N` items.
+
+Use a min-oriented pq. transaction data type is *Comparable* (ordered by `$$`)
+
+```java
+MinPQ<Transaction> pq = new MinPQ<Transaction>();
+while (StdIn.hasNextLine())
+{
+    String line = StdIn.readLine();
+    Transaction item = new Transaction(line);
+    pq.insert(item);
+    if (pq.size() > M)
+        pq.delMin();
+}
+```
+
+*Challenge*. Find the largest `M` items in a stream of `N` items.
+
+Order of growth of finding the largest M in a stream of N items:
+
+| implementation | time | space | 
+| :--: | :--: | :--: | 
+| sort | N log N | N | 
+| elementary PQ | M N | M | 
+| binary heap | N log M | M | 
+| best in theory | N | M | 
+
+### Priority queue: unordered array implementation
+
+```java
+public class UnorderedMaxPQ<Key extends Comparable<Key>>
+{
+    private Key[] pq;   // pq[i] = ith element on pq
+    private int N;      // number of elements on pq
+
+    public UnorderedMaxPQ(int capacity)
+    { pq = (Key[]) new Comparable[capacity]; }
+
+    public boolean isEmpty()
+    { return N == 0; }
+
+    public void insert(Key x)
+    { pq[N++] = x; }
+
+    public Key delMax()
+    {
+        int max = 0;
+        for (int i = 1; i < N; i++)
+            if (less(max, i)) max = i;
+        exch(max, N-1);
+        return pq[--N];
+    }
+}
+```
+
+*Challenge*. Implement *all* operations efficiently.
+
+Order of growth of running time for priority queue with N items:
+
+| implementation | insert | del max | max |  
+| :--: | :--: | :--: | :--: | 
+| unordered array | 1 | N | N | 
+| ordered array | N | 1 | 1 | 
+| goal | log N | log N | log N | 
+
+### Binary heaps
+
+*Binary tree*. Empty or node with links to left and right binary trees.  
+*Complete tree*. Perfectly balanced, except for bottom level.  
+*Property*. Height of complete tree with `N` nodes is `floor(log N)`.
+
+#### Binary heap representations
+
+*Binary heap*. Array representation of a heap-ordered complete binary tree.
+
+*Heap-ordered binary tree*.
+- Keys in nodes.
+- Parent's key no smaller than children's keys.
+
+**Array representation**.
+- Indices start at `1`.
+- Take nodes in *level* order.
+- No explicit links needed!
+
+*Proposition*. 
+
+- Largest key is `a[1]`, which is root of binary tree.
+- Can use array indices to move through tree.
+  - Parent of node at `k` is at `k/2`.
+  - Children of node at `k` are at `2k` and `2k+1`.
+
+##### Promotion in a heap
+
+*Scenario*. Child's key becomes *larger* key than its parent's key.
+
+To eliminate the violation:
+- Exchange key in child with key in parent.
+- Repeat until heap order restored.
+
+```java
+private void swim(int k)
+{
+    while (k > 1 && less(k/2, k))
+    {
+        exch(k, k/2);
+        k = k/2;
+    }
+}
+```
+
+[Peter principle](https://www.investopedia.com/terms/p/peter-principle.asp). Node promoted to level of incompetence.
+
+##### Insertion in a heap
+
+***Insert***. Add node at end, then swim it up.  
+*Cost*. At most `1 + log N` compares.
+
+```java
+public void insert(Key x)
+{
+    pq[++N] = x;
+    swim(N);
+}
+```
+
+##### Demotion in a heap
+
+*Scenario*. Parent's key becomes *smaller* than one (or both) of its children's.
+
+To eliminate the violation:
+- Exchange key in parent with key in larger child.
+- Repeat until heap order restored.
+
+```java
+private void sink(int k)
+{
+    while (2*k <= N)
+    {
+        int j = 2*k;
+        if (j < N && less(j, j+1)) j++;
+        if (!less(k, j)) break;
+        exch(k, j);
+        k = j;
+    }
+}
+```
+
+Power struggle. Better subordinate promoted.
+
+##### Delete the maximum in a heap
+
+***Delete max***. Exchange root with node at end, then sink it down.  
+*Cost*. At most `2 lg N` compares.
+
+```java
+public Key delMax()
+{
+    Key max = pq[1];    // Retrieve max key from top.
+    exch(1, N--);       // Exchange with last item.
+    pq[N+1] = null;     // Avoid loitering.
+    sink(1);            // Restore heap property.
+    return max;
+}
+```
+
+#### Binary heap: Java implementation
+
+ALGORITHM 2.6 Heap priority queue
+
+```java
+public class MaxPQ<Key extends Comparable<Key>>
+{
+    private Key[] pq;           // heap-ordered complete binary tree
+    private int N = 0;          // in pq[1..N] with pq[0] unused
+
+    public MaxPQ(int capacity)  // fixed capacity (for simplicity)
+    { pq = (Key[]) new Comparable[capacity+1]; }
+
+    public int size() { return N; }
+
+    // PQ ops
+    public boolean isEmpty() { return N == 0; }
+    public void insert(Key v)           // see previous code
+    public Key delMax()                 // see previous code
+
+    // heap helper functions
+    private void swim(int k)            // see previous code
+    private void sink(int k)            // see previous code
+
+    // array helper functions
+    private boolean less(int i, int j)  // see Comparator
+    private void exch(int i, int j)     // see Comparator
+}
+```
+
+### Priority queues implementation cost summary
+
+Order of growth of running time for priority queue with N items:
+
+| implementation | insert | del max | max |  
+| :--: | :--: | :--: | :--: | 
+| unordered array | 1 | N | N | 
+| ordered array | N | 1 | 1 | 
+| binary heap | log N | log N | 1 | 
+| d-ary heap | log<sub>d</sub> N | d log<sub>d</sub> N | 1 | 
+| Fibonacci | 1 | log N † | 1 | 
+| impossible | 1 | 1 | 1 | 
+
+† amortized
+
+*NOTE*: The [*d-ary heap*](https://en.wikipedia.org/wiki/D-ary_heap) or *d-heap* is a priority queue data structure, a generalization of the binary heap in which the nodes have `d` children instead of `2`.
+
+### Immutability
+
+Immutability of keys.
+- Assumption: client does not change keys while they're on the PQ.
+- Best practice: use immutable keys.
+
+Data type. Set of values and operations on those values.  
+**Immutable data type**. Can't change the data type value once created.
+
+```java
+public final class Vector { // final, can't override instance methods
+    // all instance variables private and final
+    private final int N;
+    private final double[] data;
+
+    public Vector(double[] data) {
+        this.N = data.length;
+
+        // defensive copy of mutable instance variables
+        this.data = new double[N];
+        for (int i = 0; i < N; i++)
+            this.data[i] = data[i];
+    }
+
+    // instance methods don't change instance variables
+    ...
+}
+```
+
+*Immutable*. String, Integer, Double, Color, Vector, Transaction, Point2D.  
+*Mutable*. StringBuilder, Stack, Counter, Java array.
+
+**Advantages**.
+- Simplifies debugging.
+- Safer in presence of hostile code.
+- Simplifies concurrent programming.
+- Safe to use as key in priority queue or symbol table.
+
+**Disadvantage**. Must create new object for each data type value.
+
+## Heapsort
+
+
+[<img src="res/Sorting_heapsort_anim.gif" alt="Heapsort animation" width="280">](https://en.wikipedia.org/wiki/Heapsort "Wikipedia: Heapsort")
+
+*via* [Wikipedia: Heapsort](https://en.wikipedia.org/wiki/Heapsort)
+
+
+We can use any priority queue to develop a sorting method. 
+
+We insert all the items to be sorted into a minimum-oriented priority queue, then repeatedly use remove the minimum to remove them all in order. 
+
+- Using a priority queue represented as an unordered array in this way corresponds to doing a *selection sort*; 
+- Using an ordered array corresponds to doing an *insertion sort*. 
+- Using the *heap* can develop a classic elegant sorting algorithm known as **heapsort**.
+
+
+Basic plan for in-place sort.
+- Create max-heap with all N keys.
+- Repeatedly remove the maximum key.
+
+Two steps:
+- *Heap construction*. Build max heap using bottom-up method.
+- *Sortdown*. Repeatedly delete the largest remaining item.
+  - Remove the maximum, one at a time.
+  - Leave in array, instead of nulling out.
+
+```java
+while (N > 1)
+{
+    exch(a, 1, N--);
+    sink(a, 1, N);
+}
+```
+
+### Heapsort: Java implementation
+
+
+```java
+public class Heap
+{
+    public static void sort(Comparable[] a)
+    {
+        int N = a.length;
+        for (int k = N/2; k >= 1; k--)
+            sink(a, k, N);
+        while (N > 1)
+        {
+            exch(a, 1, N);
+            sink(a, 1, --N);
+        }
+    }
+    private static void sink(Comparable[] a, int k, int N)
+    { /* as before */ }
+    private static boolean less(Comparable[] a, int i, int j)
+    { /* as before */ }
+    private static void exch(Comparable[] a, int i, int j)
+    { /* as before */ }
+}
+```
+
+### Heapsort: mathematical analysis
+
+*Proposition*. 
+- Heap construction uses ≤ *2N* compares and exchanges.
+- Heapsort uses ≤ *2 N lg N* compares and exchanges.
+
+*Significance*. In-place sorting algorithm with *N log N* worst-case.
+- Mergesort: no, linear extra space.
+- Quicksort: no, quadratic time in worst case.
+- Heapsort: yes!
+
+*Bottom line*. Heapsort is optimal for both time and space, **but**:
+- Inner loop longer than quicksort’s.
+- Makes poor use of cache memory.
+- Not stable.
+
+### Sorting algorithms: summary
+
+| | inplace? | stable? | worst | average | best | remarks |
+| :--: | :--: | :--: | :--: | :--: | :----: | :-----: | 
+| selection | x | | N<sup>2</sup> / 2 | N<sup>2</sup> / 2 | N<sup>2</sup> / 2 | N exchanges | 
+| insertion | x | x | N<sup>2</sup> / 2 | N<sup>2</sup> / 4 | N | use for small N or partially ordered | 
+| shell | x | | ? | ? | N | tight code, subquadratic | 
+| quick | x | | N<sup>2</sup> / 2 | 2 N ln N | N lg N | N log N probabilistic guarantee fastest in practice | 
+| 3-way quick | x | | N<sup>2</sup> / 2 | 2 N ln N | N | improves quicksort in presence of duplicate keys | 
+| merge | | x | N lg N | N lg N | N lg N | N log N guarantee, stable | 
+| heap | x | | 2 N lg N | 2 N lg N | N lg N | N log N guarantee, in-place | 
+| ??? | x | x | N lg N | N lg N | N lg N | holy sorting grail | 
+
+
+## Symbol Tables (Searching)
+
+Key-value pair abstraction.
+- Insert a value with specified key.
+- Given a key, search for the corresponding value.
+
+### Basic symbol table API
+
+| `public class ST<Key, Value>` | | 
+| :--: | :--: | 
+|  `ST()` | create a symbol table | 
+| `void put(Key key, Value val)` | put key-value pair into the table (remove key from table if value is null) | 
+| `Value get(Key key)` | value paired with key (null if key is absent) | 
+| `void delete(Key key)` | remove key (and its value) from table | 
+| `boolean contains(Key key)` | is there a value paired with key? | 
+| `boolean isEmpty()` | is the table empty? | 
+| `int size()` | number of key-value pairs in the table | 
+| `Iterable<Key> keys()` | all the keys in the table | 
+
+*Conventions*
+- Values are not null.
+- Method `get()` returns null if key not present.
+- Method `put()` overwrites old value with new value.
+
+**Keys and values**
+
+*Value type*. Any generic type.
+
+*Key type*: several natural assumptions.
+- Assume keys are Comparable, use compareTo().
+- Assume keys are any generic type, use equals() to test equality.
+- Assume keys are any generic type, use equals() to test equality;
+use hashCode() to scramble key.
+
+*Best practices*. Use immutable types for symbol table keys.
+- Immutable in Java: Integer, Double, String, java.io.File, …
+- Mutable in Java: StringBuilder, java.net.URL, arrays, ...
+
+**Equality test**
+
+Seems easy, but requires some care.
+
+```java
+// typically unsafe to use equals() with inheritance (would violate symmetry)
+public final class Date implements Comparable<Date>
+{
+    private final int month;
+    private final int day;
+    private final int year;
+...
+    public boolean equals(Object y)     // must be Object.
+    {
+        if (y == this) return true;     // optimize for true object equality
+        if (y == null) return false;    // check for null
+
+        // objects must be in the same class (religion: getClass() vs. instanceof)
+        if (y.getClass() != this.getClass())    
+            return false;
+
+        Date that = (Date) y;           // cast is guaranteed to succeed
+
+        // check that all significant fields are the same
+        if (this.day != that.day ) return false;
+        if (this.month != that.month) return false;
+        if (this.year != that.year ) return false;
+        return true;
+    }
+}
+```
+
+*"Standard" recipe for user-defined types*.
+- Optimization for reference equality.
+- Check against `null`.
+- Check that two objects are of the same type and cast.
+- Compare each significant field:
+  - if field is a primitive type, use `==`
+  - if field is an object, use `equals() `
+    - apply rule recursively
+  - if field is an array, apply to each entry
+    - alternatively, use `Arrays.equals(a, b)` or `Arrays.deepEquals(a, b)`, but not `a.equals(b)`
+
+
+*Best practices*.
+- No need to use calculated fields that depend on other fields.
+- Compare fields mostly likely to differ first.
+- Make `compareTo()` consistent with `equals()`.
+  - `x.equals(y)` if and only if `(x.compareTo(y) == 0)`
+
+Frequency counter implementation
+
+```java
+public class FrequencyCounter
+{
+    public static void main(String[] args)
+    {
+        int minlen = Integer.parseInt(args[0]);
+        ST<String, Integer> st = new ST<String, Integer>();
+        while (!StdIn.isEmpty())
+        {
+            String word = StdIn.readString();
+            if (word.length() < minlen) continue;
+            if (!st.contains(word)) st.put(word, 1);
+            else st.put(word, st.get(word) + 1);
+        }
+        String max = "";
+        st.put(max, 0);
+        for (String word : st.keys())
+            if (st.get(word) > st.get(max))
+                max = word;
+        StdOut.println(max + " " + st.get(max));
+    }
+}
+```
+
+### Ordered symbol tables
+
+In typical applications, keys are *Comparable* objects, so the option exists of using the code `a.compareTo(b)` to compare two keys a and b.
+
+Several symbol-table implementations take advantage of order among the keys that is implied by Comparable to provide efficient implementations of the `put()` and `get()` operations. 
+
+More important, in such implementations, we can think of the symbol table as keeping the keys in order and consider a significantly expanded API that defines numerous natural and useful operations involving relative key order.
+
+#### Ordered symbol table API
+
+| `public class ST<Key extends Comparable<Key>, Value>` | | 
+| :--: | :--: | 
+|  `ST()` | create a symbol table | 
+| `void put(Key key, Value val)` | put key-value pair into the table (remove key from table if value is null) | 
+| `Value get(Key key)` | value paired with key (null if key is absent) | 
+| `void delete(Key key)` | remove key (and its value) from table | 
+| `boolean contains(Key key)` | is there a value paired with key? | 
+| `boolean isEmpty()` | is the table empty? | 
+| `int size()` | number of key-value pairs in the table | 
+| `Key min()` | smallest key |
+| `Key max()` | largest key |
+| `Key floor(Key key)` | largest key less than or equal to key |
+| `Key ceiling(Key key)` | smallest key greater than or equal to key |
+| `int rank(Key key)` | number of keys less than key |
+| `Key select(int k)` | key of rank `k` |
+| `void deleteMin()` | delete smallest key |
+| `void deleteMax()` | delete largest key |
+| `int size(Key lo, Key hi)` | number of keys in `[lo..hi]` |
+| `Iterable<Key> keys(Key lo, Key hi)` | keys in `[lo..hi]`, in sorted order |
+| `Iterable<Key> keys()` | all the keys in the table | 
+
+#### Binary search: ordered symbol table operations summary
+
+Order of growth of the running time for ordered symbol table operations
+
+| | sequential search | binary search | 
+| :--: | :--: | :--: | 
+| search | N | lg N | 
+| insert / delete | N | N | 
+| min / max | N | 1 | 
+| floor / ceiling | N | lg N | 
+| rank | N | lg N | 
+| select | N | 1 | 
+| ordered iteration | N lg N | N | 
+
+## Binary search trees
+
+Definition. A BST is a binary tree in symmetric order.
+
+A binary tree is either:
+- Empty.
+- Two disjoint binary trees (left and right).
+
+Symmetric order. Each node has a key, and every node’s key is:
+- Larger than all keys in its left subtree.
+- Smaller than all keys in its right subtree.
+ 
+
+Java definition. A BST is a reference to a root Node.
+A Node is comprised of four fields:
+- A Key and a Value.
+- A reference to the left (smaller keys) and right (larger keys) subtree.
+
+```java
+// Key and Value are generic types; Key is Comparable
+private class Node
+{
+    private Key key;
+    private Value val;
+    private Node left, right;
+    public Node(Key key, Value val)
+    {
+        this.key = key;
+        this.val = val;
+    }
+}
+```
+
+### BST implementation
+
+```java
+public class BST<Key extends Comparable<Key>, Value>
+{
+    private Node root;
+    private class Node
+    { /* see previous slide */ }
+    public void put(Key key, Value val)
+    { /* see next slides */ }
+    public Value get(Key key)
+    { /* see next slides */ }
+    public void delete(Key key)
+    { /* see next slides */ }
+    public Iterable<Key> iterator()
+    { /* see next slides */ }
+}
+```
+
+**Search**. If less, go left; if greater, go right; if equal, search hit.  
+*Cost*. Number of compares is equal to 1 + depth of node.
+
+```java
+public Value get(Key key)
+{
+    Node x = root;
+    while (x != null)
+    {
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) x = x.left;
+        else if (cmp > 0) x = x.right;
+        else if (cmp == 0) return x.val;
+    }
+    return null;
+}
+```
+
+**Insert**. If less, go left; if greater, go right; if null, insert.  
+*Cost*. Number of compares is equal to 1 + depth of node.
+
+```java
+public void put(Key key, Value val)
+{ root = put(root, key, val); }
+
+private Node put(Node x, Key key, Value val)
+{
+    if (x == null) return new Node(key, val);
+    int cmp = key.compareTo(x.key);
+    if (cmp < 0)
+        x.left = put(x.left, key, val);
+    else if (cmp > 0)
+        x.right = put(x.right, key, val);
+    else if (cmp == 0)
+        x.val = val;
+    return x;
+}
+```
+
+**Proposition**. If N distinct keys are inserted into a BST in random order, the expected number of compares for a search/insert is ~ *2 ln N*.  
+Pf. 1-1 correspondence with quicksort partitioning.
+
+Proposition. [Reed, 2003] If N distinct keys are inserted in random order, expected height of tree is ~ *4.311 ln N*.
+
+Worst-case height is *N*. (exponentially small chance when keys are inserted in random order)
+
+
+### Ordered operations
+
+#### Minimum and maximum
+
+*Minimum*. Smallest key in table.  
+*Maximum*. Largest key in table.
+
+How to find `min` / `max`?
+- If the left link of the root is null, the smallest key in a BST is the key at the root;   
+- if the left link is not null, the smallest key in the BST is the smallest key in the subtree rooted at the node referenced by the left link. 
+
+This statement is both a description of a **recursive** `min()` method and an *inductive* proof that it finds the smallest key in the BST.
+
+
+```java
+public Key min()
+{
+    return min(root).key;
+}
+
+private Node min(Node x)
+{
+    if (x.left == null) return x;
+    return min(x.left);
+}
+```
+
+
+#### Floor and ceiling
+
+*Floor*. Largest key ≤ a given key.  
+*Ceiling*. Smallest key ≥ a given key.
+
+How to find `floor` / `ceiling`?
+- If a given key key is less than the key at the root of a BST, then the floor of key (the largest key in the BST less than or equal to key) must be in the left subtree. 
+- If key is greater than the key at the root, then the floor of key could be in the right subtree, but only if there is a key smaller than or equal to key in the right subtree; 
+- if not (or if key is equal to the key at the root), then the key at the root is the floor of key.
+
+
+```java
+public Key floor(Key key)
+{
+    Node x = floor(root, key);
+    if (x == null) return null;
+    return x.key;
+}
+
+private Node floor(Node x, Key key)
+{
+    if (x == null) return null;
+
+    int cmp = key.compareTo(x.key);
+
+    if (cmp == 0) return x;
+    if (cmp < 0) return floor(x.left, key);
+
+    Node t = floor(x.right, key);
+    if (t != null) return t;
+    else return x;
+}
+```
+
+#### Selection
+
+Return Node containing key of rank k.
+
+Suppose that we seek the key of rank `k` (the key such that precisely `k` other keys in the BST are smaller). 
+- If the number of keys `t` in the left subtree is larger than `k`, we look (recursively) for the key of rank `k` in the left subtree; 
+- if `t` is equal to `k`, we return the key at the root; and if `t` is smaller than `k`, we look (recursively) for the key of rank `k - t - 1` in the right subtree.
+
+
+```java
+public Key select(int k)
+{
+    return select(root, k).key;
+}
+
+private Node select(Node x, int k)
+{ // Return Node containing key of rank k.
+    if (x == null) return null;
+    int t = size(x.left);
+    if (t > k) return select(x.left, k);
+    else if (t < k) return select(x.right, k-t-1);
+    else return x;
+}
+```
+
+**BST implementation: subtree counts**
+
+In each node, we store the number of nodes in the subtree rooted at that node; to implement `size()`, return the count at the root.
+
+```java
+private class Node
+{
+    private Key key;
+    private Value val;
+    private Node left;
+    private Node right;
+    private int count;  // number of nodes in subtree
+}
+
+public int size()
+{ return size(root); }
+
+private int size(Node x)
+{
+    if (x == null) return 0;
+    return x.count;
+}
+
+private Node put(Node x, Key key, Value val)
+{
+    if (x == null) return new Node(key, val, 1);
+    int cmp = key.compareTo(x.key);
+    if (cmp < 0) x.left = put(x.left, key, val);
+    else if (cmp > 0) x.right = put(x.right, key, val);
+    else if (cmp == 0) x.val = val;
+    x.count = 1 + size(x.left) + size(x.right);
+    return x;
+}
+```
+
+
+#### Rank
+
+How many keys < `k`?
+
+The inverse method `rank()` that returns the rank of a given key is similar: 
+- if the given key is equal to the key at the root, we return the number of keys `t` in the left subtree; 
+- if the given key is less than the key at the root, we return the rank of the key in the left subtree (recursively computed); 
+- and if the given key is larger than the key at the root, we return `t` plus one (to count the key at the root) plus the rank of the key in the right subtree (recursively computed).
+
+
+```java
+public int rank(Key key)
+{ return rank(key, root); }
+
+private int rank(Key key, Node x)
+{ // Return number of keys less than x.key in the subtree rooted at x.
+    if (x == null) return 0;
+    int cmp = key.compareTo(x.key);
+    if (cmp < 0) return rank(key, x.left);
+    else if (cmp > 0) return 1 + size(x.left) + rank(key, x.right);
+    else return size(x.left);
+}
+```
+
+#### Inorder traversal
+
+Inorder traversal of a BST yields keys in ascending order.
+
+- Traverse left subtree.
+- Enqueue key.
+- Traverse right subtree.
+
+```java
+public Iterable<Key> keys()
+{
+    Queue<Key> q = new Queue<Key>();
+    inorder(root, q);
+    return q;
+}
+private void inorder(Node x, Queue<Key> q)
+{
+    if (x == null) return;
+    inorder(x.left, q);
+    q.enqueue(x.key);
+    inorder(x.right, q);
+}
+```
+
+#### BST: ordered symbol table operations summary
+
+Order of growth of the running time for ordered symbol table operations
+
+| | sequential search | binary search | BST |
+| :--: | :--: | :--: | :--: | 
+| search | N | lg N | h |
+| insert / delete | N | N | h |
+| min / max | N | 1 | h |
+| floor / ceiling | N | lg N | h |
+| rank | N | lg N | h |
+| select | N | 1 | h |
+| ordered iteration | N lg N | N | N | 
+
+NOTE: h = height of BST (proportional to log N if keys inserted in random order)
+
+
+
+#### Deletion
+
+We can proceed in a similar manner to delete any node that has one child (or no children), but what can we do to delete a node that has two children? We are left with two links, but have a place in the parent node for only one of them. 
+
+An answer to this dilemma, first proposed by T. Hibbard in 1962, is to delete a node `x` by replacing it with its successor. Because `x` has a right child, its successor is the node with the smallest key in its right subtree. 
+
+The replacement preserves order in the tree because there are no keys between `x.key` and the successor’s key. 
+
+We can accomplish the task of replacing `x` by its successor in four (!) easy steps: 
+- Save a link to the node to be deleted in `t`. 
+- Set `x` to point to its successor `min(t.right)`. 
+- Set the right link of `x` (which is supposed to point to the BST containing all the keys larger than `x.key`) to `deleteMin(t.right)`, the link to the BST containing all the keys that are larger than `x.key` after the deletion. 
+- Set the left link of `x` (which was null) to `t.left` (all the keys that are less than both the deleted key and its successor).
+
+Unsatisfactory solution. Not symmetric.
+
+*Hibbard deletion in BSTs: Java implementation*
+
+```java
+public void deleteMin()
+{
+    root = deleteMin(root);
+}
+
+private Node deleteMin(Node x)
+{
+    if (x.left == null) return x.right;
+    x.left = deleteMin(x.left);
+    x.N = size(x.left) + size(x.right) + 1;
+    return x;
+}
+
+public void delete(Key key)
+{ root = delete(root, key); }
+
+private Node delete(Node x, Key key)
+{
+    if (x == null) return null;
+    int cmp = key.compareTo(x.key);
+    if (cmp < 0) x.left = delete(x.left, key);
+    else if (cmp > 0) x.right = delete(x.right, key);
+    else
+    {
+        if (x.right == null) return x.left;
+        if (x.left == null) return x.right;
+        Node t = x;
+        x = min(t.right);
+        x.right = deleteMin(t.right);
+        x.left = t.left;
+    }
+    x.N = size(x.left) + size(x.right) + 1;
+    return x;
+}
+```
+
+### ST implementations: summary
+
+
+| implementation | search (guarantee) | insert (guarantee) | delete (guarantee) | search hit (average case) | insert (average case) | delete (average case) | ordered ops? | operations on keys |
+| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | 
+| sequential search (unordered list) | N | N | N | N/2 | N | N/2 | no | equals() | 
+| binary search (ordered array) | lg N | N | N | lg N | N/2 | N/2 | yes | compareTo() | 
+| BST | N | N | N | 1.39 lg N | 1.39 lg N | √N | yes | compareTo() | 
 
 
