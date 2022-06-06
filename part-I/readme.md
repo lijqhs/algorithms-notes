@@ -1,89 +1,146 @@
 # Notes of Algorithms, Part I <!-- omit in toc -->
 
-> "An algorithm must be seen to be believed."— Donald Knuth
+> "An algorithm must be seen to be believed." — Donald Knuth
+
+Notes are taken from the course [Algorithms, Part I](https://www.coursera.org/learn/algorithms-part1) by Robert Sedgewick and Kevin Wayne. The notes are for tracking learning progress and easy reference. Section numbers are used to distinguish different parts of the content, not the original chapter numbers.
 
 
-- [Introduction](#introduction)
-- [Fundamentals](#fundamentals)
-  - [Autoboxing](#autoboxing)
-  - [Bags, Queues, and Stacks](#bags-queues-and-stacks)
-    - [Stack implementation](#stack-implementation)
-    - [Queue implementation](#queue-implementation)
-    - [Bag Implementation](#bag-implementation)
-  - [Analysis of Algorithms](#analysis-of-algorithms)
-    - [Theory of algorithms](#theory-of-algorithms)
-    - [Typical memory usage summary](#typical-memory-usage-summary)
-  - [Union-Find](#union-find)
-    - [Quick-find (eager approach)](#quick-find-eager-approach)
-    - [Quick-union (lazy approach)](#quick-union-lazy-approach)
-    - [Weighted quick-union](#weighted-quick-union)
-- [Elementary Sorts](#elementary-sorts)
-  - [Selection sort](#selection-sort)
-  - [Insertion sort](#insertion-sort)
-  - [Shellsort](#shellsort)
-    - [h-sorting](#h-sorting)
-  - [Shuffling](#shuffling)
-  - [Convex hull](#convex-hull)
-    - [Graham scan](#graham-scan)
-- [Mergesort](#mergesort)
-  - [Abstract in-place merge](#abstract-in-place-merge)
-  - [Top-down mergesort](#top-down-mergesort)
-    - [Mergesort: Java implementation](#mergesort-java-implementation)
-    - [Mergesort: analysis](#mergesort-analysis)
-    - [Mergesort: practical improvements](#mergesort-practical-improvements)
-  - [Bottom-up mergesort](#bottom-up-mergesort)
-  - [Complexity of sorting](#complexity-of-sorting)
-  - [Comparator](#comparator)
-    - [Polar order](#polar-order)
-  - [Stability](#stability)
-- [Quicksort](#quicksort)
-  - [Mergesort vs. Quicksort](#mergesort-vs-quicksort)
-  - [Quicksort implementation](#quicksort-implementation)
-  - [Performance](#performance)
-  - [Quicksort: practical improvements](#quicksort-practical-improvements)
-  - [Selection](#selection)
-    - [Quickselect](#quickselect)
-  - [Duplicate keys](#duplicate-keys)
-    - [Quicksort with 3-way partitioning](#quicksort-with-3-way-partitioning)
-  - [Sorting applications](#sorting-applications)
-  - [Java system sorts](#java-system-sorts)
-- [Priority Queues](#priority-queues)
-  - [Priority queue API](#priority-queue-api)
-  - [Priority queue applications](#priority-queue-applications)
-  - [Priority queue client example](#priority-queue-client-example)
-  - [Priority queue: unordered array implementation](#priority-queue-unordered-array-implementation)
-  - [Binary heaps](#binary-heaps)
-    - [Binary heap representations](#binary-heap-representations)
-      - [Promotion in a heap](#promotion-in-a-heap)
-      - [Insertion in a heap](#insertion-in-a-heap)
-      - [Demotion in a heap](#demotion-in-a-heap)
-      - [Delete the maximum in a heap](#delete-the-maximum-in-a-heap)
-    - [Binary heap: Java implementation](#binary-heap-java-implementation)
-  - [Priority queues implementation cost summary](#priority-queues-implementation-cost-summary)
-  - [Immutability](#immutability)
-- [Heapsort](#heapsort)
-  - [Heapsort: Java implementation](#heapsort-java-implementation)
-  - [Heapsort: mathematical analysis](#heapsort-mathematical-analysis)
-  - [Sorting algorithms: summary](#sorting-algorithms-summary)
-- [Symbol Tables (Searching)](#symbol-tables-searching)
-  - [Basic symbol table API](#basic-symbol-table-api)
-  - [Ordered symbol tables](#ordered-symbol-tables)
-    - [Ordered symbol table API](#ordered-symbol-table-api)
-    - [Binary search: ordered symbol table operations summary](#binary-search-ordered-symbol-table-operations-summary)
-- [Binary search trees](#binary-search-trees)
-  - [BST implementation](#bst-implementation)
-  - [Ordered operations](#ordered-operations)
-    - [Minimum and maximum](#minimum-and-maximum)
-    - [Floor and ceiling](#floor-and-ceiling)
-    - [Selection](#selection-1)
-    - [Rank](#rank)
-    - [Inorder traversal](#inorder-traversal)
-    - [BST: ordered symbol table operations summary](#bst-ordered-symbol-table-operations-summary)
-    - [Deletion](#deletion)
-  - [ST implementations: summary](#st-implementations-summary)
+- [1. Introduction](#1-introduction)
+- [2. Fundamentals](#2-fundamentals)
+  - [2.1. Autoboxing](#21-autoboxing)
+  - [2.2. Bags, Queues, and Stacks](#22-bags-queues-and-stacks)
+    - [2.2.1. Stack implementation](#221-stack-implementation)
+    - [2.2.2. Queue implementation](#222-queue-implementation)
+    - [2.2.3. Bag Implementation](#223-bag-implementation)
+  - [2.3. Analysis of Algorithms](#23-analysis-of-algorithms)
+    - [2.3.1. Theory of algorithms](#231-theory-of-algorithms)
+    - [2.3.2. Typical memory usage summary](#232-typical-memory-usage-summary)
+  - [2.4. Union-Find](#24-union-find)
+    - [2.4.1. Quick-find (eager approach)](#241-quick-find-eager-approach)
+    - [2.4.2. Quick-union (lazy approach)](#242-quick-union-lazy-approach)
+    - [2.4.3. Weighted quick-union](#243-weighted-quick-union)
+- [3. Elementary Sorts](#3-elementary-sorts)
+  - [3.1. Selection sort](#31-selection-sort)
+  - [3.2. Insertion sort](#32-insertion-sort)
+  - [3.3. Shellsort](#33-shellsort)
+    - [3.3.1. h-sorting](#331-h-sorting)
+  - [3.4. Shuffling](#34-shuffling)
+  - [3.5. Convex hull](#35-convex-hull)
+    - [3.5.1. Graham scan](#351-graham-scan)
+- [4. Mergesort](#4-mergesort)
+  - [4.1. Abstract in-place merge](#41-abstract-in-place-merge)
+  - [4.2. Top-down mergesort](#42-top-down-mergesort)
+    - [4.2.1. Mergesort: Java implementation](#421-mergesort-java-implementation)
+    - [4.2.2. Mergesort: analysis](#422-mergesort-analysis)
+    - [4.2.3. Mergesort: practical improvements](#423-mergesort-practical-improvements)
+  - [4.3. Bottom-up mergesort](#43-bottom-up-mergesort)
+  - [4.4. Complexity of sorting](#44-complexity-of-sorting)
+  - [4.5. Comparator](#45-comparator)
+    - [4.5.1. Polar order](#451-polar-order)
+  - [4.6. Stability](#46-stability)
+- [5. Quicksort](#5-quicksort)
+  - [5.1. Mergesort vs. Quicksort](#51-mergesort-vs-quicksort)
+  - [5.2. Quicksort implementation](#52-quicksort-implementation)
+  - [5.3. Performance](#53-performance)
+  - [5.4. Quicksort: practical improvements](#54-quicksort-practical-improvements)
+  - [5.5. Selection](#55-selection)
+    - [5.5.1. Quickselect](#551-quickselect)
+  - [5.6. Duplicate keys](#56-duplicate-keys)
+    - [5.6.1. Quicksort with 3-way partitioning](#561-quicksort-with-3-way-partitioning)
+  - [5.7. Sorting applications](#57-sorting-applications)
+  - [5.8. Java system sorts](#58-java-system-sorts)
+- [6. Priority Queues](#6-priority-queues)
+  - [6.1. Priority queue API](#61-priority-queue-api)
+  - [6.2. Priority queue applications](#62-priority-queue-applications)
+  - [6.3. Priority queue client example](#63-priority-queue-client-example)
+  - [6.4. Priority queue: unordered array implementation](#64-priority-queue-unordered-array-implementation)
+  - [6.5. Binary heaps](#65-binary-heaps)
+    - [6.5.1. Binary heap representations](#651-binary-heap-representations)
+      - [6.5.1.1. Promotion in a heap](#6511-promotion-in-a-heap)
+      - [6.5.1.2. Insertion in a heap](#6512-insertion-in-a-heap)
+      - [6.5.1.3. Demotion in a heap](#6513-demotion-in-a-heap)
+      - [6.5.1.4. Delete the maximum in a heap](#6514-delete-the-maximum-in-a-heap)
+    - [6.5.2. Binary heap: Java implementation](#652-binary-heap-java-implementation)
+  - [6.6. Priority queues implementation cost summary](#66-priority-queues-implementation-cost-summary)
+  - [6.7. Immutability](#67-immutability)
+- [7. Heapsort](#7-heapsort)
+  - [7.1. Heapsort: Java implementation](#71-heapsort-java-implementation)
+  - [7.2. Heapsort: mathematical analysis](#72-heapsort-mathematical-analysis)
+  - [7.3. Sorting algorithms: summary](#73-sorting-algorithms-summary)
+- [8. Symbol Tables (Searching)](#8-symbol-tables-searching)
+  - [8.1. Basic symbol table API](#81-basic-symbol-table-api)
+  - [8.2. Ordered symbol tables](#82-ordered-symbol-tables)
+    - [8.2.1. Ordered symbol table API](#821-ordered-symbol-table-api)
+    - [8.2.2. Binary search: ordered symbol table operations summary](#822-binary-search-ordered-symbol-table-operations-summary)
+- [9. Binary search trees](#9-binary-search-trees)
+  - [9.1. BST implementation](#91-bst-implementation)
+  - [9.2. Ordered operations](#92-ordered-operations)
+    - [9.2.1. Minimum and maximum](#921-minimum-and-maximum)
+    - [9.2.2. Floor and ceiling](#922-floor-and-ceiling)
+    - [9.2.3. Selection](#923-selection)
+    - [9.2.4. Rank](#924-rank)
+    - [9.2.5. Inorder traversal](#925-inorder-traversal)
+    - [9.2.6. BST: ordered symbol table operations summary](#926-bst-ordered-symbol-table-operations-summary)
+    - [9.2.7. Deletion](#927-deletion)
+  - [9.3. ST implementations: summary](#93-st-implementations-summary)
+- [10. Balanced search trees](#10-balanced-search-trees)
+  - [10.1. 2-3 tree](#101-2-3-tree)
+    - [10.1.1. Performance](#1011-performance)
+    - [10.1.2. Implementation](#1012-implementation)
+  - [10.2. Left-leaning red-black BSTs](#102-left-leaning-red-black-bsts)
+    - [10.2.1. Definition](#1021-definition)
+    - [10.2.2. Search implementation for red-black BSTs](#1022-search-implementation-for-red-black-bsts)
+    - [10.2.3. Red-black BST representation](#1023-red-black-bst-representation)
+    - [10.2.4. Elementary red-black BST operations](#1024-elementary-red-black-bst-operations)
+    - [10.2.5. Insertion in a LLRB tree](#1025-insertion-in-a-llrb-tree)
+    - [10.2.6. Insertion in a LLRB tree: Java implementation](#1026-insertion-in-a-llrb-tree-java-implementation)
+    - [10.2.7. ST implementations: summary](#1027-st-implementations-summary)
+  - [10.3. B-trees](#103-b-trees)
+    - [10.3.1. Searching in a B-tree](#1031-searching-in-a-b-tree)
+    - [10.3.2. Insertion in a B-tree](#1032-insertion-in-a-b-tree)
+    - [10.3.3. B-tree summary](#1033-b-tree-summary)
+- [11. Geometric applications of BSTs](#11-geometric-applications-of-bsts)
+  - [11.1. 1d range search](#111-1d-range-search)
+  - [11.2. line segment intersection](#112-line-segment-intersection)
+    - [11.2.1. Sweep-line algorithm](#1121-sweep-line-algorithm)
+  - [11.3. kd trees](#113-kd-trees)
+    - [11.3.1. 2-d orthogonal range search](#1131-2-d-orthogonal-range-search)
+    - [11.3.2. Space-partitioning trees](#1132-space-partitioning-trees)
+    - [11.3.3. Space-partitioning trees: applications](#1133-space-partitioning-trees-applications)
+    - [11.3.4. 2d tree implementation](#1134-2d-tree-implementation)
+    - [11.3.5. Range search in a 2d tree](#1135-range-search-in-a-2d-tree)
+    - [11.3.6. Nearest neighbor search in a 2d tree](#1136-nearest-neighbor-search-in-a-2d-tree)
+    - [11.3.7. Flocking boids](#1137-flocking-boids)
+    - [11.3.8. N-body simulation](#1138-n-body-simulation)
+  - [11.4. Interval search trees](#114-interval-search-trees)
+  - [11.5. Orthogonal rectangle intersection](#115-orthogonal-rectangle-intersection)
+    - [11.5.1. Sweep-line algorithm](#1151-sweep-line-algorithm)
+- [12. Hash Tables](#12-hash-tables)
+  - [12.1. Computing the hash function](#121-computing-the-hash-function)
+    - [12.1.1. Java’s hash code conventions](#1211-javas-hash-code-conventions)
+      - [12.1.1.1. Implementing hash code: strings](#12111-implementing-hash-code-strings)
+      - [12.1.1.2. Implementing hash code: user-defined types](#12112-implementing-hash-code-user-defined-types)
+    - [12.1.2. Hash code design](#1212-hash-code-design)
+    - [12.1.3. Modular hashing](#1213-modular-hashing)
+    - [12.1.4. Uniform hashing assumption](#1214-uniform-hashing-assumption)
+  - [12.2. Collisions](#122-collisions)
+    - [12.2.1. Separate chaining symbol table](#1221-separate-chaining-symbol-table)
+      - [12.2.1.1. Analysis of separate chaining](#12211-analysis-of-separate-chaining)
+    - [12.2.2. Collision resolution: open addressing (Linear probing hash table)](#1222-collision-resolution-open-addressing-linear-probing-hash-table)
+      - [12.2.2.1. Clustering](#12221-clustering)
+      - [12.2.2.2. Knuth's parking problem](#12222-knuths-parking-problem)
+      - [12.2.2.3. Analysis of linear probing](#12223-analysis-of-linear-probing)
+    - [12.2.3. ST implementations: summary](#1223-st-implementations-summary)
+  - [12.3. Context](#123-context)
+    - [12.3.1. Algorithmic complexity attacks](#1231-algorithmic-complexity-attacks)
+    - [12.3.2. One-way hash functions](#1232-one-way-hash-functions)
+    - [12.3.3. Separate chaining vs. linear probing](#1233-separate-chaining-vs-linear-probing)
+    - [12.3.4. Hashing: variations on the theme](#1234-hashing-variations-on-the-theme)
+    - [12.3.5. Hash tables vs. balanced search trees](#1235-hash-tables-vs-balanced-search-trees)
+- [13. Symbol table applications](#13-symbol-table-applications)
 
 
-## Introduction
+## 1. Introduction
 
 | topic | data structures and algorithms | course |
 | :--: | :--: | :--: |
@@ -106,15 +163,21 @@ Algorithms have a strong influence in many fields and its applications are innum
 - *Physics*. N-body simulation, particle collision simulation, ...
 - ...
 
-## Fundamentals
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
-### Autoboxing
+## 2. Fundamentals
+
+### 2.1. Autoboxing
 
 *Type parameters* have to be instantiated as *reference* types, so Java has special mechanisms to allow generic code to be used with primitive types. Recall that Java’s wrapper types are reference types that correspond to primitive types: `Boolean`, `Byte`, `Character`, `Double`, `Float`, `Integer`, `Long`, and `Short` correspond to `boolean`, `byte`, `char`, `double`, `float`, `int`, `long`, and `short`, respectively. Java automatically converts between these reference types and the corresponding primitive types—in assignments, method arguments, and arithmetic/logic expressions.
 
 Automatically casting a primitive type to a wrapper type is known as **autoboxing**, and automatically casting a wrapper type to a primitive type is known as **auto-unboxing**.
 
-### Bags, Queues, and Stacks
+### 2.2. Bags, Queues, and Stacks
 
 - The way in which we represent the objects in the collection directly impacts the efficiency of the various operations
 - Use *generics* and *iteration* to substantially simplify client code
@@ -193,7 +256,7 @@ A remarkably simple algorithm that was developed by E. W. Dijkstra in the 1960s 
 - On encountering a right parenthesis, pop an operator, pop the requisite number of operands, and push onto the operand stack the result of applying that operator to those operands.
 
 
-#### Stack implementation
+#### 2.2.1. Stack implementation
 
 **ALGORITHM 1.1 Pushdown (LIFO) stack (resizing array implementation)**
 
@@ -315,7 +378,7 @@ public class Stack<Item> implements Iterable<Item>
 }
 ```
 
-#### Queue implementation
+#### 2.2.2. Queue implementation
 
 This implementation uses the same data structure as does Stack—*a linked list*—but it implements different algorithms for adding and removing items, which make the difference between LIFO and FIFO for the client.
 
@@ -395,7 +458,7 @@ public class Queue<Item> implements Iterable<Item>
 
 *Linked lists are a fundamental alternative to arrays* for structuring a collection of data. From a historical perspective, this alternative has been available to programmers for many decades. Indeed, a landmark in the history of programming languages was the development of **LISP** by John McCarthy in the 1950s, where linked lists are the primary structure for programs and data.
 
-#### Bag Implementation
+#### 2.2.3. Bag Implementation
 
 This Bag implementation maintains a linked list of the items provided in calls to `add()`. Code for `isEmpty()` and `size()` is the same as in Stack and is omitted. The iterator traverses the list, maintaining the current node in current.
 
@@ -461,7 +524,7 @@ Examples of data structures developed in the book [*Algorithms, 4th Edition, Rob
 | ternary search trie | 5.3 | TST | three links per node |
 
 
-### Analysis of Algorithms
+### 2.3. Analysis of Algorithms
 
 **Reasons to analyze algorithms**:
 - Predict performance.
@@ -493,7 +556,7 @@ Scientific method:
 
 **Common order-of-growth classifications**
 
-<img src="res/common-order-of-growth-classifications.png" alt="Common order-of-growth classifications" width="550">
+<img src="res/common-order-of-growth-classifications.png" alt="Common order-of-growth classifications" width="550"></img>
 
 **Types of analyses**
 
@@ -501,7 +564,7 @@ Scientific method:
 - Worst case. Upper bound on cost.
 - Average case. “Expected” cost.
 
-#### Theory of algorithms
+#### 2.3.1. Theory of algorithms
 
 - Goals
   - Establish “difficulty” of a problem.
@@ -514,11 +577,14 @@ Scientific method:
   - No algorithm can provide a better performance guarantee.
 
 Commonly-used notations in the theory of algorithms:
-- Big Theta `Θ()`. provides *asymptotic order of growth*. used to *classify algorithms*.
-- Big Oh `O()`. provides *`Θ()` and smaller*. used to *develop upper bounds*.
-- Big Omega `Ω()`. provides *`Θ()` and larger*. used to *develop lower bounds*.
 
-#### Typical memory usage summary
+| notations | usage |
+| :--: | :-- |
+| Big Theta `Θ()` | provides *asymptotic order of growth*. used to *classify algorithms*. |
+| Big Oh `O()` | provides *`Θ()` and smaller*. used to *develop upper bounds*. |
+| Big Omega `Ω()` | provides *`Θ()` and larger*. used to *develop lower bounds*. |
+
+#### 2.3.2. Typical memory usage summary
 
 Total memory usage for a data type value:
 - Primitive type: 4 bytes for int, 8 bytes for double, …
@@ -531,11 +597,11 @@ Total memory usage for a data type value:
 
 *Deep memory usage*: If array entry or instance variable is a reference, add memory (recursively) for referenced object.
 
-### Union-Find
+### 2.4. Union-Find
 
 We shall consider three different implementations, all based on using the site-indexed `id[]` array, to determine whether two sites are in the same connected component.
 
-#### Quick-find (eager approach)
+#### 2.4.1. Quick-find (eager approach)
 
 **Data structure.**
 - Integer array `id[]` of length `N`.
@@ -570,7 +636,7 @@ public class QuickFindUF
 **Quick-find is too slow**:  
 *Union is too expensive*. It takes *N<sup>2</sup>* array accesses to process a sequence of `N` union commands on `N` objects.
 
-#### Quick-union (lazy approach)
+#### 2.4.2. Quick-union (lazy approach)
 
 **Data structure.**
 - Integer array `id[]` of length `N`.
@@ -619,7 +685,7 @@ public class QuickUnionUF
 - Find too expensive (could be `N` array accesses).
 
 
-#### Weighted quick-union
+#### 2.4.3. Weighted quick-union
 
 **Improvement 1: weighting**
 
@@ -710,7 +776,13 @@ private int root(int i)
 }
 ```
 
-## Elementary Sorts
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+## 3. Elementary Sorts
 
 **Sorting cost model**. When studying sorting algorithms, we count compares and exchanges. For algorithms that do not use exchanges, we count array accesses.
 
@@ -760,7 +832,7 @@ private static void exch(Comparable[] a, int i, int j)
 
 See more: [Sorting Algorithms Animations](https://www.toptal.com/developers/sorting-algorithms).
 
-### Selection sort
+### 3.1. Selection sort
 
 - In iteration i, find index min of smallest remaining entry.
 - Swap `a[i]` and `a[min]`.
@@ -801,7 +873,7 @@ public class Selection
 
 **Data movement is minimal**. Linear number of exchanges.
 
-### Insertion sort
+### 3.2. Insertion sort
 
 - In iteration `i`, swap `a[i]` with each larger entry to its left.
 
@@ -850,7 +922,7 @@ e.g.: `A E E L M O T R X P S`
 *Proposition*. For partially-sorted arrays, insertion sort runs in linear time.  
 *Pf*. Number of exchanges equals the number of inversions. (number of compares = exchanges + (N – 1).)
 
-### Shellsort
+### 3.3. Shellsort
 
 Shellsort is a simple extension of insertion sort that gains speed by allowing exchanges of array entries that are far apart, to produce partially sorted arrays that can be efficiently sorted, eventually by insertion sort.
 
@@ -858,7 +930,7 @@ Shellsort is a simple extension of insertion sort that gains speed by allowing e
 
 *Shellsort*. [Shell 1959] `h-sort` array for decreasing sequence of values of `h`.
 
-#### h-sorting
+#### 3.3.1. h-sorting
 
 *How to h-sort an array?* Insertion sort, with stride length `h`.
 
@@ -909,7 +981,7 @@ public class Shell {
   - Average-case performance?
 
 
-### Shuffling
+### 3.4. Shuffling
 
 *Goal*. Rearrange array so that result is a uniformly random permutation.
 
@@ -938,16 +1010,16 @@ public class StdRandom {
 }
 ```
 
-### Convex hull
+### 3.5. Convex hull
 
 Geometric properties (fact):
 - Can traverse the convex hull by making only counterclockwise turns.
 - The vertices of convex hull appear in increasing order of polar angle with respect to point p with lowest y-coordinate.
 
-    <img src="res/convex-hull.png" alt="convex hull" width="280">
+    <img src="res/convex-hull.png" alt="convex hull" width="280"></img>
 
 
-#### Graham scan
+#### 3.5.1. Graham scan
 
 - Choose point p with smallest y-coordinate.
 - Sort points by polar angle with p.
@@ -955,7 +1027,7 @@ Geometric properties (fact):
 
 **Implementing ccw**
 
-<img src="res/ccw.png" alt="implementing ccw" width="550">
+<img src="res/ccw.png" alt="implementing ccw" width="550"></img>
 
 ```java
 public class Point2D {
@@ -981,7 +1053,14 @@ public class Point2D {
 }
 ```
 
-## Mergesort
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+## 4. Mergesort
 
 - Java sort for objects.
 - Perl, C++ stable sort, Python stable sort, Firefox JavaScript, ...
@@ -993,7 +1072,7 @@ public class Point2D {
 
 **Goal**. Given two sorted subarrays `a[lo]` to `a[mid]` and `a[mid+1]` to `a[hi]`, replace with sorted subarray `a[lo]` to `a[hi]`.
 
-### Abstract in-place merge
+### 4.1. Abstract in-place merge
 
 This method merges by first copying into the auxiliary array `aux[]` then merging back to `a[]`. In the merge (the second for loop), there are four conditions: left half exhausted (take from the right), right half exhausted (take from the left), current key on right less than current key on left (take from the right), and current key on right greater than or equal to current key on left (take from the left).
 
@@ -1034,9 +1113,9 @@ java -da MyProgram // disable assertions (default)
 
 See also: [Merge-sort with Transylvanian-saxon (German) folk dance](https://www.youtube.com/watch?v=dENca26N6V4&t=23s).
 
-### Top-down mergesort
+### 4.2. Top-down mergesort
 
-#### Mergesort: Java implementation
+#### 4.2.1. Mergesort: Java implementation
 
 The code is based on top-down mergesort. It is one of the best-known examples of the utility of the divide-and-conquer paradigm for efficient algorithm design. This recursive code is the basis for an inductive proof that the algorithm sorts the array: if it sorts the two subarrays, it sorts the whole array, by merging together the subarrays.
 
@@ -1060,7 +1139,7 @@ public class Merge
 }
 ```
 
-#### Mergesort: analysis
+#### 4.2.2. Mergesort: analysis
 
 **Proposition**. 
 - *Number of compares and array accesses*. Mergesort uses at most `NlgN` compares and `6NlgN` array accesses to sort any array of size `N`.
@@ -1070,7 +1149,7 @@ public class Merge
 *Def*. A sorting algorithm is *in-place* if it uses `≤ clogN` extra memory.  
 Ex. Insertion sort, selection sort, shellsort.
 
-#### Mergesort: practical improvements
+#### 4.2.3. Mergesort: practical improvements
 
 - Use insertion sort for small subarrays.
   - Mergesort has too much overhead for tiny subarrays.
@@ -1132,7 +1211,7 @@ private static void sort(Comparable[] a, Comparable[] aux, int lo, int hi)
 }
 ```
 
-### Bottom-up mergesort
+### 4.3. Bottom-up mergesort
 
 Bottom-up mergesort consists of a sequence of passes over the whole array, doing `sz-by-sz` merges, starting with `sz` equal to `1` and doubling `sz` on each pass. The final subarray is of size `sz` only when the array size is an even multiple of `sz` (otherwise it is less than `sz`). 
 
@@ -1156,7 +1235,7 @@ public class MergeBU
     }
 }
 ```
-### Complexity of sorting
+### 4.4. Complexity of sorting
 
 *Computational complexity*. Framework to study efficiency of algorithms for solving a particular problem `X`.
 
@@ -1203,7 +1282,7 @@ Lower bound may not hold if the algorithm has information about:
 
 *Digital properties of keys*. We can use digit/character compares instead of key compares for numbers and strings.
 
-### Comparator
+### 4.5. Comparator
 
 Comparator interface: sort using an *alternate order*.
 
@@ -1266,9 +1345,9 @@ public class Student
 }
 ```
 
-#### Polar order
+#### 4.5.1. Polar order
 
-<img src="res/polar-order.png" alt="Polar order" width="380">
+<img src="res/polar-order.png" alt="Polar order" width="380"></img>
 
 A ccw-based solution.
 - If `q1` is above `p` and `q2` is below `p`, then `q1` makes smaller polar angle.
@@ -1298,7 +1377,7 @@ public class Point2D
 }
 ```
 
-### Stability
+### 4.6. Stability
 
 A stable sort preserves the relative order of items with equal keys.
 
@@ -1311,9 +1390,16 @@ A stable sort preserves the relative order of items with equal keys.
 - shellsort).
 
 
-## Quicksort
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
-[<img src="res/Sorting_quicksort_anim.gif" alt="Quicksort animation" width="280">](https://en.wikipedia.org/wiki/Quicksort "Wikipedia: Quicksort")
+
+## 5. Quicksort
+
+[<img src="res/Sorting_quicksort_anim.gif" alt="Quicksort animation" width="280"></img>](https://en.wikipedia.org/wiki/Quicksort "Wikipedia: Quicksort")
 
 *via* [Wikipedia: Quicksort](https://en.wikipedia.org/wiki/Quicksort)
 
@@ -1340,7 +1426,7 @@ A stable sort preserves the relative order of items with equal keys.
 - When pointers cross.
   - Exchange `a[lo]` with `a[j]`.
 
-### Mergesort vs. Quicksort
+### 5.1. Mergesort vs. Quicksort
 - For mergesort, we break the array into two subarrays to be sorted and then combine the ordered subarrays to make the whole ordered array.
   - Do the two recursive calls before working on the whole array.
   - The array is divided in half.
@@ -1349,7 +1435,7 @@ A stable sort preserves the relative order of items with equal keys.
   - The position of the partition depends on the contents of the array.
 
 
-### Quicksort implementation
+### 5.2. Quicksort implementation
 
 ALGORITHM 2.5 Quicksort
 
@@ -1387,7 +1473,7 @@ public class Quick
 }
 ```
 
-### Performance
+### 5.3. Performance
 
 - Worst-case performance: *O(N<sup>2</sup>)*
 - Best-case performance: 
@@ -1402,7 +1488,7 @@ public class Quick
 
 *Proposition*. Quicksort is not stable.
 
-### Quicksort: practical improvements
+### 5.4. Quicksort: practical improvements
 
 *Insertion sort small subarrays.*
 - Even quicksort has too much overhead for tiny subarrays.
@@ -1441,7 +1527,7 @@ private static void sort(Comparable[] a, int lo, int hi)
 }
 ```
 
-### Selection
+### 5.5. Selection
 
 *Goal*. Given an array of *N* items, find a `kth` smallest item.  
 Ex. Min (`k = 0`), max (`k = N - 1`), median (`k = N / 2`).
@@ -1450,7 +1536,7 @@ Ex. Min (`k = 0`), max (`k = N - 1`), median (`k = N / 2`).
 - Order statistics.
 - Find the "top k."
 
-#### Quickselect
+#### 5.5.1. Quickselect
 
 [Quickselect](https://en.wikipedia.org/wiki/Quickselect) is a selection algorithm to find the `kth` smallest element in an unordered list. It is related to the quicksort algorithm.
 
@@ -1478,7 +1564,7 @@ public static Comparable select(Comparable[] a, int k)
 
 *Proposition*. Quick-select takes **linear** time on average.
 
-### Duplicate keys
+### 5.6. Duplicate keys
 
 Often, purpose of sort is to bring items with equal keys together.
 - Sort population by age.
@@ -1489,7 +1575,7 @@ Typical characteristics of such applications.
 - Huge array.
 - Small number of key values.
 
-#### Quicksort with 3-way partitioning
+#### 5.6.1. Quicksort with 3-way partitioning
 
 One straightforward idea is to partition the array into three parts, one each for items with keys smaller than, equal to, and larger than the partitioning item’s key. 
 
@@ -1530,7 +1616,7 @@ public class Quick3way
 
 Randomized quicksort with 3-way partitioning reduces running time from *linearithmic* to *linear* in broad class of applications.
 
-### Sorting applications
+### 5.7. Sorting applications
 
 Sorting algorithms are essential in a broad variety of applications:
 - obvious applications:
@@ -1549,7 +1635,7 @@ Sorting algorithms are essential in a broad variety of applications:
   - Computational biology.
   - Load balancing on a parallel computer.
 
-### Java system sorts
+### 5.8. Java system sorts
 
 ***Arrays.sort()***
 - Has different method for each primitive type.
@@ -1574,8 +1660,14 @@ Median of the median of 3 samples, each of 3 entries.
 - Approximates the median of 9.
 - Uses at most 12 compares.
 
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
-## Priority Queues
+
+## 6. Priority Queues
 
 Many applications require that we process items having keys in order, but not necessarily in full sorted order and not necessarily all at once. Often, we collect a set of items, then process the one with the largest key, then perhaps collect more items, then process the one with the current largest key, and so forth.
 
@@ -1587,7 +1679,7 @@ An appropriate data type in such an environment supports two operations: **remov
 - Randomized queue. Remove a random item.
 - **Priority queue**. Remove the *largest* (or *smallest*) item.
 
-### Priority queue API
+### 6.1. Priority queue API
 
 | `public class MaxPQ<Key extends Comparable<Key>>` | Key must be Comparable (bounded type parameter) | 
 | :--: | :--: | 
@@ -1598,7 +1690,7 @@ An appropriate data type in such an environment supports two operations: **remov
 | `Key max()` | return the largest key | 
 | `int size()` | number of entries in the priority queue | 
 
-### Priority queue applications
+### 6.2. Priority queue applications
 
 - Event-driven simulation. [customers in a line, colliding particles]
 - Numerical computation. [reducing roundoff error]
@@ -1611,7 +1703,7 @@ An appropriate data type in such an environment supports two operations: **remov
 - Discrete optimization. [bin packing, scheduling]
 - Spam filtering. [Bayesian spam filter]
 
-### Priority queue client example
+### 6.3. Priority queue client example
 
 *Challenge*. Find the largest `M` items in a stream of `N` items.
 - Fraud detection: isolate $$ transactions.
@@ -1644,7 +1736,7 @@ Order of growth of finding the largest M in a stream of N items:
 | binary heap | N log M | M | 
 | best in theory | N | M | 
 
-### Priority queue: unordered array implementation
+### 6.4. Priority queue: unordered array implementation
 
 ```java
 public class UnorderedMaxPQ<Key extends Comparable<Key>>
@@ -1682,13 +1774,13 @@ Order of growth of running time for priority queue with N items:
 | ordered array | N | 1 | 1 | 
 | goal | log N | log N | log N | 
 
-### Binary heaps
+### 6.5. Binary heaps
 
 *Binary tree*. Empty or node with links to left and right binary trees.  
 *Complete tree*. Perfectly balanced, except for bottom level.  
 *Property*. Height of complete tree with `N` nodes is `floor(log N)`.
 
-#### Binary heap representations
+#### 6.5.1. Binary heap representations
 
 *Binary heap*. Array representation of a heap-ordered complete binary tree.
 
@@ -1708,7 +1800,7 @@ Order of growth of running time for priority queue with N items:
   - Parent of node at `k` is at `k/2`.
   - Children of node at `k` are at `2k` and `2k+1`.
 
-##### Promotion in a heap
+##### 6.5.1.1. Promotion in a heap
 
 *Scenario*. Child's key becomes *larger* key than its parent's key.
 
@@ -1729,7 +1821,7 @@ private void swim(int k)
 
 [Peter principle](https://www.investopedia.com/terms/p/peter-principle.asp). Node promoted to level of incompetence.
 
-##### Insertion in a heap
+##### 6.5.1.2. Insertion in a heap
 
 ***Insert***. Add node at end, then swim it up.  
 *Cost*. At most `1 + log N` compares.
@@ -1742,7 +1834,7 @@ public void insert(Key x)
 }
 ```
 
-##### Demotion in a heap
+##### 6.5.1.3. Demotion in a heap
 
 *Scenario*. Parent's key becomes *smaller* than one (or both) of its children's.
 
@@ -1766,7 +1858,7 @@ private void sink(int k)
 
 Power struggle. Better subordinate promoted.
 
-##### Delete the maximum in a heap
+##### 6.5.1.4. Delete the maximum in a heap
 
 ***Delete max***. Exchange root with node at end, then sink it down.  
 *Cost*. At most `2 lg N` compares.
@@ -1782,7 +1874,7 @@ public Key delMax()
 }
 ```
 
-#### Binary heap: Java implementation
+#### 6.5.2. Binary heap: Java implementation
 
 ALGORITHM 2.6 Heap priority queue
 
@@ -1812,7 +1904,7 @@ public class MaxPQ<Key extends Comparable<Key>>
 }
 ```
 
-### Priority queues implementation cost summary
+### 6.6. Priority queues implementation cost summary
 
 Order of growth of running time for priority queue with N items:
 
@@ -1829,7 +1921,7 @@ Order of growth of running time for priority queue with N items:
 
 *NOTE*: The [*d-ary heap*](https://en.wikipedia.org/wiki/D-ary_heap) or *d-heap* is a priority queue data structure, a generalization of the binary heap in which the nodes have `d` children instead of `2`.
 
-### Immutability
+### 6.7. Immutability
 
 Immutability of keys.
 - Assumption: client does not change keys while they're on the PQ.
@@ -1869,10 +1961,18 @@ public final class Vector { // final, can't override instance methods
 
 **Disadvantage**. Must create new object for each data type value.
 
-## Heapsort
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
-[<img src="res/Sorting_heapsort_anim.gif" alt="Heapsort animation" width="280">](https://en.wikipedia.org/wiki/Heapsort "Wikipedia: Heapsort")
+## 7. Heapsort
+
+
+[<img src="res/Sorting_heapsort_anim.gif" alt="Heapsort animation" width="280"></img>](https://en.wikipedia.org/wiki/Heapsort "Wikipedia: Heapsort")
 
 *via* [Wikipedia: Heapsort](https://en.wikipedia.org/wiki/Heapsort)
 
@@ -1904,7 +2004,7 @@ while (N > 1)
 }
 ```
 
-### Heapsort: Java implementation
+### 7.1. Heapsort: Java implementation
 
 
 ```java
@@ -1930,7 +2030,7 @@ public class Heap
 }
 ```
 
-### Heapsort: mathematical analysis
+### 7.2. Heapsort: mathematical analysis
 
 *Proposition*. 
 - Heap construction uses ≤ *2N* compares and exchanges.
@@ -1946,7 +2046,7 @@ public class Heap
 - Makes poor use of cache memory.
 - Not stable.
 
-### Sorting algorithms: summary
+### 7.3. Sorting algorithms: summary
 
 | | inplace? | stable? | worst | average | best | remarks |
 | :--: | :--: | :--: | :--: | :--: | :----: | :-----: | 
@@ -1960,13 +2060,20 @@ public class Heap
 | ??? | x | x | N lg N | N lg N | N lg N | holy sorting grail | 
 
 
-## Symbol Tables (Searching)
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 8. Symbol Tables (Searching)
 
 Key-value pair abstraction.
 - Insert a value with specified key.
 - Given a key, search for the corresponding value.
 
-### Basic symbol table API
+### 8.1. Basic symbol table API
 
 | `public class ST<Key, Value>` | | 
 | :--: | :--: | 
@@ -2074,7 +2181,7 @@ public class FrequencyCounter
 }
 ```
 
-### Ordered symbol tables
+### 8.2. Ordered symbol tables
 
 In typical applications, keys are *Comparable* objects, so the option exists of using the code `a.compareTo(b)` to compare two keys a and b.
 
@@ -2082,7 +2189,7 @@ Several symbol-table implementations take advantage of order among the keys that
 
 More important, in such implementations, we can think of the symbol table as keeping the keys in order and consider a significantly expanded API that defines numerous natural and useful operations involving relative key order.
 
-#### Ordered symbol table API
+#### 8.2.1. Ordered symbol table API
 
 | `public class ST<Key extends Comparable<Key>, Value>` | | 
 | :--: | :--: | 
@@ -2105,7 +2212,7 @@ More important, in such implementations, we can think of the symbol table as kee
 | `Iterable<Key> keys(Key lo, Key hi)` | keys in `[lo..hi]`, in sorted order |
 | `Iterable<Key> keys()` | all the keys in the table | 
 
-#### Binary search: ordered symbol table operations summary
+#### 8.2.2. Binary search: ordered symbol table operations summary
 
 Order of growth of the running time for ordered symbol table operations
 
@@ -2119,7 +2226,16 @@ Order of growth of the running time for ordered symbol table operations
 | select | N | 1 | 
 | ordered iteration | N lg N | N | 
 
-## Binary search trees
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 9. Binary search trees
 
 Definition. A BST is a binary tree in symmetric order.
 
@@ -2152,7 +2268,7 @@ private class Node
 }
 ```
 
-### BST implementation
+### 9.1. BST implementation
 
 ```java
 public class BST<Key extends Comparable<Key>, Value>
@@ -2218,9 +2334,9 @@ Proposition. [Reed, 2003] If N distinct keys are inserted in random order, expec
 Worst-case height is *N*. (exponentially small chance when keys are inserted in random order)
 
 
-### Ordered operations
+### 9.2. Ordered operations
 
-#### Minimum and maximum
+#### 9.2.1. Minimum and maximum
 
 *Minimum*. Smallest key in table.  
 *Maximum*. Largest key in table.
@@ -2246,7 +2362,7 @@ private Node min(Node x)
 ```
 
 
-#### Floor and ceiling
+#### 9.2.2. Floor and ceiling
 
 *Floor*. Largest key ≤ a given key.  
 *Ceiling*. Smallest key ≥ a given key.
@@ -2280,7 +2396,7 @@ private Node floor(Node x, Key key)
 }
 ```
 
-#### Selection
+#### 9.2.3. Selection
 
 Return Node containing key of rank k.
 
@@ -2341,7 +2457,7 @@ private Node put(Node x, Key key, Value val)
 ```
 
 
-#### Rank
+#### 9.2.4. Rank
 
 How many keys < `k`?
 
@@ -2365,7 +2481,7 @@ private int rank(Key key, Node x)
 }
 ```
 
-#### Inorder traversal
+#### 9.2.5. Inorder traversal
 
 Inorder traversal of a BST yields keys in ascending order.
 
@@ -2389,7 +2505,7 @@ private void inorder(Node x, Queue<Key> q)
 }
 ```
 
-#### BST: ordered symbol table operations summary
+#### 9.2.6. BST: ordered symbol table operations summary
 
 Order of growth of the running time for ordered symbol table operations
 
@@ -2407,21 +2523,21 @@ NOTE: h = height of BST (proportional to log N if keys inserted in random order)
 
 
 
-#### Deletion
+#### 9.2.7. Deletion
 
-We can proceed in a similar manner to delete any node that has one child (or no children), but what can we do to delete a node that has two children? We are left with two links, but have a place in the parent node for only one of them. 
+If we delete a node that has two children, we are left with two links, but have a place in the parent node for only one of them. 
 
 An answer to this dilemma, first proposed by T. Hibbard in 1962, is to delete a node `x` by replacing it with its successor. Because `x` has a right child, its successor is the node with the smallest key in its right subtree. 
 
 The replacement preserves order in the tree because there are no keys between `x.key` and the successor’s key. 
 
-We can accomplish the task of replacing `x` by its successor in four (!) easy steps: 
+Four steps: 
 - Save a link to the node to be deleted in `t`. 
 - Set `x` to point to its successor `min(t.right)`. 
 - Set the right link of `x` (which is supposed to point to the BST containing all the keys larger than `x.key`) to `deleteMin(t.right)`, the link to the BST containing all the keys that are larger than `x.key` after the deletion. 
 - Set the left link of `x` (which was null) to `t.left` (all the keys that are less than both the deleted key and its successor).
 
-Unsatisfactory solution. Not symmetric.
+*Unsatisfactory solution*. Not symmetric.
 
 *Hibbard deletion in BSTs: Java implementation*
 
@@ -2462,7 +2578,7 @@ private Node delete(Node x, Key key)
 }
 ```
 
-### ST implementations: summary
+### 9.3. ST implementations: summary
 
 
 | implementation | search (guarantee) | insert (guarantee) | delete (guarantee) | search hit (average case) | insert (average case) | delete (average case) | ordered ops? | operations on keys |
@@ -2470,5 +2586,1216 @@ private Node delete(Node x, Key key)
 | sequential search (unordered list) | N | N | N | N/2 | N | N/2 | no | equals() | 
 | binary search (ordered array) | lg N | N | N | lg N | N/2 | N/2 | yes | compareTo() | 
 | BST | N | N | N | 1.39 lg N | 1.39 lg N | √N | yes | compareTo() | 
+| goal | log N | log N | log N | log N | log N | log N | yes | compareTo() | 
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 10. Balanced search trees
+
+Challenge. Guarantee performance.
+
+### 10.1. 2-3 tree
+
+Allow 1 or 2 keys per node.
+- 2-node: one key, two children.
+- 3-node: two keys, three children.
+
+*Symmetric order*. Inorder traversal yields keys in ascending order.
+
+*Perfect balance*. Every path from root to null link has same length.
+
+*Search*.
+- Compare search key against keys in node.
+- Find interval containing search key.
+- Follow associated link (recursively).
+
+*Insertion into a 3-node at bottom.*
+- Add new key to 3-node to create temporary 4-node.
+- Move middle key in 4-node into parent.
+- Repeat up the tree, as necessary.
+- If you reach the root and it's a 4-node, split it into three 2-nodes.
+
+Splitting a 4-node is a local transformation: constant number of operations.
+
+**Global properties in a 2-3 tree**   
+*Invariants*. Maintains symmetric order and perfect balance.
+
+
+<img src="res/2-3-trees.png" alt="2-3 trees" width="550"></img>
+
+
+#### 10.1.1. Performance
+
+Tree height.
+- Worst case: lg N. [all 2-nodes]
+- Best case: log3 N ≈ .631 lg N. [all 3-nodes]
+- Between 12 and 20 for a million nodes.
+- Between 18 and 30 for a billion nodes.
+
+**Guaranteed *logarithmic* performance for search and insert.**
+
+#### 10.1.2. Implementation
+
+Direct implementation is complicated, because:
+- Maintaining multiple node types is cumbersome.
+- Need multiple compares to move down tree.
+- Need to move back up the tree to split 4-nodes.
+- Large number of cases for splitting.
+
+*Bottom line*. Could do it, but there's a better way.
+
+### 10.2. Left-leaning red-black BSTs 
+
+#### 10.2.1. Definition
+
+(Guibas-Sedgewick 1979 and Sedgewick 2007)
+
+1. Represent 2–3 tree as a BST.
+2. Use "internal" left-leaning links as "glue" for 3–nodes.
+
+*An equivalent definition:*
+
+A BST such that:
+- No node has two red links connected to it.
+- Every path from root to null link has the same number of black links.
+- Red links lean left.
+
+*Key property*. 1–1 correspondence between 2–3 and LLRB.
+
+#### 10.2.2. Search implementation for red-black BSTs
+
+Search is the same as for elementary BST (ignore color).   
+Most other ops (e.g., floor, iteration, selection) are also identical.
+
+```java
+public Val get(Key key)
+{
+    Node x = root;
+    while (x != null)
+    {
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) x = x.left;
+        else if (cmp > 0) x = x.right;
+        else if (cmp == 0) return x.val;
+    }
+    return null;
+}
+```
+
+#### 10.2.3. Red-black BST representation
+
+Each node is pointed to by precisely one link (from its parent) ⇒ can encode color of links in nodes.
+
+```java
+private static final boolean RED = true;
+private static final boolean BLACK = false;
+private class Node
+{
+    Key key;
+    Value val;
+    Node left, right;
+    boolean color; // color of parent link
+}
+private boolean isRed(Node x)
+{
+    if (x == null) return false;
+    return x.color == RED;
+}
+```
+
+#### 10.2.4. Elementary red-black BST operations
+
+*Invariants*. Maintains symmetric order and perfect black balance.
+
+**Left rotation**. Orient a (temporarily) right-leaning red link to lean left.
+
+
+```java
+private Node rotateLeft(Node h)
+{
+    assert isRed(h.right);
+    Node x = h.right;
+    h.right = x.left;
+    x.left = h;
+    x.color = h.color;
+    h.color = RED;
+    return x;
+}
+```
+
+**Right rotation**. Orient a left-leaning red link to (temporarily) lean right.
+
+```java
+private Node rotateRight(Node h)
+{
+`assert isRed(h.left);
+Node x = h.left;
+h.left = x.right;
+x.right = h;
+x.color = h.color;
+h.color = RED;
+return x;`
+}
+```
+
+**Color flip**. Recolor to split a (temporary) 4-node.
+
+```java
+private void flipColors(Node h)
+{
+    assert !isRed(h);
+    assert isRed(h.left);
+    assert isRed(h.right);
+    h.color = RED;
+    h.left.color = BLACK;
+    h.right.color = BLACK;
+}
+```
+
+#### 10.2.5. Insertion in a LLRB tree
+
+**Basic strategy**. Maintain 1-1 correspondence with 2-3 trees by applying elementary red-black BST operations.
+
+**Case 1**. Insert into a 2-node at the bottom.
+- Do standard BST insert; color new link red.
+- If new red link is a right link, rotate left.
+
+
+<img src="res/insert-llrb-case1.png" alt="Insertion in a LLRB tree Case 1" width="250"></img>
+
+
+**Case 2**. Insert into a 3-node at the bottom.
+- Do standard BST insert; color new link red.
+- Rotate to balance the 4-node (if needed).
+- Flip colors to pass red link up one level.
+- Rotate to make lean left (if needed).
+- Repeat case 1 or case 2 up the tree (if needed).
+
+
+<img src="res/insert-llrb-case2.png" alt="Insertion in a LLRB tree Case 2" width="550"></img>
+
+
+**Passing red links up the tree**
+
+
+<img src="res/insert-llrb-case2-2.png" alt="Insertion in a LLRB tree Case 2" width="550"></img>
+
+#### 10.2.6. Insertion in a LLRB tree: Java implementation
+
+Same code for all cases.
+- Right child red, left child black: rotate left.
+- Left child, left-left grandchild red: rotate right.
+- Both children red: flip colors.
+
+
+```java
+private Node put(Node h, Key key, Value val)
+{
+    if (h == null) return new Node(key, val, RED); // insert at bottom (and color it red)
+    int cmp = key.compareTo(h.key);
+    if (cmp < 0) h.left = put(h.left, key, val);
+    else if (cmp > 0) h.right = put(h.right, key, val);
+    else if (cmp == 0) h.val = val;
+    if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);        // lean left
+    if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);    // balance 4-node
+    if (isRed(h.left) && isRed(h.right)) flipColors(h);             // split 4-node
+    return h;
+}
+```
+
+#### 10.2.7. ST implementations: summary
+
+| implementation | search (guarantee) | insert (guarantee) | delete (guarantee) | search hit (average case) | insert (average case) | delete (average case) | ordered ops? | operations on keys |
+| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | 
+| sequential search (unordered list) | N | N | N | N/2 | N | N/2 | no | equals() | 
+| binary search (ordered array) | lg N | N | N | lg N | N/2 | N/2 | yes | compareTo() | 
+| BST | N | N | N | 1.39 lg N | 1.39 lg N | √N | yes | compareTo() | 
+| 2-3 tree | c log N | c log N | c log N | c log N | c log N | c log N | yes | compareTo() | 
+| red-black BST | 2 lg N | 2 lg N | 2 lg N | 1.00 lg N * | 1.00 lg N * | 1.00 lg N * | yes | compareTo() | 
+
+\* exact value of coefficient unknown but extremely close to 1
+
+
+### 10.3. B-trees
+
+
+**File system model**
+
+- *Page*. Contiguous block of data (e.g., a file or 4,096-byte chunk).
+- *Probe*. First access to a page (e.g., from disk to memory).
+- *Property*. Time required for a probe is much larger than time to access
+data within a page.
+- *Cost model*. Number of probes.
+- *Goal*. Access data using minimum number of probes.
+
+
+[**B-tree**](https://en.wikipedia.org/wiki/B-tree) generalizes 2-3 trees by allowing up to M - 1 key-link pairs per node. (choose M as large as possible so that M links fit in a page, e.g., M = 1024)
+- At least 2 key-link pairs at root.
+- At least M / 2 key-link pairs in other nodes.
+- External nodes contain client keys.
+- Internal nodes contain copies of keys to guide search.
+
+
+<img src="res/b-tree.png" alt="B tree" width="550"></img>
+
+#### 10.3.1. Searching in a B-tree
+
+- Start at root.
+- Find interval for search key and take corresponding link.
+- Search terminates in external node.
+
+#### 10.3.2. Insertion in a B-tree
+
+- Search for new key.
+- Insert at bottom.
+- Split nodes with M key-link pairs on the way up the tree.
+
+
+**Proposition**. A search or an insertion in a B-tree of order M with N keys requires between log<sub>M-1</sub>N and log<sub>M/2</sub>N probes.  
+*Pf*. All internal nodes (besides root) have between `M / 2` and `M - 1` links.
+
+*In practice*. Number of probes is at most 4.
+
+*Optimization*. Always keep root page in memory.
+
+#### 10.3.3. B-tree summary
+
+Red-black trees are widely used as system symbol tables.
+- Java: java.util.TreeMap, java.util.TreeSet.
+- C++ STL: map, multimap, multiset.
+- Linux kernel: completely fair scheduler, linux/rbtree.h.
+- Emacs: conservative stack scanning.
+
+*B-tree variants*. B+ tree, B*tree, B# tree, …
+
+B-trees (and variants) are widely used for file systems and databases.
+- Windows: NTFS.
+- Mac: HFS, HFS+.
+- Linux: ReiserFS, XFS, Ext3FS, JFS.
+- Databases: ORACLE, DB2, INGRES, SQL, PostgreSQL.
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 11. Geometric applications of BSTs
+
+### 11.1. 1d range search
+
+*Extension of ordered symbol table.*
+- Insert key-value pair.
+- Search for key k.
+- Delete key k.
+- **Range search**: find all keys between k<sub>1</sub> and k<sub>2</sub>.
+- **Range count**: number of keys between k<sub>1</sub> and k<sub>2</sub>.
+
+*Application*. Database queries.
+
+*Geometric interpretation.*
+- Keys are point on a line.
+- Find/count points in a given 1d interval.
+
+**Elementary implementations** vs. **BST implementation**
+- *Unordered list*. Fast insert, slow range search. 
+- *Ordered array*. Slow insert, binary search for k<sub>1</sub> and k<sub>2</sub> to do range search.
+
+
+| data structure | insert | range count | range search | 
+| :--: | :--: | :--: | :--: | 
+| unordered list | 1 | N | N | 
+| ordered array | N | log N | R + log N | 
+| **BST** | **log N** | **log N** | **R + log N** | 
+
+N = number of keys
+R = number of keys that match
+
+*1d range count*. How many keys between lo and hi ?
+
+```java
+public int size(Key lo, Key hi)
+{
+    if (contains(hi)) return rank(hi) - rank(lo) + 1;
+    else return rank(hi) - rank(lo);
+}
+```
+
+*1d range search*. Find all keys between lo and hi.
+- Recursively find all keys in left subtree (if any could fall in range).
+- Check key in current node.
+- Recursively find all keys in right subtree (if any could fall in range).
+
+### 11.2. line segment intersection
+
+Orthogonal line segment intersection. Given N horizontal and vertical line segments, find all intersections.
+
+*Quadratic algorithm*. Check all pairs of line segments for intersection.
+
+Nondegeneracy assumption. All x- and y-coordinates are distinct.
+
+#### 11.2.1. Sweep-line algorithm
+
+Sweep vertical line from left to right.
+- x-coordinates define events.
+- h-segment (left endpoint): insert y-coordinate into BST.
+- h-segment (right endpoint): remove y-coordinate from BST.
+- v-segment: range search for interval of y-endpoints.
+
+*Proposition*. The sweep-line algorithm takes time proportional to *N log N + R* to find all R intersections among N orthogonal line segments.  
+Pf.
+| ops | order of growth |
+| :--: | :--: |
+| Put x-coordinates on a PQ (or sort) | N log N |
+| Insert y-coordinates into BST | N log N |
+| Delete y-coordinates from BST | N log N |
+| Range searches in BST | N log N + R |
+
+
+*Bottom line*. Sweep line reduces 2d orthogonal line segment intersection search to 1d range search.
+
+### 11.3. kd trees
+
+Kd tree. Recursively partition k-dimensional space into 2 halfspaces.
+
+Efficient, simple data structure for processing k-dimensional data.
+
+#### 11.3.1. 2-d orthogonal range search
+
+Extension of ordered symbol-table to 2d keys.
+- Insert a 2d key.
+- Delete a 2d key.
+- Search for a 2d key.
+- Range search: find all keys that lie in a 2d range.
+- Range count: number of keys that lie in a 2d range.
+
+*Applications*. Networking, circuit design, databases, ...
+
+*Geometric interpretation*.
+- Keys are point in the plane.
+- Find/count points in a given h-v rectangle (rectangle is axis-aligned)
+
+**Grid implementation**
+
+Grid implementation.
+- Divide space into M-by-M grid of squares.
+- Create list of points contained in each square.
+- Use 2d array to directly index relevant square.
+- Insert: add (x, y) to list for corresponding square.
+- Range search: examine only squares that intersect 2d range query.
+
+*Space-time tradeoff*.
+- Space: M 2 + N.
+- Time: 1 + N / M 2 per square examined, on average.
+
+Choose grid square size to tune performance.
+- Too small: wastes space.
+- Too large: too many points per square.
+- Rule of thumb: √N-by-√N grid.
+
+Running time. [if points are evenly distributed] (choose M ~ √N)
+- Initialize data structure: N.
+- Insert point: 1.
+- Range search: 1 per point in range.
+
+Grid implementation. Fast, simple solution for *evenly-distributed* points.
+
+
+***Problem***. **Clustering** a well-known phenomenon in geometric data.
+- Lists are too long, even though average length is short.
+- Need data structure that adapts gracefully to data.
+
+
+#### 11.3.2. Space-partitioning trees
+
+Use a tree to represent a recursive subdivision of 2d space.
+
+**Grid. Divide space uniformly into squares.**  
+**2d tree. Recursively divide space into two halfplanes.**  
+Quadtree. Recursively divide space into four quadrants.  
+BSP tree. Recursively divide space into two regions.  
+
+
+<img src="res/space-partitioning-tree.png" alt="Space-partitioning trees" width="550"></img>
+
+
+#### 11.3.3. Space-partitioning trees: applications
+
+Applications.
+- Ray tracing.
+- **2d range search**.
+- Flight simulators.
+- N-body simulation.
+- Collision detection.
+- Astronomical databases.
+- **Nearest neighbor search**.
+- *Adaptive mesh generation*.
+- Accelerate rendering in Doom.
+- Hidden surface removal and shadow casting.
+
+
+#### 11.3.4. 2d tree implementation
+
+**2d tree construction**
+
+Recursively partition plane into two halfplanes.
+
+**Data structure**. BST, but alternate using x- and y-coordinates as key.
+- Search gives rectangle containing point.
+- Insert further subdivides the plane.
+
+
+
+<img src="res/2d-tree.png" alt="2d tree implementation" width="550"></img>
+
+#### 11.3.5. Range search in a 2d tree
+
+*Goal*. Find all points in a query axis-aligned rectangle.
+- Check if point in node lies in given rectangle.
+- Recursively search left/bottom (if any could fall in rectangle).
+- Recursively search right/top (if any could fall in rectangle).
+
+*Analysis*
+- Typical case. R + log N.
+- Worst case (assuming tree is balanced). R + √N.
+
+
+#### 11.3.6. Nearest neighbor search in a 2d tree
+
+*Goal*. Find closest point to query point.
+- Check distance from point in node to query point.
+- Recursively search left/bottom (if it could contain a closer point).
+- Recursively search right/top (if it could contain a closer point).
+- Organize method so that it begins by searching for query point.
+
+
+*Analysis*
+Typical case. log N.
+Worst case (even if tree is balanced). N.
+
+
+#### 11.3.7. Flocking boids
+
+[Boids](https://en.wikipedia.org/wiki/Boids) is an artificial life program, developed by Craig Reynolds in 1986, which simulates the flocking behaviour of birds.
+
+Boids. Three simple rules lead to complex emergent flocking behavior:
+- Collision avoidance: point away from *k nearest* boids.
+- Flock centering: point towards the center of mass of *k nearest* boids.
+- Velocity matching: update velocity to the average of *k nearest* boids.
+
+
+#### 11.3.8. N-body simulation
+
+
+[N-body simulation](https://en.wikipedia.org/wiki/N-body_simulation) is a simulation of a dynamical system of particles, usually under the influence of physical forces, such as gravity.
+
+Goal. Simulate the motion of N particles, mutually affected by gravity.
+
+*Brute force*. For each pair of particles, compute force: F = Gm<sub>1</sub>m<sub>2</sub> / r<sup>2</sup>.
+
+*Running time*. Time per step is N<sup>2</sup>.
+
+**Appel's algorithm for N-body simulation**
+
+Key idea. Suppose particle is far, far away from cluster of particles.
+- Treat cluster of particles as a single aggregate particle.
+- Compute force between particle and center of mass of aggregate.
+- Build 3d-tree with N particles as nodes.
+- Store center-of-mass of subtree in each node.
+- To compute total force acting on a particle, traverse tree, but stop as soon as distance from particle to subdivision is sufficiently large.
+
+Running time per step is *N log N*.
+
+
+### 11.4. Interval search trees
+
+*1d interval search*. Data structure to hold set of (overlapping) intervals.
+- Insert an interval `(lo, hi)`.
+- Search for an interval `(lo, hi)`.
+- Delete an interval `(lo, hi)`.
+- Interval intersection query: given an interval `(lo, hi)`, find all intervals (or one interval) in data structure that intersects `(lo, hi)`.
+
+| `public class IntervalST<Key extends Comparable<Key>, Value>` | | 
+| :--: | :--: | 
+| `IntervalST()` | create interval search tree | 
+| `void put(Key lo, Key hi, Value val)` | put interval-value pair into ST | 
+| `Value get(Key lo, Key hi)` | value paired with given interval | 
+| `void delete(Key lo, Key hi)` | delete the given interval | 
+| `Iterable<Value> intersects(Key lo, Key hi)` | all intervals that intersect the given interval | 
+
+
+Nondegeneracy assumption. No two intervals have the same left endpoint.
+
+Create BST, where each node stores an interval `(lo, hi)`.
+- Use left endpoint as BST key.
+- Store *max endpoint* in subtree rooted at node.
+
+
+<img src="res/interval-search-tree.png" alt="interval search trees" width="550"></img>
+
+**Insert**
+
+To insert an interval `(lo, hi)` :
+- Insert into BST, using `lo` as the key.
+- Update max in each node on search path.
+
+**Search**
+
+To search for any one interval that intersects query interval `(lo, hi)` :
+- If interval in node intersects query interval, return it.
+- Else if left subtree is null, go right.
+- Else if max endpoint in left subtree is less than `lo`, go right.
+- Else go left.
+
+```java
+Node x = root;
+while (x != null)
+{
+    if (x.interval.intersects(lo, hi)) return x.interval;
+    else if (x.left == null)    x = x.right;
+    else if (x.left.max < lo)   x = x.right;
+    else x = x.left;
+}
+return null;
+```
+
+Case 1. If search goes right, then no intersection in left.
+
+Case 2. If search goes left, then there is either an intersection in left subtree or no intersections in either.
+
+**Implementation**. Use a red-black BST to guarantee performance.
+
+
+### 11.5. Orthogonal rectangle intersection
+
+Goal. Find all intersections among a set of N orthogonal rectangles.
+
+*Quadratic algorithm*. Check all pairs of rectangles for intersection.
+
+Non-degeneracy assumption. All x- and y-coordinates are distinct.
+
+
+**Microprocessors and geometry**
+
+
+Early 1970s. microprocessor design became a geometric problem.
+- Very Large Scale Integration (VLSI).
+- Computer-Aided Design (CAD).
+
+Design-rule checking.
+- Certain wires cannot intersect.
+- Certain spacing needed between different types of wires.
+- Debugging = orthogonal rectangle intersection search.
+
+
+#### 11.5.1. Sweep-line algorithm
+
+
+Sweep vertical line from left to right.
+- x-coordinates of left and right endpoints define events.
+- Maintain set of rectangles that intersect the sweep line in an interval
+search tree (using y-intervals of rectangle).
+- Left endpoint: interval search for y-interval of rectangle; insert y-interval.
+- Right endpoint: remove y-interval.
+
+**Proposition**. Sweep line algorithm takes time proportional to *N log N + R log N* to find R intersections among a set of N rectangles.  
+Pf.
+| ops | order of growth |
+| :--: | :--: |
+| Put x-coordinates on a PQ (or sort) | N log N |
+| Insert y-intervals into ST | N log N |
+| Delete y-intervals from ST | N log N |
+| Interval searches for y-intervals. | N log N + R log N |
+
+*Bottom line*. Sweep line reduces 2d orthogonal rectangle intersection search to 1d interval search.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 12. Hash Tables
+
+Reference key-value pairs using arrays by doing arithmetic operations to transform keys into array indices.
+
+Search algorithms that use hashing consist of two separate parts. 
+- to compute a hash function that transforms the search key into an array index.
+- collision-resolution process
+  - separate chaining
+  - linear probing
+
+Hashing is a classic example of a time-space tradeoff. Hashing provides a way to use a reasonable amount of both memory and time to strike a balance between these two extremes (no memory limitation, no time limitation).
+
+With hashing algorithms that take advantage of the knowledge gained from probability theory, we can implement search and insert for symbol tables that require constant (amortized) time per operation in typical applications.
+
+### 12.1. Computing the hash function
+
+*Idealistic goal*. Scramble the keys uniformly to produce a table index.
+- Efficiently computable.
+- Each table index equally likely for each key.
+
+```mermaid
+graph TD;
+    A[key]-->B[hash function];
+    B-->C[table index];
+```
+
+#### 12.1.1. Java’s hash code conventions
+
+All Java classes inherit a method hashCode(), which returns a 32-bit int.
+
+*Requirement*. If `x.equals(y)`, then `(x.hashCode() == y.hashCode())`.
+
+*Highly desirable*. If `!x.equals(y)`, then `(x.hashCode() != y.hashCode())`.
+
+Default implementation. Memory address of x.  
+Legal (but poor) implementation. Always return 17.  
+Customized implementations. Integer, Double, String, File, URL, Date, …  
+User-defined types. Users are on their own.  
+
+```java
+public final class Integer
+{
+    private final int value;
+    // ...
+    public int hashCode()
+    { return value; }
+}
+```
+
+```java
+public final class Boolean
+{
+    private final boolean value;
+    // ...
+    public int hashCode()
+    {
+        if (value) return 1231;
+        else return 1237;
+    }
+}
+```
+
+```java
+public final class Double
+{
+    private final double value;
+    // ...
+    public int hashCode()
+    {
+        long bits = doubleToLongBits(value);
+        // convert to IEEE 64-bit representation;
+        // xor most significant 32-bits
+        // with least significant 32-bits
+        return (int) (bits ^ (bits >>> 32));
+    }
+}
+```
+
+##### 12.1.1.1. Implementing hash code: strings
+
+```java
+public final class String
+{
+    private final char[] s;
+    // ...
+    public int hashCode()
+    {
+        int hash = 0;
+        for (int i = 0; i < length(); i++)
+            hash = s[i] + (31 * hash);  // ith character of s
+        return hash;
+    }
+}
+```
+
+- Horner's method to hash string of length L: L multiplies/adds.
+- Equivalent to h = s[0] · 31<sup>L-1</sup> + … + s[L-3] · 31<sup>2</sup> + s[L-2] · 31<sup>1</sup> + s[L-1] · 31<sup>0</sup>.
+
+Ex.  
+```java
+String s = "call";
+int code = s.hashCode();
+```
+(Horner's method) 3045982 = 99·31<sup>3</sup> + 97·31<sup>2</sup> + 108·31<sup>1</sup> + 108·31<sup>0</sup> = 108 + 31· (108 + 31 · (97 + 31 · (99)))
+
+**Performance optimization.**
+- Cache the hash value in an instance variable.
+- Return cached value.
+
+```java
+public final class String
+{
+    private int hash = 0;       // cache of hash code
+    private final char[] s;
+    // ...
+    public int hashCode()
+    {
+        int h = hash;
+        if (h != 0) return h;   // return cached value
+        for (int i = 0; i < length(); i++)
+            h = s[i] + (31 * h);
+        hash = h;               // store cache of hash code
+        return h;
+    }
+}
+```
+
+##### 12.1.1.2. Implementing hash code: user-defined types
+
+```java
+public final class Transaction implements Comparable<Transaction>
+{
+    private final String who;
+    private final Date when;
+    private final double amount;
+
+    public Transaction(String who, Date when, double amount)
+    { /* as before */ }
+
+    //...
+
+    public boolean equals(Object y)
+    { /* as before */ }
+
+    public int hashCode()
+    {
+        int hash = 17;                                  // nonzero constant
+        // 31: typically a small prime
+        hash = 31*hash + who.hashCode();                // for reference types, use hashCode()
+        hash = 31*hash + when.hashCode();               // for reference types, use hashCode()
+        hash = 31*hash + ((Double) amount).hashCode();  // for primitive types, use hashCode() of wrapper type
+        return hash;
+    }
+}
+```
+
+#### 12.1.2. Hash code design
+
+"Standard" recipe for user-defined types.
+- Combine each significant field using the `31x + y` rule.
+- If field is a primitive type, use wrapper type `hashCode()`.
+- If field is null, return 0.
+- If field is a reference type, use `hashCode()`. (applies rule *recursively*)
+- If field is an array, apply to each entry. (or use `Arrays.deepHashCode()`)
+
+*In practice*. Recipe works reasonably well; used in Java libraries.  
+*In theory*. Keys are bitstring; "universal" hash functions exist.
+
+*Basic rule*. Need to use the whole key to compute hash code;  
+consult an expert for state-of-the-art hash codes.
+
+
+#### 12.1.3. Modular hashing
+
+Since the goal is an array index, not a 32-bit integer, we combine `hashCode()` with **modular hashing** in the implementations to produce integers between `0` and `M – 1`.
+
+*Hash code*. An `int` between -2<sup>31</sup> and 2<sup>31</sup> - 1.
+*Hash function*. An `int` between `0` and `M - 1` (for use as array index). (M: typically a *prime* or power of 2)
+
+**bug**: 
+```java
+private int hash(Key key)
+{ return key.hashCode() % M; }
+```
+
+**1-in-a-billion bug**: hashCode() of "polygenelubricants" is -2<sup>31</sup>
+```java
+private int hash(Key key)
+{ return Math.abs(key.hashCode()) % M; }
+```
+
+```java
+String mockString = "polygenelubricants";
+mockString.hashCode() == Integer.MIN_VALUE; // True
+```
+
+**correct**:
+```java
+private int hash(Key key)
+{ return (key.hashCode() & 0x7fffffff) % M; }
+```
+
+#### 12.1.4. Uniform hashing assumption
+
+*Uniform hashing assumption*. Each key is equally likely to hash to an integer between 0 and M - 1.
+
+*Bins and balls*. Throw balls uniformly at random into M bins.
+
+<img src="res/bins-and-balls.png" alt="interval search trees" width="300"></img>
+
+[**Birthday problem**](https://en.wikipedia.org/wiki/Birthday_problem). Expect two balls in the same bin after ~ *sqrt(π M / 2)* tosses.
+
+```python
+import math
+math.sqrt(math.pi * 365 / 2)
+23.944532972687885
+```
+
+[Coupon collector](https://en.wikipedia.org/wiki/Coupon_collector%27s_problem). Expect every bin has ≥ 1 ball after ~ *M ln M* tosses.  
+Note: see [this video on Youtube](https://www.youtube.com/watch?v=3mu47FWEuqA) for a quick explanation.
+
+*Load balancing*. After M tosses, expect most loaded bin has *Θ ( log M / log log M )* balls.
+
+
+### 12.2. Collisions
+
+**Collision**. Two distinct keys hashing to same index.
+- *Birthday problem* ⇒ can't avoid collisions unless you have a ridiculous (quadratic) amount of memory.
+- *Coupon collector* + *load balancing* ⇒ collisions are evenly distributed.
+
+Challenge. Deal with collisions efficiently.
+
+#### 12.2.1. Separate chaining symbol table
+
+Use an array of M < N linked lists. [H. P. Luhn, IBM 1953]
+- Hash: map key to integer i between 0 and M - 1.
+- Insert: put at front of ith chain (if not already there).
+- Search: need to search only ith chain.
+
+ALGORITHM: Hashing with separate chaining
+
+```java
+public class SeparateChainingHashST<Key, Value>
+{
+    private int N;  // number of key-value pairs
+    private int M;  // hash table size
+    private SequentialSearchST<Key, Value>[] st;    // array of ST objects
+
+    public SeparateChainingHashST()
+    { this(997); }
+
+    public SeparateChainingHashST(int M)
+    {   // Create M linked lists.
+        this.M = M;
+        st = (SequentialSearchST<Key, Value>[]) new SequentialSearchST[M];
+        for (int i = 0; i < M; i++)
+            st[i] = new SequentialSearchST();
+    }
+
+    private int hash(Key key)
+    { return (key.hashCode() & 0x7fffffff) % M; }
+
+    public Value get(Key key)
+    { return (Value) st[hash(key)].get(key); }
+
+    public void put(Key key, Value val)
+    { st[hash(key)].put(key, val); }
+
+    public Iterable<Key> keys()
+    // ...
+}
+```
+
+##### 12.2.1.1. Analysis of separate chaining
+
+**Proposition**. Under uniform hashing assumption, prob. that the number of keys in a list is within a constant factor of N / M is extremely close to 1.
+
+**Consequence**. Number of probes for search/insert is proportional to N / M.
+- M too large ⇒ too many empty chains.
+- M too small ⇒ chains too long.
+- Typical choice: `M ~ N / 5` ⇒ constant-time ops.
+
+#### 12.2.2. Collision resolution: open addressing (Linear probing hash table)
+
+**Open addressing**. [Amdahl-Boehme-Rocherster-Samuel, IBM 1953]  
+When a new key collides, find next empty slot, and put it there.
+
+The simplest open-addressing method is called linear probing.
+
+**Linear probing hash table**
+
+Linear probing is characterized by identifying three possible outcomes:
+- Key equal to search key: **search hit**
+- Empty position (null key at indexed position): **search miss**
+- Key not equal to search key: try next entry
+
+*Hash*. Map key to integer i between 0 and M-1.  
+*Insert*. Put at table index `i` if free; if not try `i+1`, `i+2`, etc.
+*Search*. Search table index `i`; if occupied but no match, try `i+1`, `i+2`, etc.
+
+*Note*. Array size `M` must be greater than number of key-value pairs `N`.
+
+```java
+public class LinearProbingHashST<Key, Value>
+{
+    private int M = 30001;
+    // array doubling and halving code omitted
+    private Value[] vals = (Value[]) new Object[M]; 
+    private Key[] keys = (Key[]) new Object[M];
+    private int hash(Key key) { /* as before */ }
+    public void put(Key key, Value val)
+    {
+        int i;
+        for (i = hash(key); keys[i] != null; i = (i+1) % M)
+            if (keys[i].equals(key))
+                break;
+        keys[i] = key;
+        vals[i] = val;
+    }
+    public Value get(Key key)
+    {
+        for (int i = hash(key); keys[i] != null; i = (i+1) % M)
+            if (key.equals(keys[i]))
+                return vals[i];
+        return null;
+    }
+}
+```
+
+##### 12.2.2.1. Clustering
+
+*Cluster*. A contiguous block of items.  
+*Observation*. New keys likely to hash into middle of big clusters.
+
+##### 12.2.2.2. Knuth's parking problem
+
+**Model**. Cars arrive at one-way street with `M` parking spaces.  
+Each desires a random space `i` : if space `i` is taken, try `i + 1`, `i + 2`, etc.
+
+Q. What is mean displacement of a car?
+
+**Half-full**. With `M / 2` cars, mean displacement is ~ 3 / 2.  
+**Full**. With `M` cars, mean displacement is ~ sqrt(π M / 8).
+
+##### 12.2.2.3. Analysis of linear probing
+
+**Proposition**. Under uniform hashing assumption, the average # of probes in a linear probing hash table of size M that contains N = α M keys is:  
+<p align="center">~ 1 / 2 (1 + 1 / (1-α)) and ~ 1 / 2 (1 + 1 / (1-α)<sup>2</sup>)</p>
+for search hits and search misses (or inserts), respectively.  
+
+<br />
+
+*Parameters*.
+- M too large ⇒ too many empty array entries.
+- M too small ⇒ search time blows up.
+- Typical choice: α = N / M ~ 1/2.
+
+#### 12.2.3. ST implementations: summary
+
+| implementation | search (guarantee) | insert (guarantee) | delete (guarantee) | search hit (average case) | insert (average case) | delete (average case) | ordered ops? | operations on keys |
+| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | 
+| sequential search (unordered list) | N | N | N | N/2 | N | N/2 | no | equals() | 
+| binary search (ordered array) | lg N | N | N | lg N | N/2 | N/2 | yes | compareTo() | 
+| BST | N | N | N | 1.39 lg N | 1.39 lg N | √N | yes | compareTo() | 
+| 2-3 tree | c log N | c log N | c log N | c log N | c log N | c log N | yes | compareTo() | 
+| red-black BST | 2 lg N | 2 lg N | 2 lg N | 1.00 lg N | 1.00 lg N | 1.00 lg N | yes | compareTo() | 
+| separate chaining | lg N * | lg N * | lg N * | 3-5 * | 3-5 * | 3-5 * | no | equals(), hashCode() | 
+| linear probing | lg N * | lg N * | lg N * | 3-5 * | 3-5 * | 3-5 * | no | equals(), hashCode() | 
+
+\* under uniform hashing assumption
+
+
+### 12.3. Context
+
+#### 12.3.1. Algorithmic complexity attacks
+
+Q. Is the uniform hashing assumption important in practice?  
+A. Obvious situations: aircraft control, nuclear reactor, pacemaker.  
+A. Surprising situations: *denial-of-service* attacks.  
+
+
+Real-world exploits. [Crosby-Wallach 2003]
+- Bro server: send carefully chosen packets to DOS the server,
+using less bandwidth than a dial-up modem.
+- Perl 5.8.0: insert carefully chosen strings into associative array.
+- Linux 2.4.20 kernel: save files with carefully chosen names.
+
+#### 12.3.2. One-way hash functions
+
+**One-way hash function**. "Hard" to find a key that will hash to a desired value (or two keys that hash to same value).  
+Ex. 
+- *known to be insecure*: MD4, MD5, SHA-0, SHA-1, 
+- SHA-2, WHIRLPOOL, RIPEMD-160, ….
+
+```java
+String password = args[0];
+MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+byte[] bytes = sha1.digest(password);
+/* prints bytes as hex string */
+```
+
+*Applications*. Digital fingerprint, message digest, storing passwords.  
+*Caveat*. Too expensive for use in ST implementations.
+
+#### 12.3.3. Separate chaining vs. linear probing
+
+Separate chaining.
+- Easier to implement delete.
+- Performance degrades gracefully.
+- Clustering less sensitive to poorly-designed hash function.
+
+Linear probing.
+- Less wasted space.
+- Better cache performance.
+
+
+#### 12.3.4. Hashing: variations on the theme
+
+Many improved versions have been studied.
+
+**Two-probe hashing**. (separate-chaining variant)
+- Hash to two positions, insert key in shorter of the two chains.
+- Reduces expected length of the longest chain to `log log N`.
+
+[**Double hashing**](https://en.wikipedia.org/wiki/Double_hashing). (linear-probing variant)
+- Use linear probing, but skip a variable amount, not just `1` each time.
+- Effectively eliminates clustering.
+- Can allow table to become nearly full.
+- More difficult to implement delete.
+
+[**Cuckoo hashing**](https://en.wikipedia.org/wiki/Cuckoo_hashing). (linear-probing variant)
+- Hash key to two positions; insert key into either position; if occupied, reinsert displaced key into its alternative position (and recur).
+- Constant worst case time for search.
+
+#### 12.3.5. Hash tables vs. balanced search trees
+
+**Hash tables**.
+- Simpler to code.
+- No effective alternative for unordered keys.
+- Faster for simple keys (a few arithmetic ops versus *log N* compares).
+- Better system support in Java for strings (e.g., cached hash code).
+
+**Balanced search trees**.
+- Stronger performance guarantee.
+- Support for ordered ST operations.
+- Easier to implement `compareTo()` correctly than `equals() `and `hashCode()`.
+
+Java system includes both.
+- *Red-black BSTs*: `java.util.TreeMap`, `java.util.TreeSet`.
+- *Hash tables*: `java.util.HashMap`, `java.util.IdentityHashMap`.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 13. Symbol table applications
+
+- `SET`. Mathematical set. A collection of distinct keys.
+  - Exception filter applications. Read in a list of words from one file. Print out all words from standard input that are not in the list.
+- Dictionary lookup
+- File indexing. Given a list of files specified, create an index so that you can efficiently find all files containing a given query string.
+    ```java
+    import java.io.File;
+    public class FileIndex
+    {
+        public static void main(String[] args)
+        {
+            ST<String, SET<File>> st = new ST<String, SET<File>>();
+            for (String filename : args) {
+                File file = new File(filename);
+                In in = new In(file);
+                while (!in.isEmpty())
+                {
+                    String key = in.readString();
+                    if (!st.contains(key))
+                        st.put(key, new SET<File>());
+                    SET<File> set = st.get(key);
+                    set.add(file);
+                }
+            }
+            while (!StdIn.isEmpty())
+            {
+                String query = StdIn.readString();
+                StdOut.println(st.get(query));
+            }
+        }
+    }
+    ```
+- Book index
+- Concordance. Preprocess a text corpus to support concordance queries: given a word, find all occurrences with their immediate contexts.
+    ```java
+    public class Concordance
+    {
+        public static void main(String[] args)
+        {
+            In in = new In(args[0]);
+            String[] words = in.readAllStrings();
+            ST<String, SET<Integer>> st = new ST<String, SET<Integer>>();
+            for (int i = 0; i < words.length; i++)
+            {
+                String s = words[i];
+                if (!st.contains(s))
+                    st.put(s, new SET<Integer>());
+                SET<Integer> set = st.get(s);
+                set.add(i);
+            }
+            while (!StdIn.isEmpty())
+            {
+                String query = StdIn.readString();
+                SET<Integer> set = st.get(query);
+                for (int k : set)
+                // print words[k-4] to words[k+4]
+            }
+        }
+    }
+    ```
+- sparse vectors
+  - Vector representations
+    - 1d array (standard) representation.
+      - Constant time access to elements.
+      - Space proportional to N.
+    - Symbol table representation.
+      - Key = index, value = entry.
+      - Efficient iterator.
+      - Space proportional to number of nonzeros.
+      ```java
+      public class SparseVector
+      {
+          private HashST<Integer, Double> v;
+          
+          public SparseVector()
+          { v = new HashST<Integer, Double>(); }
+
+          public void put(int i, double x)
+          { v.put(i, x); }
+
+          public double get(int i)
+          {
+              if (!v.contains(i)) return 0.0;
+              else return v.get(i);
+          }
+
+          public Iterable<Integer> indices()
+          { return v.keys(); }
+
+          public double dot(double[] that)
+          {
+              double sum = 0.0;
+              for (int i : indices())
+                  sum += that[i]*this.get(i);
+              return sum;
+          }
+      }
+      ```
+  - Matrix representations
+    - 2D array (standard) matrix representation: Each row of matrix is an *array*.
+      - Constant time access to elements.
+      - Space proportional to N<sup>2</sup>.
+    - Sparse matrix representation: Each row of matrix is a *sparse vector*.
+      - Efficient access to elements.
+      - Space proportional to number of nonzeros (plus N).
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
