@@ -1,5 +1,10 @@
 # ASSESSMENT SUMMARY
 
+[Queues](https://coursera.cs.princeton.edu/algs4/assignments/queues/specification.php)
+
+> Write a generic data type for a deque and a randomized queue. The goal of this assignment is to implement elementary data structures using arrays and linked lists, and to introduce you to generics and iterators.
+
+
 ```
 Compilation:  PASSED (0 errors, 2 warnings)  
 API:          PASSED  

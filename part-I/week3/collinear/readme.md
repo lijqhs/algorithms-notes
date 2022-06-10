@@ -1,5 +1,9 @@
 # ASSESSMENT SUMMARY
 
+[Collinear Points](https://coursera.cs.princeton.edu/algs4/assignments/collinear/specification.php)
+
+> Write a program to recognize line patterns in a given set of points.
+
 ```
 Compilation:  PASSED  
 API:          PASSED  
@@ -79,10 +83,13 @@ Test 13: check that data type is immutable by testing whether each method
 ==> FAILED
 ```
 
-### Solution of problem 1
+<details>
+<summary>Solution of problem 1</summary>
+
 - make copy of input arguments in constructor
 - make copy in segments before return LineSegments
 
+</details>
 
 ## Problem 2: timing
 
@@ -134,11 +141,13 @@ Aborting: time limit of 10 seconds exceeded
 
 ```
 
-### Solution of problem 2
+<details>
+<summary>Solution of problem 2</summary>
 
 - Think about the line segment building process. The lowest end point of a line segment must be traversed in some step. So no need to add those line segment created by those point not in the end of this line segment, after sorting points on the line. So with this, no need to use loops to check duplicate, which will cost too much compareTo.
 - Sort the points before process can help lower cost of compareTo with the n-by-1 grid case. Because sorted input can lower cost.
 
+</details>
 
 
 ```    

@@ -76,6 +76,17 @@ Notes are taken from the course [Algorithms, Part II](https://www.coursera.org/l
     - [4.7.2. Finding a negative cycle](#472-finding-a-negative-cycle)
     - [4.7.3. Negative cycle application: arbitrage detection](#473-negative-cycle-application-arbitrage-detection)
   - [4.8. Single source shortest-paths implementation: summary](#48-single-source-shortest-paths-implementation-summary)
+- [5. Maximum Flow and Minimum Cut](#5-maximum-flow-and-minimum-cut)
+  - [Mincut problem](#mincut-problem)
+  - [Maxflow problem](#maxflow-problem)
+  - [Ford-Fulkerson algorithm](#ford-fulkerson-algorithm)
+  - [Maxflow-mincut theorem](#maxflow-mincut-theorem)
+    - [Computing a mincut from a maxflow](#computing-a-mincut-from-a-maxflow)
+    - [Ford-Fulkerson algorithm with integer capacities](#ford-fulkerson-algorithm-with-integer-capacities)
+    - [How to choose augmenting paths?](#how-to-choose-augmenting-paths)
+  - [Ford-Fulkerson: Java implementation](#ford-fulkerson-java-implementation)
+  - [Maxflow and mincut applications](#maxflow-and-mincut-applications)
+- [6. Radix Sorts](#6-radix-sorts)
 
 
 ## 1. Undirected Graph
@@ -2128,7 +2139,7 @@ Key point. Topological sort algorithm works even with *negative* weights.
 
 Solution. The problem is equivalent to a longest-paths problem in an edge-weighted DAG. Use critical path method (a linear-time algorithm).
 
-<img src="res/critical-path-method.png" alt="critical path method" width="550"></img>
+<img src="res/critical-path-method.png" alt="critical path method" width="500"></img>
 
 **CPM**. To solve a parallel job-scheduling problem, create edge-weighted DAG:
 - Source and sink vertices.
@@ -2390,10 +2401,389 @@ Shortest-paths is a broadly useful problem-solving model.
 
 
 
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
+## 5. Maximum Flow and Minimum Cut
+
+### Mincut problem
+
+*Input*. An edge-weighted digraph, source vertex s, and target vertex t.
+
+*Def*. A **st-cut (cut)** is a partition of the vertices into two disjoint sets, with `s` in one set A and `t` in the other set B.
+
+*Def*. Its **capacity** is the sum of the capacities of the edges from A to B.
+
+**Minimum st-cut (mincut) problem**. Find a cut of minimum capacity.
+
+### Maxflow problem
+
+*Input*. An edge-weighted digraph, source vertex s, and target vertex t. (each edge has a positive capacity)
+
+*Def*. An **st-flow (flow)** is an assignment of values to the edges such that:
+- Capacity constraint: `0 ≤ edge's flow ≤ edge's capacity`.
+- Local equilibrium: `inflow` = `outflow` at every vertex (except `s` and `t`).
+
+*Def*. The **value** of a flow is the `inflow` at `t`. (assume no edge points to s or from t)
+
+**Maximum st-flow (maxflow) problem**. Find a flow of maximum value.
+
+<img src="res/maxflow-mincut.png" alt="Maxflow Mincut" width="500"></img>
+
+*Remarkable fact*. These two problems are dual.
+
+### Ford-Fulkerson algorithm
+
+It is a generic method for increasing flows incrementally along paths from source to sink that serves as the basis for a family of algorithms. It is known as the Ford-Fulkerson algorithm in the classical literature; the more descriptive term augmenting-path algorithm is also widely used.
+
+*Initialization*. Start with 0 flow.
+
+*Augmenting path*. Find an undirected path from s to t such that:
+- Can increase flow on forward edges (not full).
+- Can decrease flow on backward edge (not empty).
+
+*Termination*. All paths from `s` to `t` are blocked by either a
+- Full forward edge.
+- Empty backward edge.
+
+**Ford-Fulkerson algorithm**
+> Start with 0 flow.
+> While there exists an augmenting path:
+> - find an augmenting path
+> - compute bottleneck capacity
+> - increase flow on that path by bottleneck capacity
+
+### Maxflow-mincut theorem
+
+*Def*. The **net flow across** a cut (A, B) is the sum of the flows on its edges from A to B minus the sum of the flows on its edges from from B to A.
+
+**Flow-value lemma**. Let f be any flow and let (A, B) be any cut. Then, the net flow across (A, B) equals the value of f.  
+Pf. 
+> By induction on the size of B.
+> - Base case: `B = { t }`.
+> - Induction step: remains true by local equilibrium when moving any vertex from A to B.
+
+*Corollary*. `Outflow from s` = `inflow to t` = `value of flow`.
+
+*Weak duality*. Let f be any flow and let (A, B) be any cut. Then, the value of the flow ≤ the capacity of the cut.  
+Pf. 
+> Value of flow f = net flow across cut (A, B) ≤ capacity of cut (A, B).
+
+**Augmenting path theorem**. A flow `f` is a maxflow iff no augmenting paths.
+
+**Maxflow-mincut theorem**. Value of the maxflow = capacity of mincut.
+
+Pf. The following three conditions are equivalent for any flow `f`:
+- i. There exists a cut whose capacity equals the value of the flow `f`.
+- ii. `f` is a maxflow.
+- iii. There is no augmenting path with respect to `f`.
+
+<details>
+<summary>detail: </summary>
+
+[ i ⇒ ii ]  
+- Suppose that (A, B) is a cut with capacity equal to the value of f.
+- Then, the value of any flow f ' ≤ capacity of (A, B) = value of f.
+- Thus, f is a maxflow.
+
+[ ii ⇒ iii ] To prove contrapositive: `~iii ⇒ ~ii`.
+- Suppose that there is an augmenting path with respect to f.
+- Can improve flow f by sending flow along this path.
+- Thus, f is not a maxflow.
+
+[ iii ⇒ i ]  
+Suppose that there is no augmenting path with respect to f.
+- Let `(A, B)` be a cut where A is the set of vertices connected to s by an undirected path with no full forward or empty backward edges.
+- By definition, s is in A; since no augmenting path, t is in B.
+- Capacity of cut = net flow across cut (forward edges full; backward edges empty)  
+  = value of flow f. (flow-value lemma)
+
+</details>
+
+#### Computing a mincut from a maxflow
+
+To compute mincut (A, B) from maxflow f :
+- By augmenting path theorem, no augmenting paths with respect to f.
+- Compute A = set of vertices connected to s by an undirected path with no full forward or empty backward edges.
 
 
+<img src="res/compute-mincut.png" alt="Computing a mincut from a maxflow" width="500"></img>
+
+***Questions***.
+- How to compute a mincut? 
+  - Easy. ✔
+- How to find an augmenting path? 
+  - BFS works well.
+- If FF terminates, does it always compute a maxflow? 
+  - Yes. ✔
+- Does FF always terminate? If so, after how many augmentations?
+  - yes, provided edge capacities are integers (or augmenting paths are chosen carefully)
+  - requires clever analysis
+
+
+#### Ford-Fulkerson algorithm with integer capacities
+
+*Important special case*. Edge capacities are integers between 1 and U.
+
+**Invariant**. The flow is **integer-valued** throughout Ford-Fulkerson.  
+Pf. *[by induction]* 
+- Bottleneck capacity is an integer.
+- Flow on an edge increases/decreases by bottleneck capacity.
+
+**Proposition**. Number of augmentations ≤ the value of the maxflow.  
+Pf. Each augmentation increases the value by at least 1.
+
+**Integrality theorem**. There exists an integer-valued maxflow.  
+Pf. Ford-Fulkerson terminates and maxflow that it finds is integer-valued.
+
+*Bad news*. Even when edge capacities are integers, number of augmenting paths could be equal to the value of the maxflow.
+
+*Good news*. This case is easily avoided. *[use shortest/fattest path]*
+
+
+#### How to choose augmenting paths?
+
+FF performance depends on choice of augmenting paths.
+
+digraph with V vertices, E edges, and integer capacities between 1 and U
+| augmenting path | number of paths | implementation | 
+| :--: | :--: | :--: | 
+| shortest path | ≤ ½ E V | queue (BFS) |
+| fattest path | ≤ E ln(E U) | priority queue |
+| random path | ≤ E U | randomized queue |
+| DFS path | ≤ E U | stack (DFS) |
+
+- shortest path: augmenting path with fewest number of edges
+- fattest path: augmenting path with maximum bottleneck capacity
+
+### Ford-Fulkerson: Java implementation
+
+*Flow edge data type*. Associate flow f<sub>e</sub> and capacity c<sub>e</sub> with edge `e = v→w`.
+
+*Flow network data type*. Need to process edge `e = v→w` in either direction:  
+Include `e` in both `v` and `w`'s adjacency lists.
+
+*Residual capacity*.
+- Forward edge: residual capacity = c<sub>e</sub> - f<sub>e</sub>.
+- Backward edge: residual capacity = f<sub>e</sub>.
+
+*Augment flow*.
+- Forward edge: add Δ.
+- Backward edge: subtract Δ.
+
+**Residual network**. A useful view of a flow network.
+
+<img src="res/residual-network.png" alt="Residual network" width="500"></img>
+
+*Key point*. Augmenting path in original network is equivalent to directed path in residual network.
+
+
+<img src="res/residual-network-.png" alt="Residual network" width="500"></img>
+
+**Flow edge: Java implementation**
+
+```java
+public class FlowEdge
+{
+    private final int v;            // edge source
+    private final int w;            // edge target
+    private final double capacity;  // capacity
+    private double flow;            // flow
+
+    public FlowEdge(int v, int w, double capacity)
+    {
+        this.v = v;
+        this.w = w;
+        this.capacity = capacity;
+        this.flow = 0.0;
+    }
+
+    public int from() { return v; }
+    public int to() { return w; }
+    public double capacity() { return capacity; }
+    public double flow() { return flow; }
+
+    public int other(int vertex)
+    // same as for Edge
+
+    public double residualCapacityTo(int vertex)
+    {
+        if (vertex == v) return flow;
+        else if (vertex == w) return cap - flow;
+        else throw new RuntimeException("Inconsistent edge");
+    }
+
+    public void addResidualFlowTo(int vertex, double delta)
+    {
+        if (vertex == v) flow -= delta;
+        else if (vertex == w) flow += delta;
+        else throw new RuntimeException("Inconsistent edge");
+    }
+
+    public String toString()
+    { return String.format("%d->%d %.2f %.2f", v, w, capacity, flow); }
+}
+```
+
+**Flow network: Java implementation**
+
+Same as `EdgeWeightedGraph`, but adjacency lists of `FlowEdges` instead of `Edges`.
+
+```java
+public class FlowNetwork
+{
+    private final int V;
+    private Bag<FlowEdge>[] adj;
+    public FlowNetwork(int V)
+    {
+        this.V = V;
+        adj = (Bag<FlowEdge>[]) new Bag[V];
+        for (int v = 0; v < V; v++)
+            adj[v] = new Bag<FlowEdge>();
+    }
+    public void addEdge(FlowEdge e)
+    {
+        int v = e.from();
+        int w = e.to();
+        adj[v].add(e);      // add forward edge
+        adj[w].add(e);      // add backward edge
+    }
+    public Iterable<FlowEdge> adj(int v)
+    { return adj[v]; }
+}
+```
+
+<img src="res/flow-network.png" alt="Flow network" width="500"></img>
+
+**Ford-Fulkerson: Java implementation**
+
+ALGORITHM: Ford-Fulkerson shortest-augmenting path maxflow algorithm
+
+```java
+public class FordFulkerson
+{
+    private boolean[] marked;   // Is s->v path in residual graph?
+    private FlowEdge[] edgeTo;  // last edge on shortest s->v path
+    private double value;       // current value of maxflow
+
+    public FordFulkerson(FlowNetwork G, int s, int t)
+    { // Find maxflow in flow network G from s to t.
+
+        while (hasAugmentingPath(G, s, t))
+        { // While there exists an augmenting path, use it.
+
+            // Compute bottleneck capacity.
+            double bottle = Double.POSITIVE_INFINITY;
+            for (int v = t; v != s; v = edgeTo[v].other(v))
+                bottle = Math.min(bottle, edgeTo[v].residualCapacityTo(v));
+
+            // Augment flow.
+            for (int v = t; v != s; v = edgeTo[v].other(v))
+                edgeTo[v].addResidualFlowTo(v, bottle);
+            value += bottle;
+        }
+    }
+
+    private boolean hasAugmentingPath(FlowNetwork G, int s, int t)
+    {
+        marked = new boolean[G.V()];        // Is path to this vertex known?
+        edgeTo = new FlowEdge[G.V()];       // last edge on path
+        Queue<Integer> q = new Queue<Integer>();
+
+        marked[s] = true;                   // Mark the source
+        q.enqueue(s);                       // and put it on the queue.
+        while (!q.isEmpty())
+        {
+            int v = q.dequeue();
+            for (FlowEdge e : G.adj(v))
+            {
+                int w = e.other(v);
+                if (e.residualCapacityTo(w) > 0 && !marked[w])
+                { // For every edge to an unmarked vertex (in residual)
+                    edgeTo[w] = e;          // Save the last edge on a path.
+                    marked[w] = true;       // Mark w because a path is known
+                    q.enqueue(w);           // and add it to the queue.
+                }
+            }
+        }
+        return marked[t];
+    }
+
+    public double value() { return value; }
+    public boolean inCut(int v) { return marked[v]; }
+
+    public static void main(String[] args)
+    {
+        FlowNetwork G = new FlowNetwork(new In(args[0]));
+        int s = 0, t = G.V() - 1;
+        FordFulkerson maxflow = new FordFulkerson(G, s, t);
+
+        StdOut.println("Max flow from " + s + " to " + t);
+        for (int v = 0; v < G.V(); v++)
+            for (FlowEdge e : G.adj(v))
+                if ((v == e.from()) && e.flow() > 0)
+                    StdOut.println(" " + e);
+        StdOut.println("Max flow value = " + maxflow.value());
+    }
+}
+```
+
+### Maxflow and mincut applications
+
+Maxflow/mincut is a widely applicable problem-solving model.
+- Data mining.
+- Open-pit mining.
+- **Bipartite matching**.
+- Network reliability.
+- **Baseball elimination**.
+- Image segmentation.
+- Network connectivity.
+- Distributed computing.
+- Security of statistical data.
+- Egalitarian stable matching.
+- Multi-camera scene reconstruction.
+- Sensor placement for homeland security.
+- Many, many, more.
+
+
+**Network flow formulation of bipartite matching**  
+
+Create s, t, one vertex for each student, and one vertex for each job.
+- Add edge from s to each student (capacity 1).
+- Add edge from each job to t (capacity 1).
+- Add edge from student to each job offered (infinite capacity).
+
+1-1 correspondence between perfect matchings in bipartite graph and integer-valued maxflows of value N.
+
+*When no perfect matching, mincut explains why.*
+
+Mincut. Consider mincut (A, B).
+- Let S = students on s side of cut.
+- Let T = companies on s side of cut.
+- Fact: | S | > | T |; students in S can be matched only to companies in T.
+
+**Maximum flow algorithms: theory**
+
+(Yet another) holy grail for theoretical computer scientists.
+
+Maxflow algorithms for sparse digraphs with E edges, integer capacities between 1 and U
+| year | method | worst case | discovered by | 
+| :--: | :--: | :--: | :--: | 
+| 1951 | simplex | E<sup>3</sup> U | Dantzig |
+| 1955 | augmenting path | E<sup>2</sup> U | Ford-Fulkerson |
+| 1970 | shortest augmenting path | E<sup>3</sup> | Dinitz, Edmonds-Karp |
+| 1970 | fattest augmenting path | E<sup>2</sup> log E log( E U ) | Dinitz, Edmonds-Karp |
+| 1977 | blocking flow | E <sup>5/2</sup> | Cherkasky |
+| 1978 | blocking flow | E <sup>7/3</sup> | Galil |
+| 1983 | dynamic trees | E<sup>2</sup> log E | Sleator-Tarjan |
+| 1985 | capacity scaling | E<sup>2</sup> log U | Gabow |
+| 1997 | length function | E<sup>3/2</sup> log E log U | Goldberg-Rao |
+| 2012 | compact network | E<sup>2</sup> / log E | Orlin |
+| ? | ? | E | ? | 
 
 
 <br/>
@@ -2401,3 +2791,6 @@ Shortest-paths is a broadly useful problem-solving model.
     <b><a href="#top">↥ back to top</a></b>
 </div>
 <br/>
+
+
+## 6. Radix Sorts
