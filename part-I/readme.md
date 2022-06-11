@@ -556,7 +556,7 @@ Scientific method:
 
 **Common order-of-growth classifications**
 
-<img src="res/common-order-of-growth-classifications.png" alt="Common order-of-growth classifications" width="550"></img>
+<img src="res/common-order-of-growth-classifications.png" alt="Common order-of-growth classifications" width="450"></img>
 
 **Types of analyses**
 
@@ -834,7 +834,7 @@ See more: [Sorting Algorithms Animations](https://www.toptal.com/developers/sort
 
 ### 3.1. Selection sort
 
-- In iteration i, find index min of smallest remaining entry.
+- In iteration `i`, find index min of smallest remaining entry.
 - Swap `a[i]` and `a[min]`.
 
 Invariants.
@@ -919,8 +919,8 @@ e.g.: `A E E L M O T R X P S`
 - Ex 1. A subarray of size 10 appended to a sorted subarray of size N.
 - Ex 2. An array of size N with only 10 entries out of place.
 
-*Proposition*. For partially-sorted arrays, insertion sort runs in linear time.  
-*Pf*. Number of exchanges equals the number of inversions. (number of compares = exchanges + (N – 1).)
+**Proposition**. For partially-sorted arrays, insertion sort runs in linear time.  
+> *Pf*. Number of exchanges equals the number of inversions. (number of compares = exchanges + (N – 1).)
 
 ### 3.3. Shellsort
 
@@ -971,14 +971,14 @@ public class Shell {
 **Proposition**. The worst-case number of compares used by shellsort with the `3x+1` increments is O(N<sup>3/2</sup>).
 
 *Why are we interested in shellsort?*
-- Useful in practice.
-  - Fast unless array size is huge (used for small subarrays).
-  - Tiny, fixed footprint for code (used in some embedded systems).
-  - Hardware sort prototype.
-- Simple algorithm, nontrivial performance, interesting questions.
-  - Asymptotic growth rate?
-  - Best sequence of increments?
-  - Average-case performance?
+> - Useful in practice.
+>   - Fast unless array size is huge (used for small subarrays).
+>   - Tiny, fixed footprint for code (used in some embedded systems).
+>   - Hardware sort prototype.
+> - Simple algorithm, nontrivial performance, interesting questions.
+>   - Asymptotic growth rate?
+>   - Best sequence of increments?
+>   - Average-case performance?
 
 
 ### 3.4. Shuffling
@@ -989,13 +989,13 @@ public class Shell {
 - Generate a random real number for each array entry.
 - Sort the array.
 
-*Proposition*. Shuffle sort produces a uniformly random permutation of the input array, provided no duplicate values.
+**Proposition**. Shuffle sort produces a uniformly random permutation of the input array, provided no duplicate values.
 
 **Knuth shuffle**
 - In iteration `i`, pick integer `r` between `0` and `i` uniformly at random.
 - Swap `a[i]` and `a[r]`.
 
-*Proposition*. [Fisher-Yates 1938] Knuth shuffling algorithm produces a uniformly random permutation of the input array in linear time.
+**Proposition**. [Fisher-Yates 1938] Knuth shuffling algorithm produces a uniformly random permutation of the input array in linear time.
 
 ```java
 public class StdRandom {
@@ -1016,7 +1016,7 @@ Geometric properties (fact):
 - Can traverse the convex hull by making only counterclockwise turns.
 - The vertices of convex hull appear in increasing order of polar angle with respect to point p with lowest y-coordinate.
 
-    <img src="res/convex-hull.png" alt="convex hull" width="280"></img>
+<img src="res/convex-hull.png" alt="convex hull" width="250"></img>
 
 
 #### 3.5.1. Graham scan
@@ -1027,7 +1027,7 @@ Geometric properties (fact):
 
 **Implementing ccw**
 
-<img src="res/ccw.png" alt="implementing ccw" width="550"></img>
+<img src="res/ccw.png" alt="implementing ccw" width="500"></img>
 
 ```java
 public class Point2D {
@@ -1399,7 +1399,7 @@ A stable sort preserves the relative order of items with equal keys.
 
 ## 5. Quicksort
 
-[<img src="res/Sorting_quicksort_anim.gif" alt="Quicksort animation" width="280"></img>](https://en.wikipedia.org/wiki/Quicksort "Wikipedia: Quicksort")
+[<img src="res/Sorting_quicksort_anim.gif" alt="Quicksort animation" width="250"></img>](https://en.wikipedia.org/wiki/Quicksort "Wikipedia: Quicksort")
 
 *via* [Wikipedia: Quicksort](https://en.wikipedia.org/wiki/Quicksort)
 
@@ -1695,7 +1695,7 @@ An appropriate data type in such an environment supports two operations: **remov
 - Event-driven simulation. [customers in a line, colliding particles]
 - Numerical computation. [reducing roundoff error]
 - Data compression. [Huffman codes]
-- Graph searching. [Dijkstra's algorithm, Prim's algorithm]
+- Graph searching. [[Dijkstra's algorithm](../part-II/readme.md#45-dijkstras-algorithm), [Prim's algorithm](../part-II/readme.md#35-prims-algorithm)]
 - Number theory. [sum of powers]
 - Artificial intelligence. [A* search]
 - Statistics. [maintain largest M values in a sequence]
@@ -1793,7 +1793,7 @@ Order of growth of running time for priority queue with N items:
 - Take nodes in *level* order.
 - No explicit links needed!
 
-*Proposition*. 
+**Proposition**. 
 
 - Largest key is `a[1]`, which is root of binary tree.
 - Can use array indices to move through tree.
@@ -1824,6 +1824,7 @@ private void swim(int k)
 ##### 6.5.1.2. Insertion in a heap
 
 ***Insert***. Add node at end, then swim it up.  
+
 *Cost*. At most `1 + log N` compares.
 
 ```java
@@ -1856,11 +1857,12 @@ private void sink(int k)
 }
 ```
 
-Power struggle. Better subordinate promoted.
+*Power struggle*. Better subordinate promoted.
 
 ##### 6.5.1.4. Delete the maximum in a heap
 
 ***Delete max***. Exchange root with node at end, then sink it down.  
+
 *Cost*. At most `2 lg N` compares.
 
 ```java
@@ -1972,7 +1974,7 @@ public final class Vector { // final, can't override instance methods
 ## 7. Heapsort
 
 
-[<img src="res/Sorting_heapsort_anim.gif" alt="Heapsort animation" width="280"></img>](https://en.wikipedia.org/wiki/Heapsort "Wikipedia: Heapsort")
+[<img src="res/Sorting_heapsort_anim.gif" alt="Heapsort animation" width="250"></img>](https://en.wikipedia.org/wiki/Heapsort "Wikipedia: Heapsort")
 
 *via* [Wikipedia: Heapsort](https://en.wikipedia.org/wiki/Heapsort)
 
@@ -2327,9 +2329,9 @@ private Node put(Node x, Key key, Value val)
 ```
 
 **Proposition**. If N distinct keys are inserted into a BST in random order, the expected number of compares for a search/insert is ~ *2 ln N*.  
-Pf. 1-1 correspondence with quicksort partitioning.
+> Pf. 1-1 correspondence with quicksort partitioning.
 
-Proposition. [Reed, 2003] If N distinct keys are inserted in random order, expected height of tree is ~ *4.311 ln N*.
+**Proposition**. [Reed, 2003] If N distinct keys are inserted in random order, expected height of tree is ~ *4.311 ln N*.
 
 Worst-case height is *N*. (exponentially small chance when keys are inserted in random order)
 
@@ -2628,7 +2630,7 @@ Splitting a 4-node is a local transformation: constant number of operations.
 *Invariants*. Maintains symmetric order and perfect balance.
 
 
-<img src="res/2-3-trees.png" alt="2-3 trees" width="550"></img>
+<img src="res/2-3-trees.png" alt="2-3 trees" width="450"></img>
 
 
 #### 10.1.1. Performance
@@ -2768,7 +2770,7 @@ private void flipColors(Node h)
 - If new red link is a right link, rotate left.
 
 
-<img src="res/insert-llrb-case1.png" alt="Insertion in a LLRB tree Case 1" width="250"></img>
+<img src="res/insert-llrb-case1.png" alt="Insertion in a LLRB tree Case 1" width="220"></img>
 
 
 **Case 2**. Insert into a 3-node at the bottom.
@@ -2779,7 +2781,7 @@ private void flipColors(Node h)
 - Repeat case 1 or case 2 up the tree (if needed).
 
 
-<img src="res/insert-llrb-case2.png" alt="Insertion in a LLRB tree Case 2" width="550"></img>
+<img src="res/insert-llrb-case2.png" alt="Insertion in a LLRB tree Case 2" width="450"></img>
 
 
 **Passing red links up the tree**
@@ -2859,7 +2861,7 @@ data within a page.
 
 
 **Proposition**. A search or an insertion in a B-tree of order M with N keys requires between log<sub>M-1</sub>N and log<sub>M/2</sub>N probes.  
-*Pf*. All internal nodes (besides root) have between `M / 2` and `M - 1` links.
+> *Pf*. All internal nodes (besides root) have between `M / 2` and `M - 1` links.
 
 *In practice*. Number of probes is at most 4.
 
@@ -2952,14 +2954,14 @@ Sweep vertical line from left to right.
 - h-segment (right endpoint): remove y-coordinate from BST.
 - v-segment: range search for interval of y-endpoints.
 
-*Proposition*. The sweep-line algorithm takes time proportional to *N log N + R* to find all R intersections among N orthogonal line segments.  
-Pf.
-| ops | order of growth |
-| :--: | :--: |
-| Put x-coordinates on a PQ (or sort) | N log N |
-| Insert y-coordinates into BST | N log N |
-| Delete y-coordinates from BST | N log N |
-| Range searches in BST | N log N + R |
+**Proposition**. The sweep-line algorithm takes time proportional to *N log N + R* to find all R intersections among N orthogonal line segments.  
+> Pf.
+> | ops | order of growth |
+> | :--: | :--: |
+> | Put x-coordinates on a PQ (or sort) | N log N |
+> | Insert y-coordinates into BST | N log N |
+> | Delete y-coordinates from BST | N log N |
+> | Range searches in BST | N log N + R |
 
 
 *Bottom line*. Sweep line reduces 2d orthogonal line segment intersection search to 1d range search.
@@ -3020,13 +3022,13 @@ Grid implementation. Fast, simple solution for *evenly-distributed* points.
 
 Use a tree to represent a recursive subdivision of 2d space.
 
-**Grid. Divide space uniformly into squares.**  
-**2d tree. Recursively divide space into two halfplanes.**  
-Quadtree. Recursively divide space into four quadrants.  
-BSP tree. Recursively divide space into two regions.  
+- **Grid. Divide space uniformly into squares.**  
+- **2d tree. Recursively divide space into two halfplanes.**  
+- Quadtree. Recursively divide space into four quadrants.  
+- BSP tree. Recursively divide space into two regions.  
 
 
-<img src="res/space-partitioning-tree.png" alt="Space-partitioning trees" width="550"></img>
+<img src="res/space-partitioning-tree.png" alt="Space-partitioning trees" width="450"></img>
 
 
 #### 11.3.3. Space-partitioning trees: applications
@@ -3056,7 +3058,7 @@ Recursively partition plane into two halfplanes.
 
 
 
-<img src="res/2d-tree.png" alt="2d tree implementation" width="550"></img>
+<img src="res/2d-tree.png" alt="2d tree implementation" width="500"></img>
 
 #### 11.3.5. Range search in a 2d tree
 
@@ -3141,7 +3143,7 @@ Create BST, where each node stores an interval `(lo, hi)`.
 - Store *max endpoint* in subtree rooted at node.
 
 
-<img src="res/interval-search-tree.png" alt="interval search trees" width="550"></img>
+<img src="res/interval-search-tree.png" alt="interval search trees" width="450"></img>
 
 **Insert**
 
@@ -3209,13 +3211,13 @@ search tree (using y-intervals of rectangle).
 - Right endpoint: remove y-interval.
 
 **Proposition**. Sweep line algorithm takes time proportional to *N log N + R log N* to find R intersections among a set of N rectangles.  
-Pf.
-| ops | order of growth |
-| :--: | :--: |
-| Put x-coordinates on a PQ (or sort) | N log N |
-| Insert y-intervals into ST | N log N |
-| Delete y-intervals from ST | N log N |
-| Interval searches for y-intervals. | N log N + R log N |
+> Pf.
+> | ops | order of growth |
+> | :--: | :--: |
+> | Put x-coordinates on a PQ (or sort) | N log N |
+> | Insert y-intervals into ST | N log N |
+> | Delete y-intervals from ST | N log N |
+> | Interval searches for y-intervals. | N log N + R log N |
 
 *Bottom line*. Sweep line reduces 2d orthogonal rectangle intersection search to 1d interval search.
 
@@ -3435,7 +3437,7 @@ private int hash(Key key)
 
 *Bins and balls*. Throw balls uniformly at random into M bins.
 
-<img src="res/bins-and-balls.png" alt="interval search trees" width="300"></img>
+<img src="res/bins-and-balls.png" alt="interval search trees" width="350"></img>
 
 [**Birthday problem**](https://en.wikipedia.org/wiki/Birthday_problem). Expect two balls in the same bin after ~ *sqrt(π M / 2)* tosses.
 

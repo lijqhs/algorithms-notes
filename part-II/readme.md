@@ -77,15 +77,15 @@ Notes are taken from the course [Algorithms, Part II](https://www.coursera.org/l
     - [4.7.3. Negative cycle application: arbitrage detection](#473-negative-cycle-application-arbitrage-detection)
   - [4.8. Single source shortest-paths implementation: summary](#48-single-source-shortest-paths-implementation-summary)
 - [5. Maximum Flow and Minimum Cut](#5-maximum-flow-and-minimum-cut)
-  - [Mincut problem](#mincut-problem)
-  - [Maxflow problem](#maxflow-problem)
-  - [Ford-Fulkerson algorithm](#ford-fulkerson-algorithm)
-  - [Maxflow-mincut theorem](#maxflow-mincut-theorem)
-    - [Computing a mincut from a maxflow](#computing-a-mincut-from-a-maxflow)
-    - [Ford-Fulkerson algorithm with integer capacities](#ford-fulkerson-algorithm-with-integer-capacities)
-    - [How to choose augmenting paths?](#how-to-choose-augmenting-paths)
-  - [Ford-Fulkerson: Java implementation](#ford-fulkerson-java-implementation)
-  - [Maxflow and mincut applications](#maxflow-and-mincut-applications)
+  - [5.1. Mincut problem](#51-mincut-problem)
+  - [5.2. Maxflow problem](#52-maxflow-problem)
+  - [5.3. Ford-Fulkerson algorithm](#53-ford-fulkerson-algorithm)
+  - [5.4. Maxflow-mincut theorem](#54-maxflow-mincut-theorem)
+    - [5.4.1. Computing a mincut from a maxflow](#541-computing-a-mincut-from-a-maxflow)
+    - [5.4.2. Ford-Fulkerson algorithm with integer capacities](#542-ford-fulkerson-algorithm-with-integer-capacities)
+    - [5.4.3. How to choose augmenting paths?](#543-how-to-choose-augmenting-paths)
+  - [5.5. Ford-Fulkerson: Java implementation](#55-ford-fulkerson-java-implementation)
+  - [5.6. Maxflow and mincut applications](#56-maxflow-and-mincut-applications)
 - [6. Radix Sorts](#6-radix-sorts)
 
 
@@ -105,11 +105,12 @@ Examples of graph applications:
 
 - [The Internet as mapped by the Opte Project](https://www.opte.org/the-internet)
 
-[![The Internet 1997 - 2021](https://img.youtube.com/vi/OzDgI0sJQBA/0.jpg)](https://www.youtube.com/watch?v=OzDgI0sJQBA "The Internet 1997 - 2021 Youtube Video")
+
+<img src="res/opte-project-internet.png" alt="The Internet" width="600"></img>
 
 - [Map of science clickstreams](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0004803)
 
-![Map of science clickstreams](res/pone.0004803.g005.png)
+<img src="res/pone.0004803.g005.png" alt="The Internet" width="600"></img>
 
 #### 1.1.1. Graph applications
 
@@ -233,7 +234,7 @@ public static int numberOfSelfLoops(Graph G)
 - Adjacency-matrix graph representation: Maintain a two-dimensional `V-by-V` boolean array; `for each edge v–w in graph: adj[v][w] = adj[w][v] = true.`
 - **Adjacency-list graph representation**: Maintain vertex-indexed array of lists.
 
-    <img src="res/adjacency-list-graph-representation.png" alt="adjacency-list-graph-representation" width="550"></img>
+    <img src="res/adjacency-list-graph-representation.png" alt="adjacency-list-graph-representation" width="450"></img>
 
 
 In practice. Use adjacency-lists representation.
@@ -682,21 +683,21 @@ public class SymbolGraph {
 ### 1.9. Challenges
 
 How difficult?
-1. Any programmer could do it.
-2. Typical diligent algorithms student could do it.
-3. Hire an expert.
-4. Intractable.
-5. No one knows.
-6. Impossible.
+> 1. Any programmer could do it.
+> 2. Typical diligent algorithms student could do it.
+> 3. Hire an expert.
+> 4. Intractable.
+> 5. No one knows.
+> 6. Impossible.
 
 Problems
-- **Is a graph bipartite**? (*is dating graph bipartite?*) [2]
-- **Find a cycle**. (simple DFS-based solution) [2] 
-- **Euler tour**. Is there a (general) cycle that uses each edge exactly once? [2]
-  - Answer. A connected graph is Eulerian iff all vertices have even degree.
-- **Hamiltonian cycle**. Find a cycle that visits every vertex exactly once. *(classical NP-complete problem)* [4]
-- **Are two graphs identical except for vertex names**? *graph isomorphism is longstanding open problem* [5]
-- **Lay out a graph in the plane without crossing edges**? *linear-time DFS-based planarity algorithm discovered by Tarjan in 1970s (too complicated for most practitioners)* [3]
+> - **Is a graph bipartite**? (*is dating graph bipartite?*) [2]
+> - **Find a cycle**. (simple DFS-based solution) [2] 
+> - **Euler tour**. Is there a (general) cycle that uses each edge exactly once? [2]
+>   - Answer. A connected graph is Eulerian iff all vertices have even degree.
+> - **Hamiltonian cycle**. Find a cycle that visits every vertex exactly once. *(classical NP-complete problem)* [4]
+> - **Are two graphs identical except for vertex names**? *graph isomorphism is longstanding open problem* [5]
+> - **Lay out a graph in the plane without crossing edges**? *linear-time DFS-based planarity algorithm discovered by Tarjan in 1970s (too complicated for most practitioners)* [3]
 
 
 
@@ -757,7 +758,7 @@ A directed graph (or digraph) is a set of vertices and a collection of directed 
 
 #### 2.2.1. Adjacency-lists digraph representation
 
-<img src="res/adjacency-lists-digraph-representation.png" alt="Adjacency-lists digraph representation" width="550"></img>
+<img src="res/adjacency-lists-digraph-representation.png" alt="Adjacency-lists digraph representation" width="450"></img>
 
 Adjacency-lists digraph representation: Java implementation
 
@@ -1234,7 +1235,7 @@ Recall in section [Graph terminology](#113-graph-terminology), two of the defini
 **Proposition J**. (**Cut property**) Given any cut, the crossing edge of min weight is in the MST.
 
 
-<img src="res/cut-property.png" alt="cut property" width="180"></img>
+<img src="res/cut-property.png" alt="cut property" width="200"></img>
 
 
 **Proposition K**. (**Greedy MST algorithm**) The following method colors *black* all edges in the the MST of any connected edgeweighted graph with V vertices: starting with all edges colored gray, find a cut with no black edges, color its minimum-weight edge black, and continue until `V - 1` edges have been colored black.
@@ -1300,7 +1301,7 @@ This API is very similar to the [API for Graph](#12-graph-api).
 
 
 
-<img src="res/edge-weighted-graph-adjacency-lists-representation.png" alt="edge-weighted-graph-adjacency-lists-representation" width="550"></img>
+<img src="res/edge-weighted-graph-adjacency-lists-representation.png" alt="edge-weighted-graph-adjacency-lists-representation" width="500"></img>
 
 
 
@@ -1430,7 +1431,7 @@ Start with any vertex as a single-vertex tree; then add `V - 1` edges to it, a
 - Repeat until `V - 1` edges.
 
 
-<img src="res/prim-algorithm.png" alt="Prim's algorithm" width="180"></img>
+<img src="res/prim-algorithm.png" alt="Prim's algorithm" width="200"></img>
 
 
 
@@ -1895,7 +1896,7 @@ Then `distTo[]` are the shortest path distances from `s` iff:
 
 > "The tools we use have a profound and devious influence on our thinking habits, and therefore on our thinking abilities." — Edsger W. Dijkstra
 
-<img src="res/Dijkstra_Animation.gif" alt="Dijkstra's algorithm animation" width="220"></img>
+<img src="res/Dijkstra_Animation.gif" alt="Dijkstra's algorithm animation" width="230"></img>
 
 Wikipedia: [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 
@@ -2139,7 +2140,7 @@ Key point. Topological sort algorithm works even with *negative* weights.
 
 Solution. The problem is equivalent to a longest-paths problem in an edge-weighted DAG. Use critical path method (a linear-time algorithm).
 
-<img src="res/critical-path-method.png" alt="critical path method" width="500"></img>
+<img src="res/critical-path-method.png" alt="critical path method" width="550"></img>
 
 **CPM**. To solve a parallel job-scheduling problem, create edge-weighted DAG:
 - Source and sink vertices.
@@ -2410,7 +2411,7 @@ Shortest-paths is a broadly useful problem-solving model.
 
 ## 5. Maximum Flow and Minimum Cut
 
-### Mincut problem
+### 5.1. Mincut problem
 
 *Input*. An edge-weighted digraph, source vertex s, and target vertex t.
 
@@ -2420,7 +2421,7 @@ Shortest-paths is a broadly useful problem-solving model.
 
 **Minimum st-cut (mincut) problem**. Find a cut of minimum capacity.
 
-### Maxflow problem
+### 5.2. Maxflow problem
 
 *Input*. An edge-weighted digraph, source vertex s, and target vertex t. (each edge has a positive capacity)
 
@@ -2432,17 +2433,17 @@ Shortest-paths is a broadly useful problem-solving model.
 
 **Maximum st-flow (maxflow) problem**. Find a flow of maximum value.
 
-<img src="res/maxflow-mincut.png" alt="Maxflow Mincut" width="500"></img>
+<img src="res/maxflow-mincut.png" alt="Maxflow Mincut" width="550"></img>
 
 *Remarkable fact*. These two problems are dual.
 
-### Ford-Fulkerson algorithm
+### 5.3. Ford-Fulkerson algorithm
 
 It is a generic method for increasing flows incrementally along paths from source to sink that serves as the basis for a family of algorithms. It is known as the Ford-Fulkerson algorithm in the classical literature; the more descriptive term augmenting-path algorithm is also widely used.
 
 *Initialization*. Start with 0 flow.
 
-*Augmenting path*. Find an undirected path from s to t such that:
+*Augmenting path*. Find an undirected path from `s` to `t` such that:
 - Can increase flow on forward edges (not full).
 - Can decrease flow on backward edge (not empty).
 
@@ -2457,95 +2458,93 @@ It is a generic method for increasing flows incrementally along paths from sourc
 > - compute bottleneck capacity
 > - increase flow on that path by bottleneck capacity
 
-### Maxflow-mincut theorem
+### 5.4. Maxflow-mincut theorem
 
 *Def*. The **net flow across** a cut (A, B) is the sum of the flows on its edges from A to B minus the sum of the flows on its edges from from B to A.
 
-**Flow-value lemma**. Let f be any flow and let (A, B) be any cut. Then, the net flow across (A, B) equals the value of f.  
-Pf. 
-> By induction on the size of B.
-> - Base case: `B = { t }`.
+**Flow-value lemma**. Let `f` be any flow and let `(A, B)` be any cut. Then, the net flow across `(A, B)` equals the value of `f`.  
+> Pf. By induction on the size of B.
+> - Base case: `B = {t}`.
 > - Induction step: remains true by local equilibrium when moving any vertex from A to B.
 
 *Corollary*. `Outflow from s` = `inflow to t` = `value of flow`.
 
-*Weak duality*. Let f be any flow and let (A, B) be any cut. Then, the value of the flow ≤ the capacity of the cut.  
-Pf. 
-> Value of flow f = net flow across cut (A, B) ≤ capacity of cut (A, B).
+*Weak duality*. Let `f` be any flow and let `(A, B)` be any cut. Then, the value of the flow ≤ the capacity of the cut.  
+> Pf. Value of flow `f` = net flow across cut `(A, B)` ≤ capacity of cut `(A, B)`.
 
 **Augmenting path theorem**. A flow `f` is a maxflow iff no augmenting paths.
 
 **Maxflow-mincut theorem**. Value of the maxflow = capacity of mincut.
 
-Pf. The following three conditions are equivalent for any flow `f`:
+Prove both theorems simultaneously by showing the following three conditions are equivalent for any flow `f`:
 - i. There exists a cut whose capacity equals the value of the flow `f`.
 - ii. `f` is a maxflow.
 - iii. There is no augmenting path with respect to `f`.
 
 <details>
-<summary>detail: </summary>
+<summary>Proof. </summary>
 
-[ i ⇒ ii ]  
-- Suppose that (A, B) is a cut with capacity equal to the value of f.
-- Then, the value of any flow f ' ≤ capacity of (A, B) = value of f.
-- Thus, f is a maxflow.
-
-[ ii ⇒ iii ] To prove contrapositive: `~iii ⇒ ~ii`.
-- Suppose that there is an augmenting path with respect to f.
-- Can improve flow f by sending flow along this path.
-- Thus, f is not a maxflow.
-
-[ iii ⇒ i ]  
-Suppose that there is no augmenting path with respect to f.
-- Let `(A, B)` be a cut where A is the set of vertices connected to s by an undirected path with no full forward or empty backward edges.
-- By definition, s is in A; since no augmenting path, t is in B.
-- Capacity of cut = net flow across cut (forward edges full; backward edges empty)  
-  = value of flow f. (flow-value lemma)
+> [ i ⇒ ii ]  
+> - Suppose that `(A, B)` is a cut with capacity equal to the value of `f`.
+> - Then, the value of any flow `f` ' ≤ capacity of `(A, B)` = value of `f`.
+> - Thus, `f` is a maxflow.
+> 
+> [ ii ⇒ iii ] To prove contrapositive: `~iii ⇒ ~ii`.
+> - Suppose that there is an augmenting path with respect to `f`.
+> - Can improve flow `f` by sending flow along this path.
+> - Thus, `f` is not a maxflow.
+> 
+> [ iii ⇒ i ]  
+> Suppose that there is no augmenting path with respect to `f`.
+> - Let `(A, B)` be a cut where `A` is the set of vertices connected to `s` by an undirected path with no full forward or empty backward edges (`A` is the set of vertices reachable from `s` in *residual* graph).
+> - By above definition, `s` is in `A`; since no augmenting path, `t` is in `B`.
+> - Capacity of cut = net flow across cut (forward edges full; backward edges empty)  
+>   = value of flow `f`. (flow-value lemma)
 
 </details>
 
-#### Computing a mincut from a maxflow
+#### 5.4.1. Computing a mincut from a maxflow
 
-To compute mincut (A, B) from maxflow f :
-- By augmenting path theorem, no augmenting paths with respect to f.
-- Compute A = set of vertices connected to s by an undirected path with no full forward or empty backward edges.
+To compute mincut `(A, B)` from maxflow `f`:
+- By augmenting path theorem, no augmenting paths with respect to `f`.
+- Compute `A` = set of vertices connected to `s` by an undirected path with no full forward or empty backward edges.
 
 
-<img src="res/compute-mincut.png" alt="Computing a mincut from a maxflow" width="500"></img>
+<img src="res/compute-mincut.png" alt="Computing a mincut from a maxflow" width="450"></img>
 
 ***Questions***.
-- How to compute a mincut? 
-  - Easy. ✔
-- How to find an augmenting path? 
-  - BFS works well.
-- If FF terminates, does it always compute a maxflow? 
-  - Yes. ✔
-- Does FF always terminate? If so, after how many augmentations?
-  - yes, provided edge capacities are integers (or augmenting paths are chosen carefully)
-  - requires clever analysis
+> - How to compute a mincut? 
+>   - Easy. ✔
+> - How to find an augmenting path? 
+>   - BFS works well.
+> - If FF terminates, does it always compute a maxflow? 
+>   - Yes. ✔
+> - Does FF always terminate? If so, after how many augmentations?
+>   - yes, provided edge capacities are integers (or augmenting paths are chosen carefully)
+>   - requires clever analysis
 
 
-#### Ford-Fulkerson algorithm with integer capacities
+#### 5.4.2. Ford-Fulkerson algorithm with integer capacities
 
 *Important special case*. Edge capacities are integers between 1 and U.
 
 **Invariant**. The flow is **integer-valued** throughout Ford-Fulkerson.  
-Pf. *[by induction]* 
-- Bottleneck capacity is an integer.
-- Flow on an edge increases/decreases by bottleneck capacity.
+> Pf. *[by induction]* 
+> - Bottleneck capacity is an integer.
+> - Flow on an edge increases/decreases by bottleneck capacity.
 
 **Proposition**. Number of augmentations ≤ the value of the maxflow.  
-Pf. Each augmentation increases the value by at least 1.
+> Pf. Each augmentation increases the value by at least 1.
 
 **Integrality theorem**. There exists an integer-valued maxflow.  
-Pf. Ford-Fulkerson terminates and maxflow that it finds is integer-valued.
+> Pf. Ford-Fulkerson terminates and maxflow that it finds is integer-valued.
 
 *Bad news*. Even when edge capacities are integers, number of augmenting paths could be equal to the value of the maxflow.
 
 *Good news*. This case is easily avoided. *[use shortest/fattest path]*
 
 
-#### How to choose augmenting paths?
+#### 5.4.3. How to choose augmenting paths?
 
 FF performance depends on choice of augmenting paths.
 
@@ -2560,7 +2559,7 @@ digraph with V vertices, E edges, and integer capacities between 1 and U
 - shortest path: augmenting path with fewest number of edges
 - fattest path: augmenting path with maximum bottleneck capacity
 
-### Ford-Fulkerson: Java implementation
+### 5.5. Ford-Fulkerson: Java implementation
 
 *Flow edge data type*. Associate flow f<sub>e</sub> and capacity c<sub>e</sub> with edge `e = v→w`.
 
@@ -2577,12 +2576,12 @@ Include `e` in both `v` and `w`'s adjacency lists.
 
 **Residual network**. A useful view of a flow network.
 
-<img src="res/residual-network.png" alt="Residual network" width="500"></img>
+<img src="res/residual-network.png" alt="Residual network" width="450"></img>
 
 *Key point*. Augmenting path in original network is equivalent to directed path in residual network.
 
 
-<img src="res/residual-network-.png" alt="Residual network" width="500"></img>
+<img src="res/residual-network-.png" alt="Residual network" width="450"></img>
 
 **Flow edge: Java implementation**
 
@@ -2657,7 +2656,7 @@ public class FlowNetwork
 }
 ```
 
-<img src="res/flow-network.png" alt="Flow network" width="500"></img>
+<img src="res/flow-network.png" alt="Flow network" width="550"></img>
 
 **Ford-Fulkerson: Java implementation**
 
@@ -2732,7 +2731,7 @@ public class FordFulkerson
 }
 ```
 
-### Maxflow and mincut applications
+### 5.6. Maxflow and mincut applications
 
 Maxflow/mincut is a widely applicable problem-solving model.
 - Data mining.
@@ -2752,19 +2751,19 @@ Maxflow/mincut is a widely applicable problem-solving model.
 
 **Network flow formulation of bipartite matching**  
 
-Create s, t, one vertex for each student, and one vertex for each job.
-- Add edge from s to each student (capacity 1).
-- Add edge from each job to t (capacity 1).
-- Add edge from student to each job offered (infinite capacity).
+> Create `s`, `t`, one vertex for each student, and one vertex for each job.
+> - Add edge from `s` to each student (capacity `1`).
+> - Add edge from each job to `t` (capacity `1`).
+> - Add edge from student to each job offered (infinite capacity).
 
-1-1 correspondence between perfect matchings in bipartite graph and integer-valued maxflows of value N.
+`1-1` correspondence between perfect matchings in bipartite graph and integer-valued maxflows of value N.
 
 *When no perfect matching, mincut explains why.*
 
-Mincut. Consider mincut (A, B).
-- Let S = students on s side of cut.
-- Let T = companies on s side of cut.
-- Fact: | S | > | T |; students in S can be matched only to companies in T.
+> Mincut. Consider mincut (A, B).
+> - Let `S` = students on `s` side of cut.
+> - Let `T` = companies on `s` side of cut.
+> - Fact: `|S| > |T|`; students in `S` can be matched only to companies in `T`.
 
 **Maximum flow algorithms: theory**
 
@@ -2777,8 +2776,8 @@ Maxflow algorithms for sparse digraphs with E edges, integer capacities between 
 | 1955 | augmenting path | E<sup>2</sup> U | Ford-Fulkerson |
 | 1970 | shortest augmenting path | E<sup>3</sup> | Dinitz, Edmonds-Karp |
 | 1970 | fattest augmenting path | E<sup>2</sup> log E log( E U ) | Dinitz, Edmonds-Karp |
-| 1977 | blocking flow | E <sup>5/2</sup> | Cherkasky |
-| 1978 | blocking flow | E <sup>7/3</sup> | Galil |
+| 1977 | blocking flow | E<sup>5/2</sup> | Cherkasky |
+| 1978 | blocking flow | E<sup>7/3</sup> | Galil |
 | 1983 | dynamic trees | E<sup>2</sup> log E | Sleator-Tarjan |
 | 1985 | capacity scaling | E<sup>2</sup> log U | Gabow |
 | 1997 | length function | E<sup>3/2</sup> log E log U | Goldberg-Rao |
