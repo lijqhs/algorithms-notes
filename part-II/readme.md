@@ -109,6 +109,15 @@ Notes are taken from the course [Algorithms, Part II](https://www.coursera.org/l
     - [6.7.3. Suffix sorting: worst-case input](#673-suffix-sorting-worst-case-input)
     - [6.7.4. Manber-Myers MSD algorithm](#674-manber-myers-msd-algorithm)
   - [6.8. String sorting summary](#68-string-sorting-summary)
+- [7. Trie](#7-trie)
+  - [7.1. R-way tries](#71-r-way-tries)
+    - [7.1.1. Trie performance](#711-trie-performance)
+  - [7.2. Ternary search trie](#72-ternary-search-trie)
+    - [7.2.1. TST vs. hashing](#721-tst-vs-hashing)
+    - [7.2.2. String symbol table implementation cost summary](#722-string-symbol-table-implementation-cost-summary)
+  - [7.3. Patricia trie](#73-patricia-trie)
+  - [7.4. Suffix tree](#74-suffix-tree)
+  - [7.5. String symbol tables summary](#75-string-symbol-tables-summary)
 
 
 ## 1. Undirected Graph
@@ -3440,5 +3449,356 @@ Long strings are rarely random in practice.
 See also:
 - [stackoverflow: In-Place Radix Sort](https://stackoverflow.com/questions/463105/in-place-radix-sort)
 - [American flag sort](https://en.wikipedia.org/wiki/American_flag_sort)
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 7. Trie
+
+Performance of symbol-table implementations
+
+Order of growth of the frequency of operations.
+
+| implementation | typical case<br/>search | typical case<br/>insert | typical case<br/>delete | ordered operations | operations on keys | 
+| :--: | :--: | :--: | :--: | :--: | :--: | 
+| red-black BST | log N | log N | log N | yes | compareTo() | 
+| hash table | 1 <sup>†</sup> | 1 <sup>†</sup> | 1 <sup>†</sup> | no | equals()<br/>hashCode() | 
+
+† under uniform hashing assumption
+
+As with sorting, we can take advantage of properties of strings to develop search methods (symbol-table implementations) that can be more efficient than the general-purpose methods (i.e., BST, hash tables) for typical applications where search keys are strings.
+
+API for a symbol table with string keys
+
+| `public class StringST< Value> `| |
+| :--: | :--: |
+| `StringST()` |  create a symbol table |
+| `void put(String key, Value val)` |  put key-value pair into the table (remove key if value is null)  |
+| `Value get(String key)` |  value paired with key (null if key is absent)  |
+| `void delete(String key)` |  remove key (and its value)  |
+| `boolean contains(String key) `|  is there a value paired with key? |
+| `boolean isEmpty()` |  is the table empty? |
+| `String longestPrefixOf(String s)` |  the longest key that is a prefix of s |
+| `Iterable<String> keysWithPrefix(String s)` |  all the keys having s as a prefix |
+| `Iterable<String> keysThatMatch(String s)` |  all the keys that match s (where . matches any character)  |
+| `int size()` |  number of key-value pairs |
+| `Iterable<String> keys()` |  all the keys in the table |
+
+
+### 7.1. R-way tries
+
+Tries. [from re**trie**val, but pronounced "try"]
+- Store characters in nodes (not keys).
+- Each node has R children, one for each possible character.
+
+<img src="res/trie.png" alt="Trie" width="500">
+
+ALGORITHM: Trie symbol table
+
+
+```java
+public class TrieST<Value>
+{
+    private static int R = 256;     // radix, extended ASCII
+    private Node root;              // root of trie
+
+    private static class Node
+    {
+        private Object val;
+        private Node[] next = new Node[R];
+    }
+
+    public Value get(String key)
+    {
+        Node x = get(root, key, 0);
+        if (x == null) return null;
+        return (Value) x.val;       // cast needed
+    }
+
+    private Node get(Node x, String key, int d)
+    { // Return value associated with key in the subtrie rooted at x.
+        if (x == null) return null;
+        if (d == key.length()) return x;
+        char c = key.charAt(d);     // Use dth key char to identify subtrie.
+        return get(x.next[c], key, d+1);
+    }
+
+    public void put(String key, Value val)
+    { root = put(root, key, val, 0); }
+
+    private Node put(Node x, String key, Value val, int d)
+    { // Change value associated with key if in subtrie rooted at x.
+        if (x == null) x = new Node();
+        if (d == key.length()) { x.val = val; return x; }
+        char c = key.charAt(d);     // Use dth key char to identify subtrie.
+        x.next[c] = put(x.next[c], key, val, d+1);
+        return x;
+    }
+        
+    public Iterable<String> keys()
+    { return keysWithPrefix(""); }
+
+    public Iterable<String> keysWithPrefix(String pre)
+    {
+        Queue<String> q = new Queue<String>();
+        collect(get(root, pre, 0), pre, q);
+        return q;
+    }
+
+    private void collect(Node x, String pre, Queue<String> q)
+    {
+        if (x == null) return;
+        if (x.val != null) q.enqueue(pre);
+        for (char c = 0; c < R; c++)
+            collect(x.next[c], pre + c, q);
+    }
+}
+```
+
+NOTE: The value in Node has to be an Object because Java does not support arrays of generics; cast values back to Value in `get()`.
+
+
+**Deletion in an R-way trie**
+
+To delete a key-value pair:
+- Find the node corresponding to key and set value to null.
+- If node has null value and all null links, remove that node (and recur).
+
+
+**Collecting keys**
+
+To iterate through all keys in sorted order:
+- Do inorder traversal of trie; add keys encountered to a queue.
+- Maintain sequence of characters *on path from root to node*.
+- Use `collect()` method to collect keys for both the `keys()` and the `keysWithPrefix()` methods in the API.
+
+<img src="res/trie-collecting.png" alt="collecting keys" width="250">
+
+
+
+**Prefix matches**
+
+Find all keys in a symbol table starting with a given prefix.
+
+Ex. Autocomplete in a cell phone, search bar, text editor, or shell.
+- User types characters one at a time.
+- System reports all matching strings.
+
+
+***Interview question***. Design a data structure to perform efficient spell checking.
+
+<details>
+<summary>Solution.</summary>
+
+Build a 26-way trie, key = word, value = bit).
+
+</details>
+
+
+
+**Longest prefix**
+
+Find longest key in symbol table that is a prefix of query string.
+- Search for query string.
+- Keep track of longest key encountered.
+
+Ex. To send packet toward destination IP address, router chooses IP address in routing table that is longest prefix match.
+
+```java
+public String longestPrefixOf(String query)
+{
+    int length = search(root, query, 0, 0);
+    return query.substring(0, length);
+}
+private int search(Node x, String query, int d, int length)
+{
+    if (x == null) return length;
+    if (x.val != null) length = d;
+    if (d == query.length()) return length;
+    char c = query.charAt(d);
+    return search(x.next[c], query, d+1, length);
+}
+```
+
+
+
+
+#### 7.1.1. Trie performance
+
+**Search hit**. Need to examine all `L` characters for equality.
+
+**Search miss**.
+- Could have mismatch on first character.
+- Typical case: examine only a few characters (sublinear).
+
+**Space**. `R` null links at each leaf.   
+(but sublinear space possible if many short strings share common prefixes)
+
+**Bottom line**. Fast search hit and even faster search miss, but **wastes space**.
+
+
+
+
+### 7.2. Ternary search trie
+
+
+Ternary search tries: another data structure that responds to the problem of too much memory space used by tries.
+
+- Store characters and values in nodes (not keys).
+- Each node has 3 children: smaller (left), equal (middle), larger (right).
+
+**Search hit**. Node where search ends has a non-null value.
+
+**Search miss**. Reach a null link or node where search ends has null value.
+
+
+<img src="res/trie-TST.png" alt="Ternary search trie" width="200">
+
+ALGORITHM: TST symbol table
+
+```java
+public class TST<Value>
+{
+    private Node root;              // root of trie
+
+    private class Node
+    {
+        char c;                     // character
+        Node left, mid, right;      // left, middle, and right subtries
+        Value val;                  // value associated with string
+    }
+
+    public Value get(String key)    // same as for tries (See page 737).
+
+    private Node get(Node x, String key, int d)
+    {
+        if (x == null) return null;
+        char c = key.charAt(d);
+        if (c < x.c) return get(x.left, key, d);
+        else if (c > x.c) return get(x.right, key, d);
+        else if (d < key.length() - 1)
+            return get(x.mid, key, d+1);
+        else return x;
+    }
+
+    public void put(String key, Value val)
+    { root = put(root, key, val, 0); }
+
+    private Node put(Node x, String key, Value val, int d)
+    {
+        char c = key.charAt(d);
+        if (x == null) { x = new Node(); x.c = c; }
+        if (c < x.c) x.left = put(x.left, key, val, d);
+        else if (c > x.c) x.right = put(x.right, key, val, d);
+        else if (d < key.length() - 1)
+            x.mid = put(x.mid, key, val, d+1);
+        else x.val = val;
+        return x;
+    }
+}
+```
+
+> - **TST** correspond to **3-way string quicksort** in the same way that
+> - **BST** correspond to **quicksort** and 
+> - **trie** correspond to **MSD sorting**.
+
+
+#### 7.2.1. TST vs. hashing
+
+| algorithm | property |
+| :--: | :-- |
+| Hashing | <ul><li>Need to examine entire key.</li><li>Search hits and misses cost about the same.</li><li>Performance relies on hash function.</li><li>Does not support ordered symbol table operations.</li></ul> |
+| TST | <ul><li>Works only for strings (or digital keys).</li><li>Only examines just enough key characters.</li><li>Search miss may involve only a few characters.</li><li>Supports ordered symbol table operations (plus others!).</li></ul> |
+
+**Bottom line**. TSTs are:
+- Faster than hashing (especially for search misses).
+- More flexible than red-black BSTs.
+
+#### 7.2.2. String symbol table implementation cost summary
+
+| implementation | character accesses<br/>(typical case)<br/>**search hit** | character accesses<br/>(typical case)<br/>**search miss** | character accesses<br/>(typical case)<br/>**insert** | character accesses<br/>(typical case)<br/>**space (references)** | moby.txt | actors.txt | 
+| :--: | :--: | :--: | :--: | :--: | :--: | :--: |  
+| red-black BST | L + c lg <sup>2</sup> N | c lg <sup>2</sup> N | c lg <sup>2</sup> N | 4 N | 1.40 | 97.4 | 
+| hash table | L | L | L | 4 N to 16 N | 0.76 | 40.6 | 
+| R-way trie | L | log <sub>R</sub> N | L | (R + 1) N | 1.12 | out of memory | 
+| TST | L + ln N | ln N | L + ln N | 4 N | 0.72 | 38.7 | 
+| TST with R<sup>2</sup> | L + ln N | ln N | L + ln N | 4 N + R<sup>2</sup> | 0.51 | 32.7 | 
+
+
+
+- R-way trie
+  - Method of choice for small *R*.
+  - Too much memory for large *R*.
+  - Challenge. Use less memory, e.g., 65,536-way trie for Unicode!
+- TST
+  - Can build balanced TSTs via rotations to achieve *L + log N* worst-case guarantees.
+  - TST is as fast as hashing (for string keys), space efficient.
+- TST with R<sup>2</sup> branching at root. (Hybrid of R-way trie and TST.)
+  - Do R<sup>2</sup>-way branching at root.
+  - Each of R<sup>2</sup> root nodes points to a TST.
+
+
+> If space is available, **R-way tries** provide the fastest search, essentially completing the job with a constant number of character compares. For *large alphabets*, where space may not be available for R-way tries, **TSTs** are preferable, since they use a logarithmic number of character compares, while **BSTs** use a logarithmic number of key compares. **Hashing** can be competitive, but, as usual, cannot support ordered symbol-table operations or extended character-based API operations such as *prefix* or *wildcard match*.
+
+
+### 7.3. Patricia trie
+
+[Practical Algorithm to Retrieve Information Coded in Alphanumeric]
+- Remove one-way branching.
+- Each node represents a sequence of characters.
+- Implementation: one step beyond this course.
+
+> **Applications**.
+> - Database search.
+> - P2P network search.
+> - IP routing tables: find longest prefix match.
+> - Compressed quad-tree for N-body simulation.
+> - Efficiently storing and querying XML documents.
+
+
+Also known as: crit-bit tree, radix tree.
+
+
+### 7.4. Suffix tree
+
+Suffix tree.
+- Patricia trie of suffixes of a string.
+- Linear-time construction: beyond this course.
+
+> **Applications**.
+> - Linear-time: longest repeated substring, longest common substring, longest palindromic substring, substring search, tandem repeats, ….
+> - Computational biology databases (BLAST, FASTA).
+
+
+
+### 7.5. String symbol tables summary
+
+| algorithm | property |
+| :--: | :-- |
+| Red-black BST | <ul><li>Performance guarantee: log N key compares.</li><li>Supports ordered symbol table API.</li></ul> |
+| Hash tables | <ul><li>Performance guarantee: constant number of probes.</li><li>Requires good hash function for key type.</li></ul> |
+| Tries. R-way, TST | <ul><li>Performance guarantee: log N characters accessed.</li><li>Supports character-based operations.</li></ul> |
+
+
+
+See also:
+- [Trie](https://en.wikipedia.org/wiki/Trie)
+- [Patricia trie](https://en.wikipedia.org/wiki/Trie#:~:text=memory.%5B8%5D-,Patricia%20trees,-%5Bedit%5D)
+- [Suffix tree](https://en.wikipedia.org/wiki/Suffix_tree)
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 
 
