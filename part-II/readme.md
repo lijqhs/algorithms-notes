@@ -86,7 +86,29 @@ Notes are taken from the course [Algorithms, Part II](https://www.coursera.org/l
     - [5.4.3. How to choose augmenting paths?](#543-how-to-choose-augmenting-paths)
   - [5.5. Ford-Fulkerson: Java implementation](#55-ford-fulkerson-java-implementation)
   - [5.6. Maxflow and mincut applications](#56-maxflow-and-mincut-applications)
-- [6. Radix Sorts](#6-radix-sorts)
+- [6. Radix Sort](#6-radix-sort)
+  - [6.1. Strings in Java](#61-strings-in-java)
+    - [6.1.1. String](#611-string)
+    - [6.1.2. StringBuilder](#612-stringbuilder)
+    - [6.1.3. String vs. StringBuilder](#613-string-vs-stringbuilder)
+    - [6.1.4. Alphabets](#614-alphabets)
+  - [6.2. Key-indexed counting](#62-key-indexed-counting)
+  - [6.3. LSD radix sort](#63-lsd-radix-sort)
+  - [6.4. MSD radix sort](#64-msd-radix-sort)
+    - [6.4.1. MSD string sort: Java implementation](#641-msd-string-sort-java-implementation)
+    - [6.4.2. MSD string sort vs. quicksort for strings](#642-msd-string-sort-vs-quicksort-for-strings)
+  - [6.5. 3-way radix quicksort](#65-3-way-radix-quicksort)
+    - [6.5.1. 3-way string quicksort: Java implementation](#651-3-way-string-quicksort-java-implementation)
+    - [6.5.2. 3-way string quicksort vs. standard quicksort](#652-3-way-string-quicksort-vs-standard-quicksort)
+    - [6.5.3. 3-way string quicksort vs. MSD string sort](#653-3-way-string-quicksort-vs-msd-string-sort)
+  - [6.6. Summary of the performance of sorting algorithms](#66-summary-of-the-performance-of-sorting-algorithms)
+  - [6.7. Suffix arrays](#67-suffix-arrays)
+    - [6.7.1. Keyword-in-context search (KWIC)](#671-keyword-in-context-search-kwic)
+    - [6.7.2. Longest repeated substring](#672-longest-repeated-substring)
+      - [6.7.2.1. Longest repeated substring: Java implementation](#6721-longest-repeated-substring-java-implementation)
+    - [6.7.3. Suffix sorting: worst-case input](#673-suffix-sorting-worst-case-input)
+    - [6.7.4. Manber-Myers MSD algorithm](#674-manber-myers-msd-algorithm)
+  - [6.8. String sorting summary](#68-string-sorting-summary)
 
 
 ## 1. Undirected Graph
@@ -2792,4 +2814,631 @@ Maxflow algorithms for sparse digraphs with E edges, integer capacities between 
 <br/>
 
 
-## 6. Radix Sorts
+## 6. Radix Sort
+
+> In computer science, [radix sort](https://en.wikipedia.org/wiki/Radix_sort) is a non-comparative sorting algorithm. It avoids comparison by creating and distributing elements into buckets according to their radix. For elements with more than one significant digit, this bucketing process is repeated for each digit, while preserving the ordering of the prior step, until all digits have been considered. For this reason, radix sort has also been called [bucket sort](https://en.wikipedia.org/wiki/Bucket_sort) and digital sort.
+> 
+> Radix sort can be applied to data that can be sorted lexicographically, be they integers, words, punch cards, playing cards, or the mail.
+> 
+> via *Wikipedia*
+
+### 6.1. Strings in Java
+
+String. Sequence of characters.
+
+Important fundamental abstraction.
+- Information processing.
+- Genomic sequences.
+- Communication systems (e.g., email).
+- Programming systems (e.g., Java programs).
+- …
+
+C char data type. Typically an 8-bit integer.
+- Supports 7-bit ASCII.
+- Can represent only 256 characters.
+
+Java char data type. A 16-bit unsigned integer.
+- Supports original 16-bit Unicode.
+- Supports 21-bit Unicode 3.0 (awkwardly).
+
+#### 6.1.1. String
+
+**String** data type in Java. Sequence of characters (immutable).
+- **Length**. Number of characters.
+- **Indexing**. Get the ith character.
+- **Substring extraction**. Get a contiguous subsequence of characters.
+- **String concatenation**. Append one character to end of another string.
+- **Underlying implementation**. **Immutable** `char[]` array, offset, and length.
+- **Memory**. 40 + 2N bytes for a virgin String of length N.
+
+String: Java implementation
+
+```java
+public final class String implements Comparable<String> 
+{
+    private char[] value; // characters
+    private int offset; // index of first char in array
+    private int length; // length of string
+    private int hash; // cache of hashCode()
+
+    public int length() {
+        return length;
+    }
+
+    public char charAt(int i) {
+        return value[i + offset];
+    }
+
+    private String(int offset, int length, char[] value) {
+        this.offset = offset;
+        this.length = length;
+        this.value = value;
+    }
+
+    public String substring(int from, int to) {
+        return new String(offset + from, to - from, value);
+    }
+}
+```
+
+#### 6.1.2. StringBuilder
+
+The **StringBuilder** data type. Sequence of characters (mutable).
+- **Underlying implementation**. Resizing `char[]` array and length.
+- *Remark*. StringBuffer data type is similar, but thread safe (and slower).
+
+| data type | String | String | StringBuilder | StringBuilder |
+| :--: | :--: | :--: | :--: | :--: | 
+| **operation** | **guarantee** | **extra space** | **guarantee** | **extra space** | 
+| length() | 1 | 1 | 1 | 1 | 
+| charAt() | 1 | 1 | 1 | 1 | 
+| substring() | 1 | 1 | N | N | 
+| concat() | N | N | 1 * | 1 * | 
+
+#### 6.1.3. String vs. StringBuilder
+
+***How to efficiently reverse a string?***
+
+- String: quadratic time
+- StringBuilder: linear time
+
+```java
+// Algorithm A
+public static String reverse(String s)
+{
+    String rev = "";
+    for (int i = s.length() - 1; i >= 0; i--)
+        rev += s.charAt(i);
+    return rev;
+}
+
+// Algorithm B
+public static String reverse(String s)
+{
+    StringBuilder rev = new StringBuilder();
+    for (int i = s.length() - 1; i >= 0; i--)
+        rev.append(s.charAt(i));
+    return rev.toString();
+}
+```
+
+***How to efficiently form array of suffixes?***
+
+```java
+// Algorithm A
+public static String[] suffixes(String s)
+{
+    int N = s.length();
+    String[] suffixes = new String[N];
+    for (int i = 0; i < N; i++)
+        suffixes[i] = s.substring(i, N);
+    return suffixes;
+}
+
+// Algorithm B
+public static String[] suffixes(String s)
+{
+    int N = s.length();
+    StringBuilder sb = new StringBuilder(s);
+    String[] suffixes = new String[N];
+    for (int i = 0; i < N; i++)
+        suffixes[i] = sb.substring(i, N);
+    return suffixes;
+}
+```
+
+
+NOTE: The order of growth of the amount of memory used by Algorithm A to form the `n` suffixes of a string of length `n` is **linear in Java 6** and **quadratic in Java 7, Update 6**.
+
+<details>
+<summary>Why?</summary>
+
+> Oracle and OpenJDK changed their representation of the **String** data type in Java 7, Update 6 so that the underlying `char[]` array is no longer shared! Now, it takes linear extra space and time to extract a substring (instead of constant extra space and time).
+> 
+> See [this article](http://java-performance.info/changes-to-string-java-1-7-0_06/) for more details.
+
+</details>
+
+
+***How long to compute length of longest common prefix?***
+
+```java
+public static int lcp(String s, String t)
+{
+    int N = Math.min(s.length(), t.length());
+
+    // linear time (worst case)
+    // sublinear time (typical case)
+    for (int i = 0; i < N; i++)
+        if (s.charAt(i) != t.charAt(i))
+            return i;
+    return N;
+}
+```
+
+- **Running time**. Proportional to length `D` of longest common prefix.
+- *Remark*. Also can compute `compareTo()` in sublinear time. (no need to look all the characters, use the same idea as above code)
+
+#### 6.1.4. Alphabets
+
+Some applications involve strings taken from a restricted alphabet. In such applications, it often makes sense to use an Alphabet class with the following API:
+
+| `public class Alphabet` | | 
+| :--: | :--: | 
+| `Alphabet(String s)` | create a new alphabet from chars in `s` | 
+| `char toChar(int index)` | convert index to corresponding alphabet char |
+| `int toIndex(char c)` | convert `c` to an index between `0` and `R-1` |
+| `boolean contains(char c)` | is `c` in the alphabet? |
+| `int R()` | radix (number of characters in alphabet) |
+| `int lgR()` | number of bits to represent an index |
+| `int[] toIndices(String s)` | convert `s` to base-R integer |
+| `String toChars(int[] indices)` | convert base-R integer to string over this alphabet |
+
+- Digital key. Sequence of digits over fixed alphabet.
+- Radix. Number of digits R in alphabet.
+
+**Standard alphabets**:
+| name | R() | lgR() | characters |
+| :--: | :--: | :--: | :--: |
+| BINARY | 2 | 1 | 01 |
+| DNA | 4 | 2 | ACTG |
+| OCTAL | 8 | 3 | 01234567 |
+| DECIMAL | 10 | 4 | 0123456789 |
+| HEXADECIMAL | 16 | 4 | 0123456789ABCDEF |
+| PROTEIN | 20 | 5 | ACDEFGHIKLMNPQRSTVWY |
+| LOWERCASE | 26 | 5 | abcdefghijklmnopqrstuvwxyz |
+| UPPERCASE | 26 | 5 | ABCDEFGHIJKLMNOPQRSTUVWXYZ |
+| BASE64 | 64 | 6 | ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/ |
+| ASCII | 128 | 7 | ASCII | characters |
+| EXTENDED_ASCII | 256 | 8 | extended | ASCII | characters |
+| UNICODE16 | 65536 | 16 | Unicode | characters
+
+
+### 6.2. Key-indexed counting
+
+*Review*: **summary of the performance of sorting algorithms**. 
+
+Frequency of operations = key compares.
+
+| algorithm | guarantee | random | extra space | stable? | operations on keys |
+| :--: | :--: | :--: | :--: | :--: | :--: |
+| insertion sort | ½ N<sup>2</sup> | ¼ N<sup>2</sup> | 1 | yes | compareTo() |
+| mergesort | N lg N | N lg N | N | yes | compareTo() |
+| quicksort | 1.39 N lg N <sup>*</sup> | 1.39 N lg N | c lg N | no | compareTo() |
+| heapsort | 2 N lg N | 2 N lg N | 1 | no | compareTo() |
+
+\* probabilistic
+
+**Lower bound**. ~ *N lg N* compares required by any **compare-based** algorithm.
+**NOTE**: can be better(despite the lower bound), if *don't* depend on key compares.
+
+**Key-indexed counting: assumptions about keys**
+
+**Assumption**. Keys are integers between `0` and `R - 1`.
+*Implication*. Can use key as an array index.
+
+> *Applications*.
+> - Sort string by first letter.
+> - Sort class roster by section.
+> - Sort phone numbers by area code.
+> - Subroutine in a sorting algorithm. 
+
+**Remark**. Keys may have associated data ⇒ can't just count up number of keys of each value.
+
+**Goal**. Sort an array `a[]` of `N` integers between `0` and `R - 1`.
+- Count frequencies of each letter using key as index.
+- Compute frequency cumulates which specify destinations.
+- Access cumulates using key as index to move items.
+- Copy back into original array.
+
+<img src="res/key-indexed-counting-cumulates.png" alt="cumulates, transforming counts to start indices" width="200">
+
+
+<img src="res/key-indexed-counting-distributing.png" alt="move items, distributing the records" width="400">
+
+
+```java
+int N = a.length;
+int[] count = new int[R+1];
+
+// count frequencies
+for (int i = 0; i < N; i++)
+    count[a[i]+1]++;
+
+// compute cumulates, transforming counts to start indices.
+for (int r = 0; r < R; r++)
+    count[r+1] += count[r];
+
+// move items, distributing the records
+for (int i = 0; i < N; i++)
+    aux[count[a[i]]++] = a[i];
+
+// copy back
+for (int i = 0; i < N; i++)
+    a[i] = aux[i];
+```
+
+**Proposition**. Key-indexed counting uses `8N + 3R + 1` array accesses to stably sort `N` items whose keys are integers between `0` and `R - 1`. 
+
+<details>
+<summary>Proof.</summary>
+
+> Immediate from the code. Initializing the arrays uses `N + R + 1` array accesses. The first loop increments a counter for each of the N items (`2N` array accesses); the second loop does R additions (`2R` array accesses); the third loop does N counter increments and N data moves (`3N` array accesses); and the fourth loop does N data moves (`2N` array accesses). **Both moves preserve the relative order of equal keys**.
+
+</details>
+
+
+### 6.3. LSD radix sort
+
+LSD string (radix) sort.
+- Consider characters from right to left.
+- Stably sort using dth character as the key (using key-indexed counting).
+
+**Proposition**. LSD sorts fixed-length strings in ascending order.
+
+<details>
+<summary>Proof.</summary>
+
+> [by induction on `i`]
+> After pass `i`, strings are sorted by last `i` characters.
+> - If two strings differ on sort key, key-indexed sort puts them in proper relative order.
+> - If two strings agree on sort key, stability keeps them in proper relative order.
+
+</details>
+
+**Proposition**. LSD sort is stable.
+
+```java
+public class LSD
+{
+    public static void sort(String[] a, int W)
+    { // fixed-length W strings
+        int R = 256;
+        int N = a.length;
+        String[] aux = new String[N];
+
+        // do key-indexed counting for each digit from right to left
+        for (int d = W-1; d >= 0; d--)
+        {
+            int[] count = new int[R+1];
+            for (int i = 0; i < N; i++)
+                count[a[i].charAt(d) + 1]++;
+
+            for (int r = 0; r < R; r++)
+                count[r+1] += count[r];
+
+            for (int i = 0; i < N; i++)
+                aux[count[a[i].charAt(d)]++] = a[i];
+
+            for (int i = 0; i < N; i++)
+                a[i] = aux[i];
+        }
+    }
+}
+```
+
+**Proposition**. LSD string sort uses ~`7WN + 3WR` array accesses and extra space proportional to `N + R` to sort `N` items whose keys are `W`-character strings taken from an `R`-character alphabet.
+
+
+### 6.4. MSD radix sort
+
+Most significant digit first string sort
+
+MSD string (radix) sort.
+- Partition array into `R` pieces according to first character (use key-indexed counting).
+- Recursively sort all strings that start with each character (key-indexed counts delineate subarrays to sort).
+
+
+<img src="res/msd-radix-sort.png" alt="MSD radix sort" width="550">
+
+**Variable-length strings**. Treat strings as if they had an extra char at end (smaller than any char).
+
+**C strings**. Have extra char `'\0'` at end ⇒ no extra work needed.
+
+#### 6.4.1. MSD string sort: Java implementation
+
+```java
+public class MSD
+{
+    private static int R = 256;         // radix
+    private static final int M = 15;    // cutoff for small subarrays
+    private static String[] aux;        // auxiliary array for distribution
+
+    private static int charAt(String s, int d)
+    { if (d < s.length()) return s.charAt(d); else return -1; }
+
+    public static void sort(String[] a)
+    {
+        int N = a.length;
+        aux = new String[N];            // can recycle aux[] array, but not count[] array
+        sort(a, 0, N-1, 0);
+    }
+
+    private static void sort(String[] a, int lo, int hi, int d)
+    { // Sort from a[lo] to a[hi], starting at the dth character.
+        if (hi <= lo + M)
+        { Insertion.sort(a, lo, hi, d); return; }
+        int[] count = new int[R+2];     // Compute frequency counts.
+        for (int i = lo; i <= hi; i++)
+            count[charAt(a[i], d) + 2]++;
+
+        for (int r = 0; r < R+1; r++)   // Transform counts to indices.
+            count[r+1] += count[r];
+
+        for (int i = lo; i <= hi; i++) // Distribute.
+            aux[count[charAt(a[i], d) + 1]++] = a[i];
+
+        for (int i = lo; i <= hi; i++) // Copy back.
+            a[i] = aux[i - lo];
+        
+        // Recursively sort for each character value.
+        for (int r = 0; r < R; r++)
+            sort(a, lo + count[r], lo + count[r+1] - 1, d+1);
+    }
+}
+```
+
+- Much too slow for small subarrays.
+  - Each function call needs its own count[] array.
+  - ASCII (256 counts): 100x slower than copy pass for N = 2.
+  - Unicode (65,536 counts): 32,000x slower for N = 2.
+- Huge number of small subarrays because of recursion.
+
+*Solution*. **Cutoff to insertion sort** for small subarrays.
+- Insertion sort, but start at d<sup>th</sup> character.
+- Implement `less()` so that it compares starting at d<sup>th</sup> character.
+
+NOTE: in Java, forming and comparing substrings is faster than directly comparing chars with `charAt()`
+
+```java
+public static void sort(String[] a, int lo, int hi, int d)
+{ // Sort from a[lo] to a[hi], starting at the dth character.
+    for (int i = lo; i <= hi; i++)
+        for (int j = i; j > lo && less(a[j], a[j-1], d); j--)
+            exch(a, j, j-1);
+}
+
+private static boolean less(String v, String w, int d)
+{ return v.substring(d).compareTo(w.substring(d)) < 0; }
+```
+
+MSD string sort: performance
+
+> Number of characters examined.
+> - MSD examines just enough characters to sort the keys.
+> - Number of characters examined depends on keys.
+> - Can be sublinear in input size. (compareTo() based sorts can also be sublinear)
+
+
+#### 6.4.2. MSD string sort vs. quicksort for strings
+
+
+Disadvantages of MSD string sort.
+- Extra space for `aux[]`.
+- Extra space for `count[]`.
+- Inner loop has a lot of instructions.
+- Accesses memory "randomly" (cache inefficient).
+
+Disadvantage of quicksort.
+- Linearithmic number of string compares (not linear).
+- Has to rescan many characters in keys with long prefix matches.
+
+*Goal*. Combine advantages of MSD and quicksort.
+
+### 6.5. 3-way radix quicksort
+
+[3-way string quicksort (Bentley and Sedgewick, 1997)](https://en.wikipedia.org/wiki/Multi-key_quicksort)
+
+Overview. Do 3-way partitioning on the d<sup>th</sup> character.
+- Less overhead than *R-way* partitioning in MSD string sort.
+- Does not re-examine characters equal to the partitioning char (but does re-examine characters not equal to the partitioning char).
+
+<img src="res/3-way-radix-quicksort.png" alt="3-way radix quicksort" width="550">
+
+#### 6.5.1. 3-way string quicksort: Java implementation
+
+```java
+private static void sort(String[] a)
+{ sort(a, 0, a.length - 1, 0); }
+
+private static void sort(String[] a, int lo, int hi, int d)
+{
+    if (hi <= lo) return;
+    int lt = lo, gt = hi;
+    int v = charAt(a[lo], d);
+    int i = lo + 1;
+    while (i <= gt)
+    {
+        int t = charAt(a[i], d);
+        if (t < v) exch(a, lt++, i++);
+        else if (t > v) exch(a, i, gt--);
+        else i++;
+    }
+
+    sort(a, lo, lt-1, d);
+    if (v >= 0) sort(a, lt, gt, d+1);   // sort 3 subarrays recursively
+    sort(a, gt+1, hi, d);
+}
+```
+
+#### 6.5.2. 3-way string quicksort vs. standard quicksort
+
+| algorithm | property |
+| :--: | :-- |
+| Standard quicksort | <ul><li>Uses ~ *2 N ln N* **string compares** on average. </li><li>Costly for keys with long common prefixes (and this is a common case!)</li></ul> |
+| 3-way string (radix) quicksort | <ul><li>Uses ~ *2 N ln N* **character compares** on average for random strings.</li><li>Avoids re-comparing long common prefixes.</li></ul> |
+
+#### 6.5.3. 3-way string quicksort vs. MSD string sort
+
+| algorithm | property |
+| :--: | :-- |
+| MSD string sort | <ul><li>Is cache-inefficient. </li><li>Too much memory storing `count[]`. </li><li>Too much overhead reinitializing `count[]` and `aux[]`</li></ul> |
+| 3-way string (radix) quicksort | <ul><li>Has a short inner loop.</li><li>Is cache-friendly.</li><li>Is in-place.</li></ul> |
+
+
+
+The main reasons to use 3-way radix quicksort are **speed** and **memory**. 3-way radix quicksort is *not stable* and it uses more character compares than MSD radix sort. Both 3-way radix quicksort and MSD radix sort handle variable-length strings.
+
+
+### 6.6. Summary of the performance of sorting algorithms
+
+Frequency of operations.
+
+| algorithm | guarantee | random | extra space | stable? | operations on keys |
+| :--: | :--: | :--: | :--: | :--: | :--: |
+| insertion sort | ½ N<sup>2</sup> | ¼ N<sup>2</sup> | 1 | yes | `compareTo()` |
+| mergesort | N lg N | N lg N | N | yes | `compareTo()` |
+| quicksort | 1.39 N lg N <sup>*</sup> | 1.39 N lg N | c lg N | no | `compareTo()` |
+| heapsort | 2 N lg N | 2 N lg N | 1 | no | `compareTo()` |
+| LSD <sup>†</sub> | 2 N W | 2 N W | N + R | yes | `charAt()` | 
+| MSD <sup>‡</sub> | 2 N W | N log <sub>R</sub> N | N + D R | yes | `charAt()` | 
+| 3-way string quicksort | 1.39 W N lg R <sup>*</sup> | 1.39 N lg N | log N + W | no | `charAt()` | 
+
+\* probabilistic  
+† fixed-length W keys  
+‡ average-length W keys
+
+
+### 6.7. Suffix arrays
+
+#### 6.7.1. Keyword-in-context search (KWIC)
+
+Given a text of N characters, preprocess it to enable fast substring search (find all occurrences of query string context).
+
+> **Applications**. Linguistics, databases, web search, word processing, ….
+
+Keyword-in-context search: suffix-sorting solution (sort suffixes to bring repeated substrings together)
+- Preprocess: **suffix sort** the text.
+- Query: **binary search** for query; scan until mismatch.
+
+#### 6.7.2. Longest repeated substring
+
+Given a string of N characters, find the longest repeated substring.
+
+> **Applications**. Bioinformatics, cryptanalysis, data compression, ...
+
+[Visualize repetitions in music](https://www.bewitched.com/song.html).
+
+> The diagrams in The Shape of Song display musical form as a sequence of translucent arches. Each arch connects two repeated, identical passages of a composition. By using repeated passages as signposts, the diagram illustrates the deep structure of the composition.
+
+
+<img src="res/visual-music.png" alt="Visualize repetitions in music" width="500">
+
+**Brute-force algorithm**.
+- Try all indices `i` and `j` for start of possible match.
+- Compute **longest common prefix** (LCP) for each pair.
+
+Analysis. Running time ≤ *D N<sup>2</sup>*, where *D* is length of longest match.
+
+**Longest repeated substring: a sorting solution**
+
+- input string
+- form suffixes
+- sort suffixes to bring repeated substrings together
+- compute longest prefix between adjacent suffixes
+
+##### 6.7.2.1. Longest repeated substring: Java implementation
+
+```java
+public String lrs(String s)
+{
+    int N = s.length();
+
+    // create suffixes (linear time and space)
+    String[] suffixes = new String[N];
+    for (int i = 0; i < N; i++)
+        suffixes[i] = s.substring(i, N);
+
+    // sort suffixes
+    Arrays.sort(suffixes);
+
+    // find LCP between adjacent suffixes in sorted order
+    String lrs = "";
+    for (int i = 0; i < N-1; i++)
+    {
+        int len = lcp(suffixes[i], suffixes[i+1]);
+        if (len > lrs.length())
+            lrs = suffixes[i].substring(0, len);
+    }
+    return lrs;
+}
+```
+
+#### 6.7.3. Suffix sorting: worst-case input
+
+Bad input: longest repeated substring very long.
+- Ex: same letter repeated N times.
+- Ex: two copies of the same Java codebase.
+
+LRS needs at least `1 + 2 + 3 + ... + D` character compares, where D = length of longest match.
+
+Running time. Quadratic (or worse) in D for LRS (and also for sort).
+
+Suffix sorting challenge. **Suffix sort an arbitrary string of length N.**
+
+worst-case running time of best algorithm for problem:
+- Manber-Myers algorithm: linearithmic.
+- [Suffix trees](https://en.wikipedia.org/wiki/Suffix_tree): linear.
+
+#### 6.7.4. Manber-Myers MSD algorithm
+
+[Suffix Arrays: A New Method for On-Line String Searches](https://courses.cs.washington.edu/courses/cse590q/00au/papers/manber-myers_soda90.pdf)
+
+- Phase 0: sort on first character using key-indexed counting sort.
+- Phase i: given array of suffixes sorted on first 2<sup>i-1</sup> characters, create array of suffixes sorted on first 2<sup>i</sup> characters.
+
+Worst-case running time. *N lg N*.
+- Finishes after *lg N* phases.
+- Can perform a phase in linear time.
+
+
+The main reason to use the **Manber-Myers algorithm** instead of 3-way quicksort in order to suffix sort a string of length *N*:
+- While 3-way radix quicksort runs faster than Manber-Myers on typical inputs, the Manber-Myers algorithm has a worst-case running time of *NlogN*, which is superior to that of 3-way radix quicksort.
+
+NOTE: 
+- The Manber-Myers algorithm requires several auxiliary arrays and uses more extra space than 3-way radix quicksort.
+- Stability is not a relevant concept for suffix sorting.
+
+### 6.8. String sorting summary
+
+We can develop linear-time sorts.
+- Key compares not necessary for string keys.
+- Use characters as index in an array.
+
+We can develop sublinear-time sorts.
+- Input size is amount of data in keys (not number of keys).
+- Not all of the data has to be examined.
+
+3-way string quicksort is asymptotically optimal.
+- *1.39 N lg N* chars for random data.
+
+Long strings are rarely random in practice.
+- Goal is often to learn the structure.
+- May need specialized algorithms.
+
+
+See also:
+- [stackoverflow: In-Place Radix Sort](https://stackoverflow.com/questions/463105/in-place-radix-sort)
+- [American flag sort](https://en.wikipedia.org/wiki/American_flag_sort)
+
+
