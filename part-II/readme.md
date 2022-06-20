@@ -118,6 +118,23 @@ Notes are taken from the course [Algorithms, Part II](https://www.coursera.org/l
   - [7.3. Patricia trie](#73-patricia-trie)
   - [7.4. Suffix tree](#74-suffix-tree)
   - [7.5. String symbol tables summary](#75-string-symbol-tables-summary)
+- [8. Substring search](#8-substring-search)
+  - [8.1. Brute force](#81-brute-force)
+    - [8.1.1. Brute-force substring search: Java implementation](#811-brute-force-substring-search-java-implementation)
+    - [8.1.2. Brute-force substring search: alternate implementation](#812-brute-force-substring-search-alternate-implementation)
+  - [8.2. Knuth-Morris-Pratt (KMP)](#82-knuth-morris-pratt-kmp)
+    - [8.2.1. Deterministic finite state automaton (DFA)](#821-deterministic-finite-state-automaton-dfa)
+    - [8.2.2. Build DFA from pattern](#822-build-dfa-from-pattern)
+  - [8.3. Boyer-Moore substring search](#83-boyer-moore-substring-search)
+    - [8.3.1. Boyer-Moore: analysis](#831-boyer-moore-analysis)
+  - [8.4. Rabin-Karp fingerprint search](#84-rabin-karp-fingerprint-search)
+    - [8.4.1. Efficiently computing the hash function](#841-efficiently-computing-the-hash-function)
+  - [8.5. Cost summary for substring search implementations](#85-cost-summary-for-substring-search-implementations)
+- [9. Regular Expressions](#9-regular-expressions)
+- [10. Data Compression](#10-data-compression)
+- [11. Reductions](#11-reductions)
+- [12. Linear Programming](#12-linear-programming)
+- [13. Intractability](#13-intractability)
 
 
 ## 1. Undirected Graph
@@ -197,6 +214,14 @@ A graph G with V vertices is a tree if and only if it satisfies any of the follo
 - Exactly one simple path connects each pair of vertices in G.
 
 A *bipartite graph* is a graph whose vertices we can divide into two sets such that all edges connect a vertex in one set with a vertex in the other set.
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
 ### 1.2. Graph API
@@ -322,6 +347,14 @@ public class Graph
 }
 ```
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 1.3. Depth-first search
 
 Searching through a graph is equivalent to finding way through a maze. There are many methods in [solving maze problem](https://en.wikipedia.org/wiki/Maze-solving_algorithm). [Trémaux's algorithm](https://en.wikipedia.org/wiki/Maze-solving_algorithm#Tr%C3%A9maux's_algorithm) was discovered in the 19th century, has been used about a hundred years later as [depth-first search](https://en.wikipedia.org/wiki/Depth-first_search).
@@ -437,6 +470,14 @@ This Graph client uses depth-first search to find paths to all the vertices in a
 - **Proposition A (continued)**. After DFS, can find vertices connected to `s` in constant time and can find a path to `s` (if one exists) in time proportional to its length.
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 1.4. Breadth-first search
 
 [Breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search) can be used to solve the following problem:  
@@ -506,6 +547,14 @@ Breadth-first search application:
   - Compute shortest path from s = Kevin Bacon.
 - [Erdös numbers](https://en.wikipedia.org/wiki/Erd%C5%91s_number)
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 1.5. Connected components
 
 **Definitions**:
@@ -573,6 +622,14 @@ public class CC
 
 **Proposition C**. DFS uses preprocessing time and space proportional to `V + E` to support constant-time connectivity queries in a graph.
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 1.6. Cycle detection 
 
 *Is a given graph acylic?*
@@ -604,6 +661,14 @@ public class Cycle
     { return hasCycle; }
 }
 ```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 1.7. Two-colorability 
 
@@ -641,6 +706,14 @@ public class TwoColor
     { return isTwoColorable; }
 }
 ```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 1.8. Symbol graphs
 
@@ -710,6 +783,14 @@ public class SymbolGraph {
     }
 }
 ```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 1.9. Challenges
 
@@ -846,6 +927,14 @@ In practice. Use adjacency-lists representation.
 | adjacency matrix | V<sup>2</sup> | 1 | 1 | V |
 | adjacency lists | E+V| 1 | outdegree(v) | outdegree(v) |
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 2.3. Digraph search
 
 #### 2.3.1. Reachability in digraphs
@@ -967,6 +1056,14 @@ while (!queue.isEmpty())
     }
 }
 ```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 2.4. Topological sort
 
@@ -1127,6 +1224,14 @@ In practice, topological sorting and cycle detection go hand in hand, with cycle
 2. Make sure that a feasible solution exists, by detecting and removing cycles in the underlying digraph until none exist. 
 3. Solve the scheduling problem, using topological sort. Similarly, any changes in the schedule can be checked for cycles (using DirectedCycle), then a new schedule computed (using Topological).
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 2.5. Strongly-connected components
 
 *Def*. Vertices `v` and `w` are strongly connected if there is both a directed path from `v` to `w` and a directed path from `w` to `v`.
@@ -1272,6 +1377,14 @@ Recall in section [Graph terminology](#113-graph-terminology), two of the defini
 **Proposition K**. (**Greedy MST algorithm**) The following method colors *black* all edges in the the MST of any connected edgeweighted graph with V vertices: starting with all edges colored gray, find a cut with no black edges, color its minimum-weight edge black, and continue until `V - 1` edges have been colored black.
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 3.2. Edge-weighted graph API
 
 Edge abstraction needed for weighted edges.
@@ -1358,6 +1471,14 @@ public class EdgeWeightedGraph
     { return adj[v]; }
 }
 ```
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
 ### 3.3. Minimum spanning tree API
@@ -1449,6 +1570,14 @@ public class KruskalMST
 Remark. If edges are already sorted, order of growth is `E log* V`.
 
 Actually we don't have to always sort them. In real life situations, we can stop when we get the `V - 1` edges in the MST.
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
 ### 3.5. Prim's algorithm
@@ -1648,6 +1777,14 @@ Prim's algorithm: running time depends on PQ implementation: V insert, V delete-
 - 4-way heap worth the trouble in performance-critical situations.
 - Fibonacci heap best in theory, but not worth implementing.
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 3.6. context
 
 #### 3.6.1. Euclidean MST
@@ -1748,6 +1885,14 @@ Cycles?
 Simplifying assumption. Shortest paths from `s` to each vertex `v` exist.
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 4.2. Weighted directed edge API
 
 | `public class DirectedEdge` | | 
@@ -1821,6 +1966,14 @@ Goal. Find the shortest path from `s` to every other vertex.
 | `double distTo(int v)` | length of shortest path from `s` to `v` | 
 | `Iterable <DirectedEdge> pathTo(int v)` | shortest path from `s` to `v` | 
 | `boolean hasPathTo(int v)` | is there a path from `s` to `v`? | 
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 4.3. Shortest-paths properties
 
@@ -1922,6 +2075,14 @@ Then `distTo[]` are the shortest path distances from `s` iff:
 - Ex 1. Dijkstra's algorithm (nonnegative weights).
 - Ex 2. Topological sort algorithm (no directed cycles).
 - Ex 3. Bellman-Ford algorithm (no negative cycles).
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 4.5. Dijkstra's algorithm
 
@@ -2059,6 +2220,14 @@ Depends on PQ implementation: V insert, V delete-min, E decrease-key. See sectio
     </details>
 
 - **Shortest paths in Euclidean graphs**. Solve the single-source, source-sink, and all-pairs shortest-paths problems in graphs where vertices are points in the plane and edge weights are proportional to Euclidean distances between vertices.
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
 
@@ -2215,6 +2384,14 @@ public class CPM
     }
 }
 ```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 4.7. Negative weights
 
@@ -2405,6 +2582,14 @@ public class Arbitrage
 ```
 
 
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
 ### 4.8. Single source shortest-paths implementation: summary
 
 ***Cost:***
@@ -2488,6 +2673,14 @@ It is a generic method for increasing flows incrementally along paths from sourc
 > - find an augmenting path
 > - compute bottleneck capacity
 > - increase flow on that path by bottleneck capacity
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 5.4. Maxflow-mincut theorem
 
@@ -2589,6 +2782,14 @@ digraph with V vertices, E edges, and integer capacities between 1 and U
 
 - shortest path: augmenting path with fewest number of edges
 - fattest path: augmenting path with maximum bottleneck capacity
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 5.5. Ford-Fulkerson: Java implementation
 
@@ -2761,6 +2962,14 @@ public class FordFulkerson
     }
 }
 ```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 5.6. Maxflow and mincut applications
 
@@ -3023,6 +3232,14 @@ Some applications involve strings taken from a restricted alphabet. In such appl
 | UNICODE16 | 65536 | 16 | Unicode | characters
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 6.2. Key-indexed counting
 
 *Review*: **summary of the performance of sorting algorithms**. 
@@ -3060,10 +3277,10 @@ Frequency of operations = key compares.
 - Access cumulates using key as index to move items.
 - Copy back into original array.
 
-<img src="res/key-indexed-counting-cumulates.png" alt="cumulates, transforming counts to start indices" width="200">
+<img src="res/key-indexed-counting-cumulates.png" alt="cumulates, transforming counts to start indices" width="220"></img>
 
 
-<img src="res/key-indexed-counting-distributing.png" alt="move items, distributing the records" width="400">
+<img src="res/key-indexed-counting-distributing.png" alt="move items, distributing the records" width="400"></img>
 
 
 ```java
@@ -3095,6 +3312,14 @@ for (int i = 0; i < N; i++)
 > Immediate from the code. Initializing the arrays uses `N + R + 1` array accesses. The first loop increments a counter for each of the N items (`2N` array accesses); the second loop does R additions (`2R` array accesses); the third loop does N counter increments and N data moves (`3N` array accesses); and the fourth loop does N data moves (`2N` array accesses). **Both moves preserve the relative order of equal keys**.
 
 </details>
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
 ### 6.3. LSD radix sort
@@ -3149,6 +3374,14 @@ public class LSD
 **Proposition**. LSD string sort uses ~`7WN + 3WR` array accesses and extra space proportional to `N + R` to sort `N` items whose keys are `W`-character strings taken from an `R`-character alphabet.
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 6.4. MSD radix sort
 
 Most significant digit first string sort
@@ -3158,7 +3391,7 @@ MSD string (radix) sort.
 - Recursively sort all strings that start with each character (key-indexed counts delineate subarrays to sort).
 
 
-<img src="res/msd-radix-sort.png" alt="MSD radix sort" width="550">
+<img src="res/msd-radix-sort.png" alt="MSD radix sort" width="550"></img>
 
 **Variable-length strings**. Treat strings as if they had an extra char at end (smaller than any char).
 
@@ -3254,6 +3487,14 @@ Disadvantage of quicksort.
 
 *Goal*. Combine advantages of MSD and quicksort.
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 6.5. 3-way radix quicksort
 
 [3-way string quicksort (Bentley and Sedgewick, 1997)](https://en.wikipedia.org/wiki/Multi-key_quicksort)
@@ -3262,7 +3503,7 @@ Overview. Do 3-way partitioning on the d<sup>th</sup> character.
 - Less overhead than *R-way* partitioning in MSD string sort.
 - Does not re-examine characters equal to the partitioning char (but does re-examine characters not equal to the partitioning char).
 
-<img src="res/3-way-radix-quicksort.png" alt="3-way radix quicksort" width="550">
+<img src="res/3-way-radix-quicksort.png" alt="3-way radix quicksort" width="550"></img>
 
 #### 6.5.1. 3-way string quicksort: Java implementation
 
@@ -3309,6 +3550,14 @@ private static void sort(String[] a, int lo, int hi, int d)
 The main reasons to use 3-way radix quicksort are **speed** and **memory**. 3-way radix quicksort is *not stable* and it uses more character compares than MSD radix sort. Both 3-way radix quicksort and MSD radix sort handle variable-length strings.
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 6.6. Summary of the performance of sorting algorithms
 
 Frequency of operations.
@@ -3351,7 +3600,7 @@ Given a string of N characters, find the longest repeated substring.
 > The diagrams in The Shape of Song display musical form as a sequence of translucent arches. Each arch connects two repeated, identical passages of a composition. By using repeated passages as signposts, the diagram illustrates the deep structure of the composition.
 
 
-<img src="res/visual-music.png" alt="Visualize repetitions in music" width="500">
+<img src="res/visual-music.png" alt="Visualize repetitions in music" width="500"></img>
 
 **Brute-force algorithm**.
 - Try all indices `i` and `j` for start of possible match.
@@ -3428,6 +3677,14 @@ NOTE:
 - The Manber-Myers algorithm requires several auxiliary arrays and uses more extra space than 3-way radix quicksort.
 - Stability is not a relevant concept for suffix sorting.
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 6.8. String sorting summary
 
 We can develop linear-time sorts.
@@ -3497,7 +3754,7 @@ Tries. [from re**trie**val, but pronounced "try"]
 - Store characters in nodes (not keys).
 - Each node has R children, one for each possible character.
 
-<img src="res/trie.png" alt="Trie" width="500">
+<img src="res/trie.png" alt="Trie" width="520"></img>
 
 ALGORITHM: Trie symbol table
 
@@ -3578,7 +3835,7 @@ To iterate through all keys in sorted order:
 - Maintain sequence of characters *on path from root to node*.
 - Use `collect()` method to collect keys for both the `keys()` and the `keysWithPrefix()` methods in the API.
 
-<img src="res/trie-collecting.png" alt="collecting keys" width="250">
+<img src="res/trie-collecting.png" alt="collecting keys" width="300"></img>
 
 
 
@@ -3596,7 +3853,7 @@ Ex. Autocomplete in a cell phone, search bar, text editor, or shell.
 <details>
 <summary>Solution.</summary>
 
-Build a 26-way trie, key = word, value = bit).
+> Build a 26-way trie, key = word, value = bit (indicating whether a string ending there is a word).
 
 </details>
 
@@ -3645,6 +3902,14 @@ private int search(Node x, String query, int d, int length)
 
 
 
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
 ### 7.2. Ternary search trie
 
 
@@ -3658,7 +3923,7 @@ Ternary search tries: another data structure that responds to the problem of too
 **Search miss**. Reach a null link or node where search ends has null value.
 
 
-<img src="res/trie-TST.png" alt="Ternary search trie" width="200">
+<img src="res/trie-TST.png" alt="Ternary search trie" width="250"></img>
 
 ALGORITHM: TST symbol table
 
@@ -3749,7 +4014,7 @@ public class TST<Value>
 
 ### 7.3. Patricia trie
 
-[Practical Algorithm to Retrieve Information Coded in Alphanumeric]
+Practical Algorithm to Retrieve Information Coded in Alphanumeric
 - Remove one-way branching.
 - Each node represents a sequence of characters.
 - Implementation: one step beyond this course.
@@ -3791,6 +4056,479 @@ See also:
 - [Trie](https://en.wikipedia.org/wiki/Trie)
 - [Patricia trie](https://en.wikipedia.org/wiki/Trie#:~:text=memory.%5B8%5D-,Patricia%20trees,-%5Bedit%5D)
 - [Suffix tree](https://en.wikipedia.org/wiki/Suffix_tree)
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+## 8. Substring search
+
+Goal. Find pattern of length M in a text of length N.
+
+**Substring search applications**
+
+- Electronic surveillance.
+- Screen scraping. Extract relevant data from web page.
+
+
+### 8.1. Brute force
+
+Check for pattern starting at each text position.
+
+#### 8.1.1. Brute-force substring search: Java implementation
+
+```java
+public static int search(String pat, String txt)
+{
+    int M = pat.length();
+    int N = txt.length();
+    for (int i = 0; i <= N - M; i++)
+    {
+        int j;
+        for (j = 0; j < M; j++)
+            if (txt.charAt(i+j) != pat.charAt(j))
+                break;
+        if (j == M) return i; // index in text where pattern starts
+    }
+    return N;   // not found
+}
+```
+
+Brute-force algorithm can be slow if text and pattern are repetitive.
+
+Worst case. ~ *M N* char compares.
+
+In many applications, we want to avoid backup in text stream.
+- Treat input as stream of data.
+- Abstract model: standard input.
+
+Brute-force algorithm needs backup for every mismatch.
+
+Maintain buffer of last M characters.
+
+#### 8.1.2. Brute-force substring search: alternate implementation
+
+Same sequence of char compares as previous implementation.
+- `i` points to end of sequence of already-matched chars in text.
+- `j` stores # of already-matched chars (end of sequence in pattern).
+
+```java
+public static int search(String pat, String txt)
+{
+    int i, N = txt.length();
+    int j, M = pat.length();
+    for (i = 0, j = 0; i < N && j < M; i++)
+    {
+        if (txt.charAt(i) == pat.charAt(j)) j++;
+        else { i -= j; j = 0; }     // explicit backup
+    }
+    if (j == M) return i - M;
+    else return N;
+}
+```
+
+**Theoretical challenge**. Linear-time guarantee.
+
+**Practical challenge**. Avoid backup in text stream.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+### 8.2. Knuth-Morris-Pratt (KMP)
+
+Intuition. Suppose we are searching in text for pattern BAAAAAAAAA.
+- Suppose we match 5 chars in pattern, with mismatch on 6th char.
+- We know previous 6 chars in text are BAAAAB.
+- Don't need to back up text pointer!
+
+#### 8.2.1. Deterministic finite state automaton (DFA)
+
+DFA is abstract string-searching machine.
+- Finite number of states (including start and halt).
+- Exactly one transition for each char in alphabet.
+- Accept if sequence of transitions leads to halt state.
+
+Key differences from brute-force implementation.
+- Need to precompute `dfa[][]` from pattern.
+- Text pointer `i` never decrements.
+- Could use input stream.
+
+```java
+public int search(String txt)
+{
+    int i, j, N = txt.length();
+    for (i = 0, j = 0; i < N && j < M; i++)
+        j = dfa[txt.charAt(i)][j];  // no backup
+
+    if (j == M) return i - M;   // found (hit end of pattern)
+    else return N;              // not found (hit end of text)
+}
+```
+
+Running time.
+- Simulate DFA on text: at most N character accesses.
+- Build DFA: how to do efficiently?
+
+<img src="res/kmp-dfa.png" alt="KMP DFA" width="400"></img>
+
+#### 8.2.2. Build DFA from pattern
+
+**Match transition**. If in state j and next char c == pat.charAt(j), go to j+1.
+**Mismatch transition**. If in state j and next char `c != pat.charAt(j)`, then the last j-1 characters of input are `pat[1..j-1]`, followed by c.
+- To compute `dfa[c][j]`: Simulate `pat[1..j-1]` on DFA and take transition c.
+- *Running time*. Takes only constant time if we maintain state X.
+
+NOTE:
+- `dfa['A'][5] = 1`: A is the longest prefix of ABABAC that is a suffix of ABABAA.
+- `dfa['B'][5] = 4`: ABAB is the longest prefix of ABABAC that is a suffix of ABABAB.
+- `dfa['C'][5] = 6`: match transition.
+
+<img src="res/kmp-dfa-x.png" alt="build DFA" width="520"></img>
+
+
+**Constructing the DFA for KMP substring search: Java implementation**
+
+For each state `j`:
+- Copy `dfa[][X]` to `dfa[][j]` for mismatch case.
+- Set `dfa[pat.charAt(j)][j]` to j+1 for match case.
+- Update X.
+
+```java
+public KMP(String pat)
+{   // Build DFA from pattern.
+    this.pat = pat;
+    M = pat.length();
+    dfa = new int[R][M];
+    dfa[pat.charAt(0)][0] = 1;
+
+    for (int X = 0, j = 1; j < M; j++)
+    {
+        for (int c = 0; c < R; c++)
+            dfa[c][j] = dfa[c][X];      // copy mismatch cases
+        dfa[pat.charAt(j)][j] = j+1;    // set match case
+        X = dfa[pat.charAt(j)][X];      // update restart state
+    }
+}
+```
+
+**Running time**. *M* character accesses (but space/time proportional to *R M*).
+
+**KMP substring search analysis**
+
+**Proposition**. KMP substring search accesses no more than *M + N* chars to search for a pattern of length *M* in a text of length *N*.  
+Pf. Each pattern char accessed once when constructing the DFA; each text char accessed once (in the worst case) when simulating the DFA.
+
+**Proposition**. KMP constructs `dfa[][]` in time and space proportional to *R M*.
+
+**Larger alphabets**. Improved version of KMP constructs `nfa[]` in time and space proportional to *M*.
+
+ALGORITHM: Knuth-Morris-Pratt substring search
+
+```java
+public class KMP
+{
+    private String pat;
+    private int[][] dfa;
+    public KMP(String pat)
+    { // Build DFA from pattern.
+        this.pat = pat;
+        int M = pat.length();
+        int R = 256;
+        dfa = new int[R][M];
+        dfa[pat.charAt(0)][0] = 1;
+        for (int X = 0, j = 1; j < M; j++)
+        { // Compute dfa[][j].
+            for (int c = 0; c < R; c++)
+                dfa[c][j] = dfa[c][X]; // Copy mismatch cases.
+            dfa[pat.charAt(j)][j] = j+1; // Set match case.
+            X = dfa[pat.charAt(j)][X]; // Update restart state.
+        }
+    }
+    
+    public int search(String txt)
+    { // Simulate operation of DFA on txt.
+        int i, j, N = txt.length(), M = pat.length();
+        for (i = 0, j = 0; i < N && j < M; i++)
+            j = dfa[txt.charAt(i)][j];
+        if (j == M) return i - M; // found (hit end of pattern)
+        else return N; // not found (hit end of text)
+    }
+    
+    public static void main(String[] args)
+    {
+        String pat = args[0];
+        String txt = args[1];
+        KMP kmp = new KMP(pat);
+        StdOut.println("text: " + txt);
+        int offset = kmp.search(txt);
+        StdOut.print("pattern: ");
+        for (int i = 0; i < offset; i++)
+            StdOut.print(" ");
+        StdOut.println(pat);
+    }
+}
+```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+### 8.3. Boyer-Moore substring search
+
+Intuition.
+- Scan characters in pattern **from right to left**.
+- Can skip as many as *M* text chars when *finding one not in the pattern*.
+
+Q. How much to skip?
+A. Precompute index of **rightmost** occurrence of character c in pattern (-1 if character not in pattern).
+
+<img src="res/Boyer-Moore-skip-table.png" alt="Boyer-Moore skip table" width="300"></img>
+
+ALGORITHM: Boyer-Moore substring search (mismatched character heuristic)
+
+```java
+public class BoyerMoore
+{
+    private int[] right;
+    private String pat;
+
+    BoyerMoore(String pat)
+    { // Compute skip table.
+        this.pat = pat;
+        int M = pat.length();
+        int R = 256;
+        right = new int[R];
+        for (int c = 0; c < R; c++)
+            right[c] = -1;              // -1 for chars not in pattern
+        for (int j = 0; j < M; j++)     // rightmost position for
+            right[pat.charAt(j)] = j;   // chars in pattern
+    }
+
+    public int search(String txt)
+    { // Search for pattern in txt.
+        int N = txt.length();
+        int M = pat.length();
+        int skip;
+        for (int i = 0; i <= N-M; i += skip)
+        { // Does the pattern match the text at position i ?
+            skip = 0;
+            for (int j = M-1; j >= 0; j--)
+                if (pat.charAt(j) != txt.charAt(i+j))
+                {
+                    skip = j - right[txt.charAt(i+j)];
+                    if (skip < 1) skip = 1;
+                    break;
+                }
+            if (skip == 0) return i;    // found.
+        }
+        return N;                       // not found.
+    }
+}
+```
+
+The constructor in this substring search algorithm builds a table giving the **rightmost** occurrence in the pattern of each possible character. The search method scans from right to left in the pattern, skipping to align any character causing a mismatch with its rightmost occurrence in the pattern.
+
+#### 8.3.1. Boyer-Moore: analysis
+
+**Property**. Substring search with the Boyer-Moore mismatched character heuristic takes about ~ *N / M* character compares to search for a pattern of length *M* in a text of length *N*.
+
+**Worst-case**. Can be as bad as ~ *M N*.
+
+**Boyer-Moore variant**. Can improve worst case to ~ *3 N* character compares by adding a KMP-like rule to guard against repetitive patterns.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+### 8.4. Rabin-Karp fingerprint search
+
+Basic idea = modular hashing.
+- Compute a hash of pattern characters 0 to M - 1.
+- For each i, compute a hash of text characters i to *M + i - 1*.
+- If pattern hash = text substring hash, check for a match.
+
+#### 8.4.1. Efficiently computing the hash function
+
+
+**Modular hash function**. Using the notation t<sub>i</sub> for `txt.charAt(i)`, we wish to compute  
+<em>x<sub>i</sub> = t<sub>i</sub> R<sup>M-1</sup> + t<sub>i+1</sub> R<sup>M-2</sup> + … + t<sub>i+M-1</sub> R<sup>0</sup> (mod *Q*)</em>
+
+**Intuition**. *M*-digit, base-*R* integer, modulo *Q*.
+
+**Horner's method**. Linear-time method to evaluate degree-*M* polynomial.
+
+```java
+// Compute hash for M-digit key
+private long hash(String key, int M)
+{
+    long h = 0;
+    for (int j = 0; j < M; j++)
+        h = (R * h + key.charAt(j)) % Q;
+    return h;
+}
+```
+
+**Challenge**. How to efficiently compute x<sub>i+1</sub> given that we know x<sub>i</sub>.  
+<em>x<sub>i</sub> = t<sub>i</sub> R<sup>M-1</sup> + t<sub>i+1</sub> R<sup>M-2</sup> + … + t<sub>i+M-1</sub> R<sup>0</sup></em>  
+<em>x<sub>i+1</sub> = t<sub>i+1</sub> R<sup>M-1</sup> + t<sub>i+2</sub> R<sup>M-2</sup> + … + t<sub>i+M</sub> R<sup>0</sup></em>
+
+**Key property**. Can update hash function in constant time.  
+<em>x<sub>i+1</sub> = (x<sub>i</sub> – t<sub>i</sub> R<sup>M-1</sup>) R + t<sub>i+M</sub></em>
+
+ALGORITHM: Rabin-Karp fingerprint substring search
+
+```java
+public class RabinKarp
+{
+    private String pat;         // pattern (only needed for Las Vegas)
+    private long patHash;       // pattern hash value
+    private int M;              // pattern length
+    private long Q;             // a large prime
+    private int R = 256;        // alphabet size
+    private long RM;            // R^(M-1) % Q
+    public RabinKarp(String pat)
+    {
+        this.pat = pat;         // save pattern (only needed for Las Vegas)
+        this.M = pat.length();
+
+        Q = longRandomPrime();  // See Exercise 5.3.33 (Book)
+
+        RM = 1;
+        for (int i = 1; i <= M-1; i++)  // Compute R^(M-1) % Q for use
+            RM = (R * RM) % Q;          // in removing leading digit.
+        patHash = hash(pat, M);
+    }
+
+    public boolean check(int i) // Monte Carlo
+    { return true; }            // For Las Vegas, check pat vs txt(i..i-M+1).
+    
+    private long hash(String key, int M)
+    {
+        long h = 0;
+        for (int j = 0; j < M; j++)
+            h = (R * h + key.charAt(j)) % Q;
+        return h;
+    }
+
+    private int search(String txt)
+    { // Search for hash match in text.
+        int N = txt.length();
+        long txtHash = hash(txt, M);
+        if (patHash == txtHash) return 0; // Match at beginning.
+
+        for (int i = M; i < N; i++)
+        { // Remove leading digit, add trailing digit, check for match.
+            txtHash = (txtHash + Q - RM*txt.charAt(i-M) % Q) % Q;
+            txtHash = (txtHash*R + txt.charAt(i)) % Q;
+            if (patHash == txtHash)
+                if (check(i - M + 1)) return i - M + 1; // match
+        }
+        return N; // no match found
+    }
+}
+```
+
+
+**Monte Carlo version**. Return match if hash match.
+- Always runs in linear time.
+- Extremely likely to return correct answer (but not always).
+
+**Las Vegas version**. Check for substring match if hash match; continue search if false collision.
+- Always returns correct answer.
+- Extremely likely to run in linear time (but worst case is *M N*).
+
+**Rabin-Karp analysis**
+
+**Theory**. If *Q* is a sufficiently large random prime (about *M N<sup>2</sup>*), then the probability of a false collision is about *1 / N*.
+
+**Practice**. Choose *Q* to be a large prime (but not so large to cause overflow). Under reasonable assumptions, probability of a collision is about *1 / Q*.
+
+**Advantages**.
+- Extends to 2d patterns.
+- Extends to finding multiple patterns.
+
+
+**Disadvantages**.
+- Arithmetic ops slower than char compares.
+- Las Vegas version requires backup.
+- Poor worst-case guarantee.
+
+### 8.5. Cost summary for substring search implementations
+
+
+<img src="res/cost-substring-search.png" alt="Cost summary for substring search" width="540"></img>
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+## 9. Regular Expressions
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 10. Data Compression
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 11. Reductions
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 12. Linear Programming
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 13. Intractability
 
 
 <br/>

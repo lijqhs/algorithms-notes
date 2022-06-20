@@ -524,6 +524,14 @@ Examples of data structures developed in the book [*Algorithms, 4th Edition, Rob
 | ternary search trie | 5.3 | TST | three links per node |
 
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 2.3. Analysis of Algorithms
 
 **Reasons to analyze algorithms**:
@@ -596,6 +604,14 @@ Total memory usage for a data type value:
 *Shallow memory usage*: Don't count referenced objects.
 
 *Deep memory usage*: If array entry or instance variable is a reference, add memory (recursively) for referenced object.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 2.4. Union-Find
 
@@ -832,6 +848,14 @@ private static void exch(Comparable[] a, int i, int j)
 
 See more: [Sorting Algorithms Animations](https://www.toptal.com/developers/sorting-algorithms).
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 3.1. Selection sort
 
 - In iteration `i`, find index min of smallest remaining entry.
@@ -872,6 +896,14 @@ public class Selection
 **Running time insensitive to input**. Quadratic time, even if input is sorted.
 
 **Data movement is minimal**. Linear number of exchanges.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 3.2. Insertion sort
 
@@ -921,6 +953,14 @@ e.g.: `A E E L M O T R X P S`
 
 **Proposition**. For partially-sorted arrays, insertion sort runs in linear time.  
 > *Pf*. Number of exchanges equals the number of inversions. (number of compares = exchanges + (N – 1).)
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 3.3. Shellsort
 
@@ -979,6 +1019,14 @@ public class Shell {
 >   - Asymptotic growth rate?
 >   - Best sequence of increments?
 >   - Average-case performance?
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
 ### 3.4. Shuffling
@@ -1211,6 +1259,14 @@ private static void sort(Comparable[] a, Comparable[] aux, int lo, int hi)
 }
 ```
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 4.3. Bottom-up mergesort
 
 Bottom-up mergesort consists of a sequence of passes over the whole array, doing `sz-by-sz` merges, starting with `sz` equal to `1` and doubling `sz` on each pass. The final subarray is of size `sz` only when the array size is an even multiple of `sz` (otherwise it is less than `sz`). 
@@ -1281,6 +1337,14 @@ Lower bound may not hold if the algorithm has information about:
 *Duplicate keys*. Depending on the input distribution of duplicates, we may not need `NlgN` compares.
 
 *Digital properties of keys*. We can use digit/character compares instead of key compares for numbers and strings.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 4.5. Comparator
 
@@ -1488,6 +1552,14 @@ public class Quick
 
 *Proposition*. Quicksort is not stable.
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 5.4. Quicksort: practical improvements
 
 *Insertion sort small subarrays.*
@@ -1526,6 +1598,14 @@ private static void sort(Comparable[] a, int lo, int hi)
     sort(a, j+1, hi);
 }
 ```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 5.5. Selection
 
@@ -1615,6 +1695,14 @@ public class Quick3way
 **Proposition**. [Sedgewick-Bentley, 1997] Quicksort with 3-way partitioning is **entropy-optimal**.
 
 Randomized quicksort with 3-way partitioning reduces running time from *linearithmic* to *linear* in broad class of applications.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 5.7. Sorting applications
 
@@ -1773,6 +1861,14 @@ Order of growth of running time for priority queue with N items:
 | unordered array | 1 | N | N | 
 | ordered array | N | 1 | 1 | 
 | goal | log N | log N | log N | 
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 6.5. Binary heaps
 
@@ -2183,6 +2279,14 @@ public class FrequencyCounter
 }
 ```
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 8.2. Ordered symbol tables
 
 In typical applications, keys are *Comparable* objects, so the option exists of using the code `a.compareTo(b)` to compare two keys a and b.
@@ -2262,6 +2366,7 @@ private class Node
     private Key key;
     private Value val;
     private Node left, right;
+
     public Node(Key key, Value val)
     {
         this.key = key;
@@ -2276,16 +2381,16 @@ private class Node
 public class BST<Key extends Comparable<Key>, Value>
 {
     private Node root;
-    private class Node
-    { /* see previous slide */ }
-    public void put(Key key, Value val)
-    { /* see next slides */ }
-    public Value get(Key key)
-    { /* see next slides */ }
-    public void delete(Key key)
-    { /* see next slides */ }
-    public Iterable<Key> iterator()
-    { /* see next slides */ }
+
+    private class Node { }
+
+    public void put(Key key, Value val) { }
+
+    public Value get(Key key) { }
+
+    public void delete(Key key) { }
+
+    public Iterable<Key> iterator() { }
 }
 ```
 
@@ -2334,6 +2439,14 @@ private Node put(Node x, Key key, Value val)
 **Proposition**. [Reed, 2003] If N distinct keys are inserted in random order, expected height of tree is ~ *4.311 ln N*.
 
 Worst-case height is *N*. (exponentially small chance when keys are inserted in random order)
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
 
 
 ### 9.2. Ordered operations
@@ -2653,6 +2766,14 @@ Direct implementation is complicated, because:
 
 *Bottom line*. Could do it, but there's a better way.
 
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
 ### 10.2. Left-leaning red-black BSTs 
 
 #### 10.2.1. Definition
@@ -2825,6 +2946,14 @@ private Node put(Node h, Key key, Value val)
 \* exact value of coefficient unknown but extremely close to 1
 
 
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
 ### 10.3. B-trees
 
 
@@ -2965,6 +3094,14 @@ Sweep vertical line from left to right.
 
 
 *Bottom line*. Sweep line reduces 2d orthogonal line segment intersection search to 1d range search.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 ### 11.3. kd trees
 
@@ -3117,6 +3254,14 @@ Key idea. Suppose particle is far, far away from cluster of particles.
 - To compute total force acting on a particle, traverse tree, but stop as soon as distance from particle to subdivision is sufficiently large.
 
 Running time per step is *N log N*.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 
 ### 11.4. Interval search trees
@@ -3453,6 +3598,14 @@ Note: see [this video on Youtube](https://www.youtube.com/watch?v=3mu47FWEuqA) f
 *Load balancing*. After M tosses, expect most loaded bin has *Θ ( log M / log log M )* balls.
 
 
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
 ### 12.2. Collisions
 
 **Collision**. Two distinct keys hashing to same index.
@@ -3599,6 +3752,14 @@ for search hits and search misses (or inserts), respectively.
 | linear probing | lg N * | lg N * | lg N * | 3-5 * | 3-5 * | 3-5 * | no | equals(), hashCode() | 
 
 \* under uniform hashing assumption
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
 
 
 ### 12.3. Context
