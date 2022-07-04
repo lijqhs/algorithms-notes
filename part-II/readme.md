@@ -131,10 +131,28 @@ Notes are taken from the course [Algorithms, Part II](https://www.coursera.org/l
     - [8.4.1. Efficiently computing the hash function](#841-efficiently-computing-the-hash-function)
   - [8.5. Cost summary for substring search implementations](#85-cost-summary-for-substring-search-implementations)
 - [9. Regular Expressions](#9-regular-expressions)
+  - [9.1. Pattern matching](#91-pattern-matching)
+  - [9.2. Regular expressions](#92-regular-expressions)
+  - [9.3. Duality between REs and DFAs](#93-duality-between-res-and-dfas)
+    - [9.3.1. Pattern matching implementation](#931-pattern-matching-implementation)
+      - [9.3.1.1. Nondeterministic finite-state automata](#9311-nondeterministic-finite-state-automata)
+      - [9.3.1.2. NFA construction: implementation](#9312-nfa-construction-implementation)
+      - [9.3.1.3. NFA construction: analysis](#9313-nfa-construction-analysis)
+  - [9.4. Generalized regular expression print (grep)](#94-generalized-regular-expression-print-grep)
+  - [9.5. Summary of pattern-matching algorithms](#95-summary-of-pattern-matching-algorithms)
 - [10. Data Compression](#10-data-compression)
+  - [10.1. Run-length encoding](#101-run-length-encoding)
+  - [10.2. Huffman compression](#102-huffman-compression)
+  - [10.3. LZW compression](#103-lzw-compression)
+    - [10.3.1. LZW compression](#1031-lzw-compression)
+    - [10.3.2. LZW expansion](#1032-lzw-expansion)
+  - [10.4. Data compression summary](#104-data-compression-summary)
 - [11. Reductions](#11-reductions)
 - [12. Linear Programming](#12-linear-programming)
 - [13. Intractability](#13-intractability)
+- [14. Dynamic Programming (DP)](#14-dynamic-programming-dp)
+  - [14.1. fibonacci](#141-fibonacci)
+  - [14.2. Shortest paths](#142-shortest-paths)
 
 
 ## 1. Undirected Graph
@@ -4109,6 +4127,8 @@ In many applications, we want to avoid backup in text stream.
 
 Brute-force algorithm needs backup for every mismatch.
 
+<img src="res/substring-backup.png" alt="brute force backup" width="450"></img>
+
 Maintain buffer of last M characters.
 
 #### 8.1.2. Brute-force substring search: alternate implementation
@@ -4147,14 +4167,14 @@ public static int search(String pat, String txt)
 
 ### 8.2. Knuth-Morris-Pratt (KMP)
 
-Intuition. Suppose we are searching in text for pattern BAAAAAAAAA.
+**Intuition**. Suppose we are searching in text for pattern `BAAAAAAAAA`.
 - Suppose we match 5 chars in pattern, with mismatch on 6th char.
-- We know previous 6 chars in text are BAAAAB.
+- We know previous 6 chars in text are `BAAAAB`.
 - Don't need to back up text pointer!
 
 #### 8.2.1. Deterministic finite state automaton (DFA)
 
-DFA is abstract string-searching machine.
+**DFA** is abstract string-searching machine.
 - Finite number of states (including start and halt).
 - Exactly one transition for each char in alphabet.
 - Accept if sequence of transitions leads to halt state.
@@ -4184,14 +4204,14 @@ Running time.
 
 #### 8.2.2. Build DFA from pattern
 
-**Match transition**. If in state j and next char c == pat.charAt(j), go to j+1.
-**Mismatch transition**. If in state j and next char `c != pat.charAt(j)`, then the last j-1 characters of input are `pat[1..j-1]`, followed by c.
-- To compute `dfa[c][j]`: Simulate `pat[1..j-1]` on DFA and take transition c.
-- *Running time*. Takes only constant time if we maintain state X.
+**Match transition**. If in state `j` and next char `c == pat.charAt(j)`, go to `j+1`.
+**Mismatch transition**. If in state `j` and next char `c != pat.charAt(j)`, then the last `j-1` characters of input are `pat[1..j-1]`, followed by `c`.
+- To compute `dfa[c][j]`: Simulate `pat[1..j-1]` on DFA and take transition `c`.
+- *Running time*. Takes only constant time if we maintain state `X`.
 
 NOTE:
-- `dfa['A'][5] = 1`: A is the longest prefix of ABABAC that is a suffix of ABABAA.
-- `dfa['B'][5] = 4`: ABAB is the longest prefix of ABABAC that is a suffix of ABABAB.
+- `dfa['A'][5] = 1`: `A` is the longest prefix of `ABABAC` that is a suffix of `ABABAA`.
+- `dfa['B'][5] = 4`: `ABAB` is the longest prefix of `ABABAC` that is a suffix of `ABABAB`.
 - `dfa['C'][5] = 6`: match transition.
 
 <img src="res/kmp-dfa-x.png" alt="build DFA" width="520"></img>
@@ -4201,8 +4221,8 @@ NOTE:
 
 For each state `j`:
 - Copy `dfa[][X]` to `dfa[][j]` for mismatch case.
-- Set `dfa[pat.charAt(j)][j]` to j+1 for match case.
-- Update X.
+- Set `dfa[pat.charAt(j)][j]` to `j+1 `for match case.
+- Update `X`.
 
 ```java
 public KMP(String pat)
@@ -4489,6 +4509,363 @@ public class RabinKarp
 
 ## 9. Regular Expressions
 
+### 9.1. Pattern matching
+
+- **Substring search**. Find a *single* string in text.
+- **Pattern matching**. Find one of *a specified set of strings* in text.
+
+***Examples***.
+- genomics
+  - Fragile X syndrome is an inherited genetic disease. 
+  - A human's genome is a string. 
+  - It contains triplet repeats of CGG or AGG, bracketed by GCG at the beginning and CTG at the end. 
+  - Number of repeats is variable and is correlated to syndrome.
+    - pattern: GCG(CGG|AGG)*CTG
+    - text: GCGGCGTGTGTGCGAGAGAGTGGGTTTAAAGCTG**GCGCGGAGGCGGCTG**GCGCGGAGGCTG
+- Syntax highlighting
+- Google code search
+
+***Applications***.
+
+Test if a string matches some pattern.
+- Scan for virus signatures.
+- Process natural language.
+- Specify a programming language.
+- Access information in digital libraries.
+- Search genome using PROSITE patterns.
+- Filter text (spam, NetNanny, Carnivore, malware).
+- Validate data-entry fields (dates, email, URL, credit card).
+- ...
+
+Parse text files.
+- Compile a Java program.
+- Crawl and index the Web.
+- Read in data stored in ad hoc input file format.
+- Create Java documentation from Javadoc comments.
+- ...
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+### 9.2. Regular expressions
+
+A [regular expression](https://en.wikipedia.org/wiki/Regular_expression) is a notation to specify a set of strings (possibly infinite). 
+
+operations:
+- concatenation: 3(order), `AABAAB`
+- or: 4, `AA | BAAB`
+- closure: 2, `AB*A`
+- parentheses: 1, `A(A|B)AAB`, `(AB)*A`
+- wildcard: `.U.U.U.`
+- character class: `[A-Za-z][a-z]*`
+- at least 1: `A(BC)+DE`
+- exactly k: `[0-9]{5}-[0-9]{4}`
+
+Ex. `[A-E]+` is shorthand for `(A|B|C|D|E)(A|B|C|D|E)*`
+
+RE notation is surprisingly expressive.
+- `.*SPB.*` (substring search)
+- `[0-9]{3}-[0-9]{2}-[0-9]{4}` (U. S. Social Security numbers)
+- `[a-z]+@([a-z]+\.)+(edu|com)` (simplified email addresses)
+- `[$_A-Za-z][$_A-Za-z0-9]*` (Java identifiers)
+
+REs play a well-understood role in the theory of computation.
+
+Regular expression caveat
+
+Writing a RE is like writing a program. REs are amazingly powerful and expressive, but using them in applications can be amazingly complex and error-prone.
+- Need to understand programming model.
+- Can be easier to write than read.
+- Can be difficult to debug.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+### 9.3. Duality between REs and DFAs
+
+**RE**. Concise way to describe a set of strings.
+
+**DFA**. Machine to recognize whether a given string is in a given set.
+
+**Kleene's theorem**.
+- For any DFA, there exists a RE that describes the same set of strings.
+- For any RE, there exists a DFA that recognizes the same set of strings.
+
+| RE (number of 1's is a multiple of 3) | DFA (number of 1's is a multiple of 3) | 
+| :--: | :--: |
+| `0* \| (0*10*10*10*)*` | <img src="res/dfa.png" alt="DFA" width="130"></img> |
+
+#### 9.3.1. Pattern matching implementation
+
+To apply Kleene’s theorem by building Deterministic finite state automata (DFA) from RE is **infeasible** because DFA may have exponential # of states.
+
+Instead, apply Kleene’s theorem by building [Nondeterministic finite state automata (NFA)](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) from RE and simulating NFA with text as input.
+
+##### 9.3.1.1. Nondeterministic finite-state automata
+
+Regular-expression-matching NFA.
+- We assume RE enclosed in parentheses.
+- One state per RE character (start = 0, accept = M).
+- Red **ε-transition** (change state, but don't scan text).
+- Black match transition (change state and scan to next text char).
+- Accept if any sequence of transitions (after scanning all text characters) ends in accept state.
+
+**Nondeterminism**.
+- One view: machine can guess the proper sequence of state transitions.
+- Another view: sequence is a proof that the machine accepts the text.
+
+<img src="res/nfa.png" alt="NFA" width="500"></img>
+
+Q. How to determine whether a string is matched by an automaton?
+- DFA. Deterministic ⇒ easy because exactly one applicable transition.
+- NFA. Nondeterministic ⇒ can be several applicable transitions; need to select the right one!
+
+Q. How to simulate NFA?  
+A. Systematically consider all possible transition sequences.
+
+Q. How to efficiently simulate an NFA?  
+A. Maintain set of all possible states that NFA could be in after reading in the first i text characters.
+
+**Digraph reachability**. Find all vertices reachable from a given source or set of vertices.
+
+**NFA simulation: Java implementation**
+
+```java
+public class NFA
+{
+    private char[] re;  // match transitions
+    private Digraph G;  // epsilon transition digraph
+    private int M;      // number of states
+
+    public NFA(String regexp)
+    {
+        M = regexp.length();
+        re = regexp.toCharArray();
+        G = buildEpsilonTransitionDigraph();
+    }
+
+    public boolean recognizes(String txt)
+    {
+        Bag<Integer> pc = new Bag<Integer>();
+        DirectedDFS dfs = new DirectedDFS(G, 0);
+        for (int v = 0; v < G.V(); v++)
+            if (dfs.marked(v)) pc.add(v);
+        for (int i = 0; i < txt.length(); i++)
+        {
+            Bag<Integer> states = new Bag<Integer>();
+            for (int v : pc)
+            {
+                if (v == M) continue;
+                if ((re[v] == txt.charAt(i)) || re[v] == '.')
+                    states.add(v+1);
+            }
+            dfs = new DirectedDFS(G, states);
+            pc = new Bag<Integer>();
+            for (int v = 0; v < G.V(); v++)
+                if (dfs.marked(v)) pc.add(v);
+        }
+        for (int v : pc)
+            if (v == M) return true;
+        return false;
+    }
+
+    public Digraph buildEpsilonTransitionDigraph()
+    { /* stay tuned */ }
+}
+```
+
+**NFA simulation: analysis**
+
+**Proposition**. Determining whether an N-character text is recognized by the NFA corresponding to an M-character pattern takes time proportional to *M N* in the worst case.  
+<details>
+
+<summary>Proof.</summary>
+
+>For each of the N text characters, we iterate through a set of states of size no more than M and run DFS on the graph of ε-transitions. [The NFA construction we will consider ensures the number of edges ≤ 3M.]
+
+</details>
+
+##### 9.3.1.2. NFA construction: implementation
+
+**States**. Include a state for each symbol in the RE, plus an accept state.
+
+**Concatenation**. Add match-transition edge from state corresponding to characters in the alphabet to next state.
+
+**Metacharacters**. `( ) . * |`
+
+**Goal**. Write a program to build the ε-transition digraph.
+
+**Challenges**. Remember left parentheses to implement closure and or; remember `|` to implement or.
+
+**Solution**. Maintain a stack.
+- `(` symbol: push `(` onto stack.
+- `|` symbol: push `|` onto stack.
+- `)` symbol: pop corresponding `(` and any intervening `|`; add ε-transition edges for closure/or.
+
+```java
+private Digraph buildEpsilonTransitionDigraph() {
+    Digraph G = new Digraph(M+1);
+    Stack<Integer> ops = new Stack<Integer>();
+    for (int i = 0; i < M; i++) {
+        int lp = i;
+        if (re[i] == '(' || re[i] == '|') ops.push(i);  // left parentheses and |
+        else if (re[i] == ')') {
+            int or = ops.pop();
+            if (re[or] == '|') {
+                lp = ops.pop();     // 2-way or
+                G.addEdge(lp, or+1);
+                G.addEdge(or, i);
+            }
+            else lp = or;
+        }
+        if (i < M-1 && re[i+1] == '*') {    // closure (needs 1-character lookahead)
+            G.addEdge(lp, i+1);
+            G.addEdge(i+1, lp);
+        }
+        if (re[i] == '(' || re[i] == '*' || re[i] == ')')   // metasymbols
+            G.addEdge(i, i+1);
+    }
+    return G;
+}
+```
+
+##### 9.3.1.3. NFA construction: analysis
+
+**Proposition**. Building the NFA corresponding to an M-character RE takes time and space proportional to M.
+
+**Proof**. For each of the M characters in the RE, we add at most three ε-transitions and execute at most two stack operations.
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+### 9.4. Generalized regular expression print (grep)
+
+**Grep**. Take a RE as a command-line argument and print the lines from standard input having some substring that is matched by the RE.
+
+```java
+public class GREP
+{
+    public static void main(String[] args)
+    {
+        String re = "(.*" + args[0] + ".*)";    // contains RE as a substring
+        NFA nfa = new NFA(re);
+        while (StdIn.hasNextLine())
+        {
+            String line = StdIn.readLine();
+            if (nfa.recognizes(line))
+                StdOut.println(line);
+        }
+    }
+}
+```
+
+**Industrial-strength grep implementation**
+
+To complete the implementation:
+- Add multiway `or`.
+- Handle metacharacters.
+- Support character classes.
+- Add capturing capabilities.
+- Extend the closure operator.
+- Error checking and recovery.
+- Greedy vs. reluctant matching.
+
+Worst-case for grep (proportional to *M N*) is the same as for brute-force substring search.
+
+**Regular expressions in Java**
+
+- Validity checking. Does the input match the re?  
+- Java string library. Use `input.matches(re)` for basic RE matching.
+
+**Harvesting information**
+
+**Goal**. Print all substrings of input that match a RE. 
+
+RE pattern matching is implemented in Java's `java.util.regexp.Pattern` and `java.util.regexp.Matcher` classes.
+
+```java
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+public class Harvester {
+    public static void main(String[] args) {
+        String regexp = args[0];
+        In in = new In(args[1]);
+        String input = in.readAll();
+
+        Pattern pattern = Pattern.compile(regexp);  // compile() creates a Pattern (NFA) from RE
+        Matcher matcher = pattern.matcher(input);   // matcher() creates a Matcher (NFA simulator) from NFA and text
+
+        while (matcher.find()) {                    // find() looks for the next match
+            StdOut.println(matcher.group());        // group() returns the substring most recently found by find()
+        }
+    }
+}
+```
+
+**Algorithmic complexity attacks**
+
+Warning. Typical implementations do not guarantee performance!
+
+- Takes exponential time on pathological email addresses.
+- Troublemaker can use such addresses to DOS a mail server.
+
+**Context**
+
+**Abstract machines**, **languages**, and **nondeterminism**.
+- Basis of the theory of computation.
+- Intensively studied since the 1930s.
+- Basis of programming languages.
+
+**Compiler**. A program that translates a program to machine code.
+- KMP string ⇒ DFA.
+- grep RE ⇒ NFA.
+- javac Java language ⇒ Java byte code.
+
+| | KMP | grep | Java |
+| :--: | :--: | :--: | :--: |
+| **pattern** | string | RE | program |
+| **parser** | unnecessary | check if legal | check if legal | 
+| **compiler output** | DFA | NFA | byte code | 
+| **simulator** | DFA simulator | NFA simulator | JVM | 
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+### 9.5. Summary of pattern-matching algorithms
+
+**Programmer**.
+- Implement substring search via DFA simulation.
+- Implement RE pattern matching via NFA simulation.
+
+
+**Theoretician**.
+- RE is a compact description of a set of strings.
+- NFA is an abstract machine equivalent in power to RE.
+- DFAs, NFAs, and REs have limitations.
+
 
 <br/>
 <div align="right">
@@ -4499,6 +4876,99 @@ public class RabinKarp
 
 ## 10. Data Compression
 
+- **Message**. Binary data `B` we want to compress.
+- **Compress**. Generates a "compressed" representation `C(B)`, which uses fewer bits (you hope).
+- **Expand**. Reconstructs original bitstream `B`.
+- **Compression ratio**. Bits in C (B) / bits in B.
+  - Ex. 50–75% or better compression ratio for natural language.
+
+
+**API for *static* methods that read from a bitstream on standard input**:
+| `public class BinaryStdIn` ||
+| :--: | :--: |
+| `boolean readBoolean()` | read 1 bit of data and return as a boolean value|
+| `char readChar()` | read 8 bits of data and return as a char value|
+| `char readChar(int r)` | read r (between 1 and 16) bits of data and return as a char value [similar methods for byte (8 bits); short (16 bits); int (32 bits); long and double (64 bits)]|
+| `boolean isEmpty()` | is the bitstream empty?|
+| `void close()` | close the bitstream |
+
+**API for *static* methods that write to a bitstream on standard output**:
+| `public class BinaryStdOut` ||
+| :--: | :--: |
+| `void write(boolean b)` | write the specified bit| 
+| `void write(char c)` | write the specified 8-bit char| 
+| `void write(char c, int r)` | write the r (between 1 and 16) least significant bits of the specified char [similar methods for byte (8 bits); short (16 bits); int (32 bits); long and double (64 bits)]| 
+| `void close()` | close the bitstream| 
+
+**Example**. Suppose that you have a nn-byte input stream consisting of `n` 7-bit ASCII characters. Approximately what compression ratio does Huffman compression achieve if each ASCII character appears with equal frequency?
+
+<details>
+
+<summary>answer.</summary>
+
+7/8. The Huffman trie will be a complete binary trie of height 7 (with the 128 characters in the leaves). Therefore, the encoding of each character will require 7 bits.
+
+</details>
+
+**Proposition**. No algorithm can compress every bitstream.
+
+### 10.1. Run-length encoding
+
+Simple type of redundancy in a bitstream. Long runs of repeated bits.
+
+`0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1`
+
+*Representation*. 4-bit counts to represent alternating runs of 0s and 1s:
+15 0s, then 7 1s, then 7 0s, then 11 1s.
+
+```java
+public class RunLength
+{
+    private final static int R = 256;
+    private final static int lgR = 8;
+
+    public static void expand()
+    {
+        boolean b = false;
+        while (!BinaryStdIn.isEmpty())
+        {
+            char cnt = BinaryStdIn.readChar();
+            for (int i = 0; i < cnt; i++)
+                BinaryStdOut.write(b);
+            b = !b;
+        }
+        BinaryStdOut.close();
+    }
+
+    public static void compress()
+    {
+        char cnt = 0;
+        boolean b, old = false;
+        while (!BinaryStdIn.isEmpty())
+        {
+            b = BinaryStdIn.readBoolean();
+            if (b != old)
+            {
+                BinaryStdOut.write(cnt);
+                cnt = 0;
+                old = !old;
+            }
+            else
+            {
+                if (cnt == 255)
+                {
+                    BinaryStdOut.write(cnt);
+                    cnt = 0;
+                    BinaryStdOut.write(cnt);
+                }
+            }
+            cnt++;
+        }
+        BinaryStdOut.write(cnt);
+        BinaryStdOut.close();
+    }
+}
+```
 
 
 <br/>
@@ -4507,6 +4977,412 @@ public class RabinKarp
 </div>
 <br/>
 
+
+### 10.2. Huffman compression
+
+Use different number of bits to encode different chars.
+
+- Ex. Morse code: `• • • − − − • • •`
+- Issue. Ambiguity.
+  - SOS ?
+  - V7 ?
+  - IAMIE ?
+  - EEWNI ?
+- In practice. Use a medium gap to separate codewords.
+
+Q. How do we avoid ambiguity?   
+A. Ensure that no codeword is a **prefix** of another.
+- Ex 1. Fixed-length code.
+- Ex 2. Append special stop char to each codeword.
+- Ex 3. General prefix-free code.
+
+**Prefix-free codes: trie representation**
+
+Q. How to represent the prefix-free code?  
+A. A binary trie!
+- Chars in leaves.
+- Codeword is path from root to leaf.
+
+**Prefix-free codes: compression and expansion**
+
+Compression.
+- Method 1: start at leaf; follow path up to the root; print bits in reverse.
+- Method 2: create ST of key-value pairs.
+
+Expansion.
+- Start at root.
+- Go left if bit is 0; go right if 1.
+- If leaf node, print char and return to root.
+
+
+**Huffman trie node data type**
+
+```java
+private static class Node implements Comparable<Node>
+{
+    private final char ch; // used only for leaf nodes
+    private final int freq; // used only for compress
+    private final Node left, right;
+    
+    public Node(char ch, int freq, Node left, Node right)
+    {
+        this.ch = ch;
+        this.freq = freq;
+        this.left = left;
+        this.right = right;
+    }
+    
+    public boolean isLeaf()
+    { return left == null && right == null; }
+    
+    public int compareTo(Node that)
+    { return this.freq - that.freq; }
+}
+```
+
+Running time. Linear in input size `N`.
+
+
+Q. How to write the trie?  
+A. Write preorder traversal of trie; mark leaf and internal nodes with a bit.
+
+Q. How to read in the trie?  
+A. Reconstruct from preorder traversal of trie.
+
+**Constructing a Huffman encoding trie: Java implementation**
+
+```java
+private static Node buildTrie(int[] freq)
+{
+    // Initialize priority queue with singleton trees.
+    MinPQ<Node> pq = new MinPQ<Node>();
+    for (char i = 0; i < R; i++)
+        if (freq[i] > 0)
+            pq.insert(new Node(i, freq[i], null, null));
+
+    while (pq.size() > 1)
+    {   // Merge two smallest trees.
+        Node x = pq.delMin();
+        Node y = pq.delMin();
+        Node parent = new Node('\0', x.freq + y.freq, x, y);
+        pq.insert(parent);
+    }
+    return pq.delMin();
+}
+```
+
+Proposition. [Huffman 1950s] Huffman algorithm produces an optimal prefix-free code.
+
+**ALGORITHM Huffman compression**
+
+Huffman algorithm:
+- Count frequency `freq[i]` for each char `i` in input.
+- Start with one node corresponding to each char `i` (with weight `freq[i]`).
+- Repeat until single trie formed:
+  - select two tries with min weight `freq[i]` and `freq[j]`
+  - merge into single trie with weight `freq[i] + freq[j]`
+
+```java
+public class Huffman
+{
+    private static int R = 256; // ASCII alphabet
+
+    public static void compress()
+    {
+        // Read input.
+        String s = BinaryStdIn.readString();
+        char[] input = s.toCharArray();
+        // Tabulate frequency counts.
+        int[] freq = new int[R];
+
+        for (int i = 0; i < input.length; i++)
+            freq[input[i]]++;
+
+        // Build Huffman code trie.
+        Node root = buildTrie(freq);
+        // Build code table (recursive).
+        String[] st = new String[R];
+
+        buildCode(st, root, "");
+        // Print trie for decoder (recursive).
+        writeTrie(root);
+        // Print number of chars.
+        BinaryStdOut.write(input.length);
+        // Use Huffman code to encode input.
+        
+        for (int i = 0; i < input.length; i++)
+        {
+            String code = st[input[i]];
+            for (int j = 0; j < code.length(); j++)
+                if (code.charAt(j) == '1')
+                    BinaryStdOut.write(true);
+                else BinaryStdOut.write(false);
+        }
+        BinaryStdOut.close();
+    }
+
+    private static String[] buildCode(Node root)
+    { // Make a lookup table from trie.
+        String[] st = new String[R];
+        buildCode(st, root, "");
+        return st;
+    }
+
+    private static void buildCode(String[] st, Node x, String s)
+    { // Make a lookup table from trie (recursive).
+        if (x.isLeaf())
+        { st[x.ch] = s; return; }
+        buildCode(st, x.left, s + '0');
+        buildCode(st, x.right, s + '1');
+    }
+
+    public void expand()
+    {
+        Node root = readTrie();         // read in encoding trie
+        int N = BinaryStdIn.readInt();  // read in number of chars
+        for (int i = 0; i < N; i++)
+        {
+            Node x = root;
+            while (!x.isLeaf())         // expand codeword for ith char
+            {
+                if (!BinaryStdIn.readBoolean())
+                    x = x.left;
+                else
+                    x = x.right;
+            }
+            BinaryStdOut.write(x.ch, 8);
+        }
+        BinaryStdOut.close();
+    }
+
+    private static void writeTrie(Node x)
+    {
+        if (x.isLeaf())
+        {
+            BinaryStdOut.write(true);
+            BinaryStdOut.write(x.ch, 8);
+            return;
+        }
+        BinaryStdOut.write(false);
+        writeTrie(x.left);
+        writeTrie(x.right);
+    }
+
+    private static Node readTrie()
+    {
+        if (BinaryStdIn.readBoolean())
+        {
+            char c = BinaryStdIn.readChar(8);
+            return new Node(c, 0, null, null);
+        }
+        Node x = readTrie();
+        Node y = readTrie();
+        return new Node('\0', 0, x, y);
+    }
+
+    private static Node buildTrie(int[] freq)
+    {
+        // Initialize priority queue with singleton trees.
+        MinPQ<Node> pq = new MinPQ<Node>();
+        for (char i = 0; i < R; i++)
+            if (freq[i] > 0)
+                pq.insert(new Node(i, freq[i], null, null));
+
+        while (pq.size() > 1)
+        {   // Merge two smallest trees.
+            Node x = pq.delMin();
+            Node y = pq.delMin();
+            Node parent = new Node('\0', x.freq + y.freq, x, y);
+            pq.insert(parent);
+        }
+        return pq.delMin();
+    }
+}
+```
+
+Implementation.
+- Pass 1: tabulate char frequencies and build trie.
+- Pass 2: encode file by traversing trie or lookup table.
+
+
+**Running time**. Using a binary heap ⇒ `N + R log R`.
+
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+### 10.3. LZW compression
+
+**Static model**. Same model for all texts.
+- Fast.
+- Not optimal: different texts have different statistical properties.
+- Ex: ASCII, Morse code.
+
+**Dynamic model**. Generate model based on text.
+- Preliminary pass needed to generate model.
+- Must transmit the model.
+- Ex: Huffman code.
+
+**Adaptive model**. Progressively learn and update model as you read text.
+- More accurate modeling produces better compression.
+- Decoding must start from beginning.
+- Ex: LZW.
+
+#### 10.3.1. LZW compression
+
+
+LZW compression.
+- Create ST associating W-bit codewords with string keys.
+- Initialize ST with codewords for single-char keys.
+- Find longest string `s` in ST that is a prefix of unscanned part of input. (longest prefix match)
+- Write the W-bit codeword associated with `s`.
+- Add `s + c` to ST, where `c` is next char in the input.
+
+Q. How to represent LZW compression code table?  
+A. A trie to support longest prefix match.
+
+#### 10.3.2. LZW expansion
+
+LZW expansion.
+- Create ST associating string values with W-bit keys.
+- Initialize ST to contain single-char values.
+- Read a W-bit key.
+- Find associated string value in ST and write it out.
+- Update ST.
+
+
+Q. How to represent LZW expansion code table?  
+A. An array of size 2<sup>W</sup>.
+
+**LZW compression: Java implementation**
+
+```java
+
+public class LZW
+{
+    private static final int R = 256;   // number of input chars
+    private static final int L = 4096;  // number of codewords = 2^12
+    private static final int W = 12;    // codeword width
+
+    public static void compress()
+    {
+        String input = BinaryStdIn.readString();
+        TST<Integer> st = new TST<Integer>();
+        for (int i = 0; i < R; i++)
+            st.put("" + (char) i, i);
+        int code = R+1;                 // R is codeword for EOF.
+        while (input.length() > 0)
+        {
+            String s = st. l ongestPrefixOf(input); // Find max prefix match.
+            BinaryStdOut.write(st.get(s), W);       // Print s's encoding.
+            int t = s.length();
+            if (t < input.length() && code < L)     // Add s to symbol table.
+                st.put(input.substring(0, t + 1), code++);
+            input = input.substring(t);             // Scan past s in input.
+        }
+        BinaryStdOut.write(R, W);                   // Write EOF.
+        BinaryStdOut.close();
+    }
+
+    public static void expand()
+    {
+        String[] st = new String[L];
+        int i;                                  // next available codeword value
+        for (i = 0; i < R; i++)                 // Initialize table for chars.
+            st[i] = "" + (char) i;
+        st[i++] = " ";                          // (unused) lookahead for EOF
+        int codeword = BinaryStdIn.readInt(W);
+        String val = st[codeword];
+        while (true)
+        {
+            BinaryStdOut.write(val);            // Write current substring.
+            codeword = BinaryStdIn.readInt(W);
+            if (codeword == R) break;
+            String s = st[codeword];            // Get next codeword.
+            if (i == codeword)                  // If lookahead is invalid,
+                s = val + val.charAt(0);        // make codeword from last one.
+            if (i < L)
+                st[i++] = val + s.charAt(0);    // Add new entry to code table.
+            val = s;                            // Update current codeword.
+        }
+        BinaryStdOut.close();
+    }
+}
+```
+
+**LZW implementation details**
+
+How big to make ST?
+- How long is message?
+- Whole message similar model?
+- [many other variations]
+
+
+What to do when ST fills up?
+- Throw away and start over. [GIF]
+- Throw away when not effective. [Unix compress]
+- [many other variations]
+
+
+Why not put longer substrings in ST?
+- [many variations have been developed]
+
+
+Lempel-Ziv and friends.
+- LZ77.
+- LZ78.
+- LZW.
+- Deflate / zlib = LZ77 variant + Huffman.
+
+
+**Lossless data compression benchmarks**
+
+| year | scheme | bits/char |
+| :--: | :--: | :--: |
+| 1967 | ASCII | 7.00 |
+| 1950 | Huffman | 4.70 |
+| 1977 | LZ77 | 3.94 |
+| 1984 | LZMW | 3.32 |
+| 1987 | LZH | 3.30 |
+| 1987 | move-to-front | 3.24 |
+| 1987 | LZB | 3.18 |
+| 1987 | gzip | 2.71 |
+| 1988 | PPMC | 2.48 |
+| 1994 | SAKDC | 2.47 |
+| 1994 | PPM | 2.34 |
+| 1995 | [**Burrows-Wheeler**](week5/readme.md) | 2.29 |
+| 1997 | BOA | 1.99 |
+| 1999 | RK | 1.89 |
+
+Note: data compression using Calgary corpus
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+### 10.4. Data compression summary
+
+**Lossless compression**.
+- Represent fixed-length symbols with variable-length codes. [Huffman]
+- Represent variable-length symbols with fixed-length codes. [LZW]
+
+**Lossy compression**.
+- JPEG, MPEG, MP3, …
+- FFT, wavelets, fractals, …
+
+**Theoretical limits on compression.**
+- Shannon entropy: H(X) = -sum(p(x<sub>i</sub>)lgp(x<sub>i</sub>))
+
+**Practical compression**. Use extra knowledge whenever possible.
 
 ## 11. Reductions
 
@@ -4529,6 +5405,137 @@ public class RabinKarp
 
 
 ## 13. Intractability
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+
+## 14. Dynamic Programming (DP)
+
+- [MIT lecture: DP 1](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-19-dynamic-programming-i-fibonacci-shortest-paths/)
+  - [note 1](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/b6d4083131dd16e7d97f56d04b6e858f_MIT6_006F11_lec19.pdf)
+- [MIT lecture: DP 2](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-20-dynamic-programming-ii-text-justification-blackjack/)
+  - [note 2](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/9f38f5c9ff4172f8b58be390c89b61d2_MIT6_006F11_lec20.pdf)
+- [MIT lecture: DP 3](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-21-dp-iii-parenthesization-edit-distance-knapsack/)
+  - [note 3](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/3484e876d81aba07911a1109f5b5e81e_MIT6_006F11_lec21.pdf)
+- MIT lecture: DP 4
+  - note 4
+
+Invented by Richard Bellman (as a precursor to the Bellman-Ford algorithm)
+
+Dynamic programming can be thought as a kind of exhaustive search, which is usually a bad thing to do because it leads to exponential time. But if you do it in a clever way, via dynamic programming, you typically get polynomial time.
+
+- algorithm design technique
+- "careful brute force"
+- subproblems + "reuse"
+
+
+> In computing, **memoization** is used to speed up computer programs by eliminating the repetitive computation of results, and by avoiding repeated calls to functions that process the same input.
+> 
+> Memoization is a specific form of caching that is used in *dynamic programming*. The purpose of caching is to improve the performance of our programs and keep data accessible that can be used later. It basically stores the previously calculated result of the subproblem and uses the stored result for the same subproblem. This removes the extra effort to calculate again and again for the same problem. And we already know that if the same problem occurs again and again, then that problem is recursive in nature.
+> 
+> via [what is memoization](https://www.geeksforgeeks.org/what-is-memoization-a-complete-tutorial/)
+
+Dynamic Programming:
+- Top-down approach: memoization
+- Bottom-up approach: tabulation
+
+### 14.1. fibonacci
+
+**DP is similar to recursion + memoization**
+- memoize (remember); and re-use solutions to subproblems that help solve the problem.
+- time = #subproblems * time of subproblem (O(1), don't count recursions)
+  - Ex: fibonacci: O(n)
+
+**Bottom-up DP algorithm for fibonacci**
+
+```python
+def fibo(n):
+    fib = [0] * (n + 1)
+    for k in range(n + 1):
+        if k == 2 or k == 1: fib[k] = 1
+        else:
+            fib[k] = fib[k-1] + fib[k-2]
+    return fib[n]
+```
+
+- In general, the bottom-up does exactly the same computation as the memoized version.
+- topological sort of subproblem dependency DAG
+- can often save space
+
+```mermaid
+graph LR;
+    Z[...] --> A[F_n-3];
+    A --> B[F_n-2];
+    Z --> B;
+    B --> C[F_n-1];
+    A --> C;
+    C --> D[F_n];
+    B --> D;
+```
+
+```python
+def fibo2(n):
+    """
+    constant space
+    """
+    fib = [0] * 2
+    for k in range(1,n+1):
+        if k == 2 or k == 1: fib[k%2] = 1
+        else:
+            fib[k%2] = fib[(k-1)%2] + fib[(k-2)%2]
+    return fib[n%2]
+```
+
+### 14.2. Shortest paths
+
+- guessing: don't know. The answer? guess. 
+  - try all guesses
+  - take best one
+  - DP is similar to **recursion** + **memoization** + **guessing**
+
+
+
+```mermaid
+graph LR;
+    A((s)) --> B((_));
+    A --> X((...));
+    B --> C((_));
+    C --> D((u));
+    D --> E((v));
+```
+
+- d(s,v) = min{(d(s,u)+w(u,v))}, (u,v) ∈ E. recursive call
+
+
+```mermaid
+graph TD;
+    s --> b;
+    b --> a;
+    a --> v;
+    a --> s;
+    v --> b;
+```
+
+- infinite time for graphs with cycles
+- DAGs: O(V+E), time for subprob d(s,v) = indegree(v)+1 => total time = sum(indegree(v)+1) = O(V+E)
+- subproblem dependency should be **acyclic**
+
+**5 "easy" steps to Dynamic Programming**:
+1. define subproblems. `count #subproblems`
+2. guess (part of solution). `count #choices for guess`
+3. relate subproblem solutions. `compute time/subproblem`
+4. recurse + memoize. `time = time/subproblem * #subproblems`
+   - or build DP table bottom-up
+   - check subproblems acyclic/topological order
+5. solve original problem: = a subproblem or by combining subproblem solutions. `extra time`
+
 
 
 <br/>

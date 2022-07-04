@@ -1483,7 +1483,7 @@ A stable sort preserves the relative order of items with equal keys.
 
 *Partitioning process*
 
-- Repeat until `i` and `j` pointers cross**.
+- Repeat until `i` and `j` pointers cross.
   - Scan `i` from left to right so long as (`a[i]` < `a[lo]`).
   - Scan `j` from right to left so long as (`a[j] > a[lo]`).
   - Exchange `a[i]` with `a[j]`.
