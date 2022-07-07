@@ -10,5 +10,4 @@ The notes are taken from the *Algorithms* course on Coursera ([Part I](https://w
 Resources link:
 - [Algorithms, 4th Edition](https://algs4.cs.princeton.edu/home/)
 - [Lecture PPT](https://algs4.cs.princeton.edu/lectures/)
-- [Mathematics for Computer Science](https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/) (MIT Open Course)
 - [Introduction to Algorithms](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/) (MIT Open Course)
