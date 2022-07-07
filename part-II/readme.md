@@ -147,12 +147,32 @@ Notes are taken from the course [Algorithms, Part II](https://www.coursera.org/l
     - [10.3.1. LZW compression](#1031-lzw-compression)
     - [10.3.2. LZW expansion](#1032-lzw-expansion)
   - [10.4. Data compression summary](#104-data-compression-summary)
-- [11. Reductions](#11-reductions)
-- [12. Linear Programming](#12-linear-programming)
-- [13. Intractability](#13-intractability)
-- [14. Dynamic Programming (DP)](#14-dynamic-programming-dp)
-  - [14.1. fibonacci](#141-fibonacci)
-  - [14.2. Shortest paths](#142-shortest-paths)
+- [11. Advanced topics](#11-advanced-topics)
+  - [11.1. Reductions](#111-reductions)
+    - [11.1.1. designing algorithms](#1111-designing-algorithms)
+      - [11.1.1.1. Convex hull reduces to sorting](#11111-convex-hull-reduces-to-sorting)
+      - [11.1.1.2. Shortest paths on edge-weighted graphs and digraphs](#11112-shortest-paths-on-edge-weighted-graphs-and-digraphs)
+      - [11.1.1.3. Linear-time reductions involving familiar problems](#11113-linear-time-reductions-involving-familiar-problems)
+    - [11.1.2. establishing lower bounds](#1112-establishing-lower-bounds)
+      - [11.1.2.1. Linear-time reductions](#11121-linear-time-reductions)
+    - [11.1.3. Classifying problems](#1113-classifying-problems)
+  - [11.2. Linear Programming](#112-linear-programming)
+    - [11.2.1. Applications](#1121-applications)
+    - [11.2.2. Standard form linear program](#1122-standard-form-linear-program)
+    - [11.2.3. Simplex algorithm](#1123-simplex-algorithm)
+    - [11.2.4. Implementations](#1124-implementations)
+    - [11.2.5. Reductions to standard form](#1125-reductions-to-standard-form)
+  - [11.3. Intractability](#113-intractability)
+    - [11.3.1. Four fundamental problems](#1131-four-fundamental-problems)
+    - [11.3.2. Search problems](#1132-search-problems)
+    - [11.3.3. P vs. NP](#1133-p-vs-np)
+    - [11.3.4. classifying problems](#1134-classifying-problems)
+      - [11.3.4.1. A key problem: satisfiability](#11341-a-key-problem-satisfiability)
+      - [11.3.4.2. SAT poly-time reduces to ILP](#11342-sat-poly-time-reduces-to-ilp)
+    - [11.3.5. NP-completeness](#1135-np-completeness)
+- [12. Dynamic Programming (DP)](#12-dynamic-programming-dp)
+  - [12.1. fibonacci](#121-fibonacci)
+  - [12.2. Shortest paths](#122-shortest-paths)
 
 
 ## 1. Undirected Graph
@@ -5384,7 +5404,231 @@ Note: data compression using Calgary corpus
 
 **Practical compression**. Use extra knowledge whenever possible.
 
-## 11. Reductions
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+## 11. Advanced topics
+
+Main topics.
+- Reduction: design algorithms, establish lower bounds, classify problems.
+- Linear programming: the ultimate practical problem-solving model.
+- Intractability: problems beyond our reach.
+
+Shifting gears.
+- From individual problems to problem-solving models.
+- From linear/quadratic to polynomial/exponential scale.
+- From details of implementation to conceptual framework.
+
+Goals.
+- Place algorithms we've studied in a larger context.
+- Introduce you to important and essential ideas.
+- Inspire you to learn more about algorithms!
+
+### 11.1. Reductions
+
+Desiderata. Classify problems according to computational requirements.
+
+Def. Problem X reduces to problem Y if you can use an algorithm that solves Y to help solve X.
+
+**Cost of solving X** = **total cost of solving Y** (perhaps many calls to Y on problems of different sizes) + **cost of reduction** (preprocessing and postprocessing).
+
+*Ex 1*. [finding the median reduces to sorting]  
+To find the median of N items:
+- Sort N items.
+- Return item in the middle.
+
+**Cost of solving finding the median**. *N log N + 1*. (cost of sorting + cost of reduction)
+
+*Ex 2*. [element distinctness reduces to sorting]
+To solve element distinctness on N items:
+- Sort N items.
+- Check adjacent pairs for equality.
+
+**Cost of solving element distinctness**. *N log N + N*.
+
+#### 11.1.1. designing algorithms
+
+Establishing lower bounds through reduction is an important tool in guiding algorithm design efforts.
+
+**Design algorithm**. Given algorithm for Y, can also solve X.
+
+Ex.
+- 3-collinear reduces to sorting. [assignment of part I](../part-I/week3/readme.md)
+- Finding the median reduces to sorting.
+- Element distinctness reduces to sorting.
+- CPM reduces to topological sort. [shortest paths lecture](#463-longest-paths-in-edge-weighted-dags-application)
+- Arbitrage reduces to shortest paths. [shortest paths lecture](#473-negative-cycle-application-arbitrage-detection)
+- Burrows-Wheeler transform reduces to suffix sort. [assignment of week 5](week5/readme.md)
+- …
+
+##### 11.1.1.1. Convex hull reduces to sorting
+
+**Sorting**. Given N distinct integers, rearrange them in ascending order.
+
+**Convex hull**. Given N points in the plane, identify the extreme points of the convex hull (in counterclockwise order).
+
+
+**Proposition**. Convex hull reduces to sorting.  
+Pf. Graham scan algorithm.
+
+**Cost of convex hull**. *N log N + N*. (cost of sorting + cost of reduction)
+
+**Graham scan algorithm**.
+- Choose point p with smallest (or largest) y-coordinate.
+- Sort points by polar angle with p to get simple polygon.
+- Consider points in order, and discard those that would create a clockwise turn.
+
+##### 11.1.1.2. Shortest paths on edge-weighted graphs and digraphs
+
+**Proposition**. Undirected shortest paths (with nonnegative weights) reduces to directed shortest path.  
+Pf. Replace each undirected edge by two directed edges.
+
+**Cost of undirected shortest paths**. E log V + E. (cost of shortest paths in digraph + cost of reduction)
+
+***Caveat***. Reduction is invalid for edge-weighted graphs with negative weights (even if no negative cycles).
+
+##### 11.1.1.3. Linear-time reductions involving familiar problems
+
+sorting: 
+- finding the median
+- SPT scheduling
+- element distinctness
+- convex hull
+
+linear programming:
+- shortest paths in digraphs: 
+  - parallel scheduling (precedence-constrained)
+  - arbitrage
+  - shortest paths in undirected graphs (no negative weights)
+- maxflow
+  - bipartite matching
+  - network reliability
+  - product distribution
+
+
+
+#### 11.1.2. establishing lower bounds
+
+**Goal**. Prove that a problem requires a certain number of steps.
+
+*Ex*. In decision tree model, any compare-based sorting algorithm requires Ω(N log N) compares in the worst case.
+
+##### 11.1.2.1. Linear-time reductions
+
+**Def**. Problem X linear-time reduces to problem Y if X can be solved with:
+- Linear number of standard computational steps.
+- Constant number of calls to Y.
+
+*Ex*. Almost all of the reductions we've seen so far. [Which ones weren't?]
+
+**Establish lower bound**:
+- If X takes Ω(N log N) steps, then so does Y.
+- If X takes Ω(N 2) steps, then so does Y.
+
+*Mentality*.
+- If I could easily solve Y, then I could easily solve X.
+- I can’t easily solve X.
+- Therefore, I can’t easily solve Y.
+
+**Proposition**. In quadratic decision tree model, any algorithm for sorting N integers requires Ω(N log N) steps.
+
+**Proposition**. Sorting linear-time reduces to convex hull.
+- Sorting instance: x<sub>1</sub>, x<sub>2</sub>, ... , x<sub>N</sub>.
+- Convex hull instance: (x<sub>1</sub>, x<sub>1</sub><sup>2</sup> ), (x<sub>2</sub>, x<sub>2</sub><sup>2</sup> ), ... , (x<sub>N</sub>, x<sub>N</sub><sup>2</sup>).
+- Region { x : x<sup>2</sup> ≥ x } is convex ⇒ all points are on hull.
+- Starting at point with most negative x, counterclockwise order of hull points yields integers in ascending order.
+
+**Implication**. Any ccw-based convex hull algorithm requires Ω(N log N) ops.
+
+Q. How to convince yourself no linear-time convex hull algorithm exists?  
+A1. [hard way] Long futile search for a linear-time algorithm.  
+A2. [easy way] Linear-time reduction from sorting.
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+#### 11.1.3. Classifying problems
+
+**Desiderata**. Problem with algorithm that matches lower bound.  
+*Ex*. Sorting and convex hull have complexity *N log N*.
+
+**Desiderata**. Prove that two problems X and Y have the same complexity.
+- First, show that problem X linear-time reduces to Y.
+- Second, show that Y linear-time reduces to X.
+- Conclude that X and Y have the same complexity.
+
+
+**Integer multiplication**. Given two N-bit integers, compute their product.  
+**Brute force**. N<sup>2</sup> bit operations.
+
+number of bit operations to multiply two N-bit integers
+
+| year | algorithm | order of growth| 
+| :--: | :--: | :--: |
+| ? | brute force | N<sup>2</sup>| 
+| 1962 | Karatsuba-Ofman | N<sup>1.585</sup>| 
+| 1963 | Toom-3, Toom-4 | N<sup>1.465</sup>, N<sup>1.404</sup>| 
+| 1966 | Toom-Cook | N<sup>1 + ε</sup>| 
+| 1971 | Schönhage–Strassen | N log N log log N| 
+| 2007 | Fürer | N log N 2<sup>log*N</sup>| 
+| ? | ? | N| 
+
+**Linear algebra reductions**
+
+
+**Matrix multiplication**. Given two N-by-N matrices, compute their product.  
+**Brute force**. N<sup>3</sup> flops.
+
+| year | algorithm | order of growth |
+| :--: | :--: | :--: |
+| ? | brute force | N<sup>3</sup> | 
+| 1969 | Strassen | N<sup>2.808</sup> | 
+| 1978 | Pan | N<sup>2.796</sup> | 
+| 1979 | Bini | N<sup>2.780</sup> | 
+| 1981 | Schönhage | N<sup>2.522</sup> | 
+| 1982 | Romani | N<sup>2.517</sup> | 
+| 1982 | Coppersmith-Winograd | N<sup>2.496</sup> | 
+| 1986 | Strassen | N<sup>2.479</sup> | 
+| 1989 | Coppersmith-Winograd | N<sup>2.376</sup> | 
+| 2010 | Strother | N<sup>2.3737</sup> | 
+| 2011 | Williams | N<sup>2.3727</sup> | 
+| ? | ? | N<sup>2 + ε</sup> | 
+
+**Desiderata**. Classify problems according to computational requirements.
+
+| complexity | order of growth | examples |
+| :--: | :--: | :--: |
+| linear | N | min, max, median, | 
+| linearithmic | N log N | sorting, convex hull, | 
+| M(N) | ? | integer multiplication, division, square root, ... | 
+| MM(N) | ? | matrix multiplication, Ax = b, least square, determinant, ... | 
+| ⋮ | ⋮ | ⋮ | 
+| NP-complete | probably not N<sup>b</sup> | SAT, IND-SET, ILP, ... |
+
+**Summary**
+
+Reductions are important in theory to:
+- Design algorithms.
+- Establish lower bounds.
+- Classify problems according to their computational requirements.
+
+
+Reductions are important in practice to:
+- Design algorithms.
+- Design reusable software modules.
+  - stacks, queues, priority queues, symbol tables, sets, graphs
+  - sorting, regular expressions, Delaunay triangulation
+  - MST, shortest path, maxflow, linear programming
+- Determine difficulty of your problem and choose the right tool.
 
 
 <br/>
@@ -5394,7 +5638,268 @@ Note: data compression using Calgary corpus
 <br/>
 
 
-## 12. Linear Programming
+### 11.2. Linear Programming
+
+What is it? Problem-solving model for optimal allocation of scarce resources, among a number of competing activities that encompasses:
+- Shortest paths, maxflow, MST, matching, assignment, ...
+- Ax = b, 2-person zero-sum games, ...
+
+**Why significant?**
+- Fast commercial solvers available.
+- Widely applicable problem-solving model.
+- Key subroutine for integer programming solvers.
+
+#### 11.2.1. Applications
+
+- Agriculture. Diet problem.
+- Computer science. Compiler register allocation, data mining.
+- Electrical engineering. VLSI design, optimal clocking.
+- Energy. Blending petroleum products.
+- Economics. Equilibrium theory, two-person zero-sum games.
+- Environment. Water quality management.
+- Finance. Portfolio optimization.
+- Logistics. Supply-chain management.
+- Management. Hotel yield management.
+- Marketing. Direct mail advertising.
+- Manufacturing. Production line balancing, cutting stock.
+- Medicine. Radioactive seed placement in cancer treatment.
+- Operations research. Airline crew assignment, vehicle routing.
+- Physics. Ground states of 3-D Ising spin glasses.
+- Telecommunication. Network design, Internet routing.
+- Sports. Scheduling ACC basketball, handicapping horse races.
+
+
+#### 11.2.2. Standard form linear program
+
+**Goal**. Maximize linear objective function of *n* nonnegative variables,
+subject to *m* linear equations.
+- Input: real numbers a<sub>ij</sub>, c<sub>j</sub>, b<sub>i</sub>.
+- Output: real numbers x<sub>j</sub>.
+
+**Caveat**. No widely agreed notion of "standard form."
+
+**matrix version**
+- maximize c<sup>T</sup>x
+- subject to the constraints `Ax = b`, `x ≥ 0`
+
+**Standard form**.
+- Add variable `Z` and equation corresponding to objective function.
+- Add **slack** variable to convert each inequality to an equality.
+- Now a 6-dimensional problem.
+
+**Geometry**
+
+Inequalities define halfspaces; feasible region is a convex polyhedron.
+
+A set is convex if for any two points a and b in the set, so is ½ (a + b).
+
+An extreme point of a set is a point in the set that can't be written as ½ (a + b), where a and b are two distinct points in the set.
+
+Extreme point property. If there exists an optimal solution to (P), then there exists one that is an extreme point.
+- Good news: number of extreme points to consider is finite.
+- Bad news : number of extreme points can be exponential!
+
+Greedy property. Extreme point optimal iff no better adjacent extreme point.
+
+#### 11.2.3. Simplex algorithm
+
+Simplex algorithm. [George Dantzig, 1947]
+- Developed shortly after WWII in response to logistical problems, including Berlin airlift.
+- Ranked as one of top 10 scientific algorithms of 20th century.
+
+Generic algorithm.
+- Start at some extreme point.
+- Pivot from one extreme point to an adjacent one. (never decreasing objective function)
+- Repeat until optimal.
+
+A **basis** is a subset of m of the n variables.
+
+**Basic feasible solution** (BFS).
+- Set n – m nonbasic variables to 0, solve for remaining m variables.
+- Solve m equations in m unknowns.
+- If unique and feasible ⇒ BFS.
+- BFS ⇔ extreme point.
+
+<img src="res/pivot.png" alt="pivot" width="500"></img>
+
+Q. Why pivot on column 2 (corresponding to variable B)?
+- Its objective function coefficient is positive.
+(each unit increase in B from 0 increases objective value by $23)
+- Pivoting on column 1 (corresponding to A) also OK.
+
+Q. Why pivot on row 2?
+- Preserves feasibility by ensuring RHS ≥ 0.
+- Minimum ratio rule: min { **480/15**, 160/4, 1190/20 }.
+
+Q. When to stop pivoting?
+A. When no objective function coefficient is positive.
+
+Q. Why is resulting solution optimal?
+A. Any feasible solution satisfies current system of equations.
+- In particular: Z = 800 – S<sub>C</sub> – 2S<sub>H</sub> 
+- Thus, optimal objective value Z<sup>*</sup> ≤ 800 since S<sub>C</sub>, S<sub>H</sub> ≥ 0.
+- Current BFS has value 800 ⇒ optimal.
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+#### 11.2.4. Implementations
+
+Construct the initial simplex tableau.
+
+| dimension | n | m | 1 |
+| :--: | :--: | :--: | :--: | 
+| m | A | I | b |
+| 1 | c | 0 | 0 | 
+
+```java
+public class Simplex {
+    private double[][] a;       // simplex tableaux
+    private int m, n;           // M constraints, N variables
+
+    public Simplex(double[][] A, double[] b, double[] c) {
+        m = b.length;
+        n = c.length;
+        a = new double[m + 1][m + n + 1];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                a[i][j] = A[i][j];                          // put A[][] into tableau
+        
+        for (int j = n; j < m + n; j++) a[j - n][j] = 1.0;  // put I[][] into tableau
+        for (int j = 0; j < n; j++) a[m][j] = c[j];         // put c[] into tableau
+        for (int i = 0; i < m; i++) a[i][m + n] = b[i];     // put b[] into tableau
+    }
+
+    private int bland() {
+        for (int q = 0; q < m + n; q++)
+            if (a[M][q] > 0) return q;      // entering column q has positive objective function coefficient
+        return -1;                          // optimal
+    }
+
+    private int minRatioRule(int q) {
+        int p = -1;                         // leaving row
+        for (int i = 0; i < m; i++) {
+            if (a[i][q] <= 0) continue;     // consider only positive entries
+            else if (p == -1) p = i;
+            else if (a[i][m + n] / a[i][q] < a[p][m + n] / a[p][q])
+                p = i;                      // row p has min ratio so far
+        }
+        return p;
+    }
+
+    public void pivot(int p, int q) {
+        for (int i = 0; i <= m; i++)
+            for (int j = 0; j <= m + n; j++)
+                if (i != p && j != q)
+                    a[i][j] -= a[p][j] * a[i][q] / a[p][q]; // scale all entries but row p and column q
+
+        for (int i = 0; i <= m; i++)
+            if (i != p) a[i][q] = 0.0;          // zero out column q
+
+        for (int j = 0; j <= m + n; j++)
+            if (j != q) a[p][j] /= a[p][q];     // scale row p
+        a[p][q] = 1.0;
+    }
+
+    public void solve() {
+        while (true) {
+            int q = bland();            // entering column q (optimal if -1)
+            if (q == -1) break;
+            int p = minRatioRule(q);    // leaving row p (unbounded if -1)
+            if (p == -1) ...
+            pivot(p, q);                // pivot on row p, column q
+        }
+    }
+}
+```
+
+**Remarkable property**. In typical practical applications, simplex algorithm terminates after at most `2(m + n)` pivots.
+
+**Pivoting rules**. Carefully balance the cost of finding an entering variable with the number of pivots needed.
+- No pivot rule is known that is guaranteed to be polynomial.
+- Most pivot rules are known to be exponential (or worse) in worst-case.
+
+**Cycling**. Get stuck by cycling through different bases that all correspond to same extreme point.
+- Doesn't occur in the wild.
+- Bland's rule guarantees finite # of pivots. (choose lowest valid index for entering and leaving columns)
+
+
+To improve the bare-bones implementation.
+- Avoid stalling. (requires artful engineering)
+- Maintain sparsity. (requires fancy data structures)
+- Numerical stability. (requires advanced math)
+- Detect infeasibility. (run "phase I" simplex algorithm)
+- Detect unboundedness. (no leaving row)
+
+**Best practice**. Don't implement it yourself!
+
+**Basic implementations**. Available in many programming environments.  
+**Industrial-strength solvers**. Routinely solve LPs with millions of variables.  
+**Modeling languages**. Simplify task of modeling problem as LP.
+
+
+Advantages of an industrial-strength linear programming solver over the one we implemented:
+- Less susceptible to floating-point roundoff error.
+- Much faster at solving large and/or sparse linear programs.
+- Detects infeasibility and unboundedness.
+
+
+**Brief history**
+
+- *1939*. Production, planning. [Kantorovich]
+- *1947*. Simplex algorithm. [Dantzig]
+- *1947*. Duality. [von Neumann, Dantzig, Gale-Kuhn-Tucker]
+- *1947*. Equilibrium theory. [Koopmans]
+- *1948*. Berlin airlift. [Dantzig]
+- *1975*. Nobel Prize in Economics. [Kantorovich and Koopmans]
+- *1979*. Ellipsoid algorithm. [Khachiyan]
+- *1984*. Projective-scaling algorithm. [Karmarkar]
+- *1990*. Interior-point methods. [Nesterov-Nemirovskii, Mehorta, ...]
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+#### 11.2.5. Reductions to standard form
+
+- Minimization problem. Replace *min 13A + 15B* with *max – 13A – 15B*.
+- ≥ constraints. Replace *4A + 4B ≥ 160* with *4A + 4B – SH = 160, SH ≥ 0*.
+- Unrestricted variables. Replace B with B = B0 – B1, B0 ≥ 0 , B1 ≥ 0.
+
+Linear “programming” (1950s term) = reduction to LP (modern term).
+- Process of formulating an LP model for a problem.
+- Solution to LP for a specific problem gives solution to the problem.
+
+Modeling.
+1. Identify *variables*.
+2. Define *constraints* (inequalities and equations).
+3. Define *objective function*.
+4. Convert to standard form. (software usually performs this step automatically)
+
+Examples.
+- Maxflow.
+  - Variables. x<sub>vw</sub> = flow on edge v→w.
+  - Constraints. Capacity and flow conservation.
+  - Objective function. Net flow into t.
+  - <img src="res/lp-maxflow.png" width="450"></img>
+- Shortest paths.
+- Bipartite matching.
+  - LP formulation. One variable per pair.
+  - Interpretation. x<sub>ij</sub> = 1 if person i assigned to job j.
+  - <img src="res/lp-bipartite.png" width="400"></img>
+  - **Theorem**. [Birkhoff 1946, von Neumann 1953] All extreme points of the above polyhedron have integer (0 or 1) coordinates.
+  - **Corollary**. Can solve matching problem by solving LP.
+- 2-person zero-sum games.
+- ...
+
 
 
 <br/>
@@ -5404,7 +5909,173 @@ Note: data compression using Calgary corpus
 <br/>
 
 
-## 13. Intractability
+### 11.3. Intractability
+
+Church-Turing thesis (1936)
+
+>Turing machines can compute any function that can be computed by a physically harnessable process of the natural world.
+
+**Turing machine** is a simple and universal model of computation.
+
+Q. Which algorithms are useful in practice?
+- Measure running time as a function of input size N.
+- Useful in practice ("efficient") = polynomial time for all inputs.
+
+Ex 1. Sorting N items takes N log N compares using mergesort.  
+Ex 2. Finding best TSP tour on N points takes N! steps using brute search.
+
+Theory. Definition is broad and robust.  
+Practice. Poly-time algorithms scale to huge problems.
+
+Def. A problem is **intractable** if it can't be solved in polynomial time.  
+Desiderata. Prove that a problem is intractable.
+
+#### 11.3.1. Four fundamental problems
+
+<img src="res/Four-fundamental-problems.png" width="500"></img>
+
+- **LSOLVE**. Given a system of linear equations, find a solution.
+- **LP**. Given a system of linear inequalities, find a solution.
+- [**ILP**](https://en.wikipedia.org/wiki/Integer_programming). Given a system of linear inequalities, find a 0-1 solution.
+- [**SAT**](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem). Given a system of boolean equations, find a binary solution.
+
+
+Q. Which of these problems have poly-time algorithms?
+- LSOLVE. Yes. Gaussian elimination solves N-by-N system in N 3 time.
+- LP. Yes. Ellipsoid algorithm is poly-time.
+- ILP, SAT. No poly-time algorithm known or believed to exist!
+
+#### 11.3.2. Search problems
+
+**Search problem**. Given an instance *I* of a problem, **find** a solution *S*.  
+**Requirement**. Must be able to efficiently **check** that S is a solution.
+
+- LSOLVE. Given a system of linear equations, find a solution. To check solution S, plug in values and verify each equation.
+- LP. Given a system of linear inequalities, find a solution. To check solution S, plug in values and verify each inequality.
+- ILP. Given a system of linear inequalities, find a binary solution. To check solution S, plug in values and verify each inequality.
+- SAT. Given a system of boolean equations, find a boolean solution. To check solution S, plug in values and verify each equation.
+- FACTOR. Given an n-bit integer x, find a nontrivial factor. 
+  - instance I: 147573952589676412927
+  - solution S: 193707721
+  - To check solution S, long divide 193707721 into 147573952589676412927.
+
+#### 11.3.3. P vs. NP
+
+
+||Def|Significance|
+|:--:|:--:|:--:|
+|NP |NP is the class of all search problems.|What scientists and engineers **aspire to compute** feasibly.|
+|P|P is the class of search problems solvable in poly-time.|What scientists and engineers **do compute** feasibly.|
+
+**Nondeterminism**
+
+Nondeterministic machine can guess the desired solution.
+
+`Ex. int[] a = new int[N];`
+- Java: initializes entries to 0.
+- Nondeterministic machine: initializes entries to the solution!
+
+
+ILP. Given a system of linear inequalities, guess a 0-1 solution.
+
+Ex. Turing machine.
+- Deterministic: state, input determines next state.
+- Nondeterministic: more than one possible next state.
+
+NP. Search problems solvable in poly time on a nondeterministic TM.
+
+**Extended Church-Turing thesis**
+
+>P = search problems solvable in poly-time in the natural world.
+
+Evidence supporting thesis. True for all physical computers.
+Natural computers? No successful attempts (yet).
+
+
+Does P = NP ? [Can you always avoid brute-force searching and do better]
+
+- If `P = NP`… Poly-time algorithms for SAT, ILP, TSP, FACTOR, …
+- If `P ≠ NP`… Would learn something fundamental about our universe.
+
+Overwhelming consensus. P ≠ NP.
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+#### 11.3.4. classifying problems
+
+##### 11.3.4.1. A key problem: satisfiability
+
+
+SAT. Given a system of boolean equations, find a solution.
+
+Key applications.
+- Automatic verification systems for software.
+- Electronic design automation (EDA) for hardware.
+- Mean field diluted spin glass model in physics.
+- ...
+
+**Exhaustive search**
+
+Q. How to solve an instance of SAT with n variables?  
+A. Exhaustive search: try all 2n truth assignments.   
+Q. Can we do anything substantially more clever?  
+Conjecture. No poly-time algorithm for SAT.  
+
+Q. Which search problems are in P?  
+A. No easy answers (we don't even know whether P = NP).
+
+Problem X poly-time reduces to problem Y if X can be solved with:
+- Polynomial number of standard computational steps.
+- Polynomial number of calls to Y.
+
+**Consequence**. If SAT poly-time reduces to Y, then we conclude that Y is (probably) intractable.
+
+##### 11.3.4.2. SAT poly-time reduces to ILP
+
+**SAT**. Given a system of boolean equations, find a solution.
+
+(can to reduce any SAT problem to this form)
+>- x'<sub>1</sub> or x<sub>2</sub> or x<sub>3</sub> = true
+>- x<sub>1</sub> or x'<sub>2</sub> or x<sub>3</sub> = true
+>- x'<sub>1</sub> or x'<sub>2</sub> or x'<sub>3</sub> = true
+>- x'<sub>1</sub> or x'<sub>2</sub> or x<sub>4</sub> = true
+
+**ILP**. Given a system of linear inequalities, find a 0-1 solution.
+
+(solution to this ILP instance gives solution to original SAT instance)
+>- 1 ≤ (1 − x<sub>1</sub> ) + x<sub>2</sub> + x<sub>3</sub>
+>- 1 ≤ x<sub>1</sub> + (1 − x<sub>2</sub>) + x<sub>3</sub>
+>- 1 ≤ (1 − x<sub>1</sub> ) + (1 − x<sub>2</sub>) + (1 − x<sub>3</sub>)
+>- 1 ≤ (1 − x<sub>1</sub> ) + (1 − x<sub>2</sub>) + x<sub>4</sub>
+
+
+<img src="res/np-sat.png" width="500"></img>
+
+**Still more reductions from SAT**
+
+- Aerospace engineering. Optimal mesh partitioning for finite elements.
+- Biology. Phylogeny reconstruction.
+- Chemical engineering. Heat exchanger network synthesis.
+- Chemistry. Protein folding.
+- Civil engineering. Equilibrium of urban traffic flow.
+- Economics. Computation of arbitrage in financial markets with friction.
+- Electrical engineering. VLSI layout.
+- Environmental engineering. Optimal placement of contaminant sensors.
+- Financial engineering. Minimum risk portfolio of given return.
+- Game theory. Nash equilibrium that maximizes social welfare.
+- Mathematics. Given integer a<sub>1</sub>, …, a<sub>n</sub>, compute ∫cos(a<sub>1</sub>θ)×…×cos(a<sub>n</sub>θ)dθ
+- Mechanical engineering. Structure of turbulence in sheared flows.
+- Medicine. Reconstructing 3d shape from biplane angiocardiogram.
+- Operations research. Traveling salesperson problem.
+- Physics. Partition function of 3d Ising model.
+- Politics. Shapley-Shubik voting power.
+- Recreation. Versions of Sudoko, Checkers, Minesweeper, Tetris.
+- Statistics. Optimal experimental design.
 
 
 <br/>
@@ -5414,9 +6085,193 @@ Note: data compression using Calgary corpus
 <br/>
 
 
+#### 11.3.5. NP-completeness
+
+Def. An NP problem is **NP-complete** if every problem in NP poly-time reduce to it.
+
+**Proposition**. [Cook 1971, Levin 1973] SAT is NP-complete. (every NP problem is a SAT problem in disguise)
+
+Extremely brief proof sketch:
+- Convert non-deterministic TM notation to SAT notation.
+- If you can solve SAT, you can solve any problem in NP.
+
+**Corollary**. Poly-time algorithm for SAT iff P = NP.
 
 
-## 14. Dynamic Programming (DP)
+<img src="res/np-sat2.png" width="500"></img>
+
+**Implication**. [SAT captures difficulty of whole class NP]
+- Poly-time algorithm for SAT iff P = NP.
+- No poly-time algorithm for some NP problem ⇒ none for SAT.
+
+**Remark**. Can replace SAT with any of Karp's problems.
+
+
+Proving a problem NP-complete guides scientific inquiry.
+- 1926: Ising introduces simple model for phase transitions.
+- 1944: Onsager finds closed form solution to 2D version in tour de force.
+- 19xx: Feynman and other top minds seek 3D solution. (a holy grail of statistical mechanics)
+- 2000: 3D-ISING proved NP-complete. (search for closed formula appears doomed)
+
+**Summary**
+
+**P**. Class of search problems solvable in poly-time.  
+**NP**. Class of all search problems, some of which seem wickedly hard.  
+**NP-complete**. Hardest problems in NP.  
+**Intractable**. Problem with no poly-time algorithm.  
+
+Many fundamental problems are NP-complete.
+- SAT, ILP, HAMILTON-PATH, …
+- 3D-ISING, …
+
+Use theory a guide:
+- A poly-time algorithm for an NP-complete problem would be a stunning breakthrough (a proof that P = NP).
+- You will confront NP-complete problems in your career.
+- Safe to assume that P ≠ NP and that such problems are intractable.
+- Identify these situations and proceed accordingly.
+
+
+**Exploiting intractability**
+
+**Modern cryptography**.
+- Ex. Send your credit card to Amazon.
+- Ex. Digitally sign an e-document.
+- Enables freedom of privacy, speech, press, political association.
+
+**RSA cryptosystem**.
+- To use: multiply two n-bit integers. [poly-time]
+- To break: factor a 2 n-bit integer. [unlikely poly-time]
+
+**FACTOR**. Given an n-bit integer x, find a nontrivial factor.
+
+Q. What is complexity of FACTOR?  
+A. In NP, but not known (or believed) to be in P or NP-complete.
+
+Q. What if P = NP?  
+A. Poly-time algorithm for factoring; modern e-conomy collapses.
+
+**Proposition**. [Shor 1994] Can factor an n-bit integer in n3 steps on a "quantum computer.”
+
+Q. Do we still believe the extended Church-Turing thesis???
+
+**Coping with intractability**
+
+Relax one of desired features.
+- Solve arbitrary instances of the problem.
+- Solve the problem to optimality.
+- Solve the problem in poly-time.
+
+Special cases may be tractable.
+- Ex: Linear time algorithm for 2-SAT. (at most two variables per equation)
+- Ex: Linear time algorithm for Horn-SAT. (at most one un-negated variable per equation)
+
+Develop a heuristic, and hope it produces a good solution.
+- No guarantees on quality of solution.
+- Ex. TSP assignment heuristics.
+- Ex. Metropolis algorithm, simulating annealing, genetic algorithms.
+
+Approximation algorithm. Find solution of provably good quality.
+- Ex. MAX-3SAT: provably satisfy 87.5% as many clauses as possible.
+
+
+Complexity theory deals with worst case behavior.
+- Instance(s) you want to solve may be "easy."
+- Chaff solves real-world SAT instances with ~ 10K variable.
+
+**Hamilton path**
+
+Goal. Find a simple path that visits every vertex exactly once.
+
+Remark. Euler path easy, but Hamilton path is NP-complete.
+
+```java
+public class HamiltonPath
+{
+    private boolean[] marked;   // vertices on current path
+    private int count = 0;      // number of Hamiltonian paths
+
+    public HamiltonPath(Graph G)
+    {
+        marked = new boolean[G.V()];
+        for (int v = 0; v < G.V(); v++)
+            dfs(G, v, 1);
+    }
+
+    private void dfs(Graph G, int v, int depth) // length of current path (depth of recursion)
+    {
+        marked[v] = true;
+        if (depth == G.V()) count++; // found one
+        for (int w : G.adj(v))
+            if (!marked[w]) dfs(G, w, depth+1); // backtrack if w is already part of path
+        marked[v] = false;  // clean up
+    }
+}
+```
+
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+[Longest-path, Daniel Barrett](http://www.jakubw.pl/inne/longest.html)
+
+```text
+Original song The longest Time
+Original artist Billy Joel
+--------------------------
+
+Woh, oh-oh-oh
+Find the Longest Path
+Woh oh-oh
+Find the Longest Path
+If you said P is NP tonight
+There would still be papers left to write
+I have a weakness
+I'm addicted to completeness
+And I keep searching for the longest Path
+
+The algorithm I would like to see
+Is of Polynomial Degree
+Buts its elusive,
+Nobody has found conclusive
+Evidence that we can find the Longest Path
+
+I have been hard
+Working for so long
+I swear its right,
+And he marks it wrong
+Somehow I'll feel sorry when its done
+GPA 2.1,
+Is more than I hoped for
+
+Garey, Johnson, Karp and other Men (and Women)
+Try to make it Order n log n.
+Am I a math fool
+If I spend my life in Grad School
+Forever following the Longest Path.
+
+Woh oh-oh-oh
+Find the longest path
+Woh oh-oh-oh
+Find the longest path
+```
+
+This concludes Algorithm Part II.
+
+<br/>
+<div align="right">
+    <b><a href="#top">↥ back to top</a></b>
+</div>
+<br/>
+
+
+
+## 12. Dynamic Programming (DP)
+
+This part is extra content from MIT open course [INTRODUCTION TO ALGORITHMS](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/).
 
 - [MIT lecture: DP 1](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-19-dynamic-programming-i-fibonacci-shortest-paths/)
   - [note 1](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/b6d4083131dd16e7d97f56d04b6e858f_MIT6_006F11_lec19.pdf)
@@ -5424,8 +6279,8 @@ Note: data compression using Calgary corpus
   - [note 2](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/9f38f5c9ff4172f8b58be390c89b61d2_MIT6_006F11_lec20.pdf)
 - [MIT lecture: DP 3](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-21-dp-iii-parenthesization-edit-distance-knapsack/)
   - [note 3](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/3484e876d81aba07911a1109f5b5e81e_MIT6_006F11_lec21.pdf)
-- MIT lecture: DP 4
-  - note 4
+- [MIT lecture: DP 4](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-22-dp-iv-guitar-fingering-tetris-super-mario-bros/)
+  - [note 4](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/397cce8a5799ff81df0e36600da2b00f_MIT6_006F11_lec22.pdf)
 
 Invented by Richard Bellman (as a precursor to the Bellman-Ford algorithm)
 
@@ -5446,7 +6301,7 @@ Dynamic Programming:
 - Top-down approach: memoization
 - Bottom-up approach: tabulation
 
-### 14.1. fibonacci
+### 12.1. fibonacci
 
 **DP is similar to recursion + memoization**
 - memoize (remember); and re-use solutions to subproblems that help solve the problem.
@@ -5493,7 +6348,7 @@ def fibo2(n):
     return fib[n%2]
 ```
 
-### 14.2. Shortest paths
+### 12.2. Shortest paths
 
 - guessing: don't know. The answer? guess. 
   - try all guesses
