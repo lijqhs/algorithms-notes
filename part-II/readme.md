@@ -3266,9 +3266,9 @@ Some applications involve strings taken from a restricted alphabet. In such appl
 | LOWERCASE | 26 | 5 | abcdefghijklmnopqrstuvwxyz |
 | UPPERCASE | 26 | 5 | ABCDEFGHIJKLMNOPQRSTUVWXYZ |
 | BASE64 | 64 | 6 | ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/ |
-| ASCII | 128 | 7 | ASCII | characters |
-| EXTENDED_ASCII | 256 | 8 | extended | ASCII | characters |
-| UNICODE16 | 65536 | 16 | Unicode | characters
+| ASCII | 128 | 7 | ASCII characters |
+| EXTENDED_ASCII | 256 | 8 | extended ASCII characters |
+| UNICODE16 | 65536 | 16 | Unicode characters | 
 
 
 
