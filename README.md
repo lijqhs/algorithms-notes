@@ -11,3 +11,8 @@ Resources link:
 - [Algorithms, 4th Edition](https://algs4.cs.princeton.edu/home/)
 - [Lecture PPT](https://algs4.cs.princeton.edu/lectures/)
 - [Introduction to Algorithms](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/) (MIT Open Course)
+
+
+
+---
+Notes by Aaron © 2022
