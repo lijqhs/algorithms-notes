@@ -564,7 +564,7 @@ Scientific method:
 
 **Common order-of-growth classifications**
 
-<img src="res/common-order-of-growth-classifications.png" alt="Common order-of-growth classifications" width="450"></img>
+<img src="res/common-order-of-growth-classifications.png" alt="Common order-of-growth classifications" width="450">
 
 **Types of analyses**
 
@@ -1064,7 +1064,7 @@ Geometric properties (fact):
 - Can traverse the convex hull by making only counterclockwise turns.
 - The vertices of convex hull appear in increasing order of polar angle with respect to point p with lowest y-coordinate.
 
-<img src="res/convex-hull.png" alt="convex hull" width="250"></img>
+<img src="res/convex-hull.png" alt="convex hull" width="250">
 
 
 #### 3.5.1. Graham scan
@@ -1075,7 +1075,7 @@ Geometric properties (fact):
 
 **Implementing ccw**
 
-<img src="res/ccw.png" alt="implementing ccw" width="500"></img>
+<img src="res/ccw.png" alt="implementing ccw" width="500">
 
 ```java
 public class Point2D {
@@ -1411,7 +1411,7 @@ public class Student
 
 #### 4.5.1. Polar order
 
-<img src="res/polar-order.png" alt="Polar order" width="380"></img>
+<img src="res/polar-order.png" alt="Polar order" width="380">
 
 A ccw-based solution.
 - If `q1` is above `p` and `q2` is below `p`, then `q1` makes smaller polar angle.
@@ -1463,7 +1463,7 @@ A stable sort preserves the relative order of items with equal keys.
 
 ## 5. Quicksort
 
-[<img src="res/Sorting_quicksort_anim.gif" alt="Quicksort animation" width="250"></img>](https://en.wikipedia.org/wiki/Quicksort "Wikipedia: Quicksort")
+[<img src="res/Sorting_quicksort_anim.gif" alt="Quicksort animation" width="250">](https://en.wikipedia.org/wiki/Quicksort "Wikipedia: Quicksort")
 
 *via* [Wikipedia: Quicksort](https://en.wikipedia.org/wiki/Quicksort)
 
@@ -2070,7 +2070,7 @@ public final class Vector { // final, can't override instance methods
 ## 7. Heapsort
 
 
-[<img src="res/Sorting_heapsort_anim.gif" alt="Heapsort animation" width="250"></img>](https://en.wikipedia.org/wiki/Heapsort "Wikipedia: Heapsort")
+[<img src="res/Sorting_heapsort_anim.gif" alt="Heapsort animation" width="250">](https://en.wikipedia.org/wiki/Heapsort "Wikipedia: Heapsort")
 
 *via* [Wikipedia: Heapsort](https://en.wikipedia.org/wiki/Heapsort)
 
@@ -2743,7 +2743,7 @@ Splitting a 4-node is a local transformation: constant number of operations.
 *Invariants*. Maintains symmetric order and perfect balance.
 
 
-<img src="res/2-3-trees.png" alt="2-3 trees" width="450"></img>
+<img src="res/2-3-trees.png" alt="2-3 trees" width="450">
 
 
 #### 10.1.1. Performance
@@ -2891,7 +2891,7 @@ private void flipColors(Node h)
 - If new red link is a right link, rotate left.
 
 
-<img src="res/insert-llrb-case1.png" alt="Insertion in a LLRB tree Case 1" width="220"></img>
+<img src="res/insert-llrb-case1.png" alt="Insertion in a LLRB tree Case 1" width="220">
 
 
 **Case 2**. Insert into a 3-node at the bottom.
@@ -2902,13 +2902,13 @@ private void flipColors(Node h)
 - Repeat case 1 or case 2 up the tree (if needed).
 
 
-<img src="res/insert-llrb-case2.png" alt="Insertion in a LLRB tree Case 2" width="450"></img>
+<img src="res/insert-llrb-case2.png" alt="Insertion in a LLRB tree Case 2" width="450">
 
 
 **Passing red links up the tree**
 
 
-<img src="res/insert-llrb-case2-2.png" alt="Insertion in a LLRB tree Case 2" width="550"></img>
+<img src="res/insert-llrb-case2-2.png" alt="Insertion in a LLRB tree Case 2" width="550">
 
 #### 10.2.6. Insertion in a LLRB tree: Java implementation
 
@@ -2974,7 +2974,7 @@ data within a page.
 - Internal nodes contain copies of keys to guide search.
 
 
-<img src="res/b-tree.png" alt="B tree" width="550"></img>
+<img src="res/b-tree.png" alt="B tree" width="550">
 
 #### 10.3.1. Searching in a B-tree
 
@@ -3165,7 +3165,7 @@ Use a tree to represent a recursive subdivision of 2d space.
 - BSP tree. Recursively divide space into two regions.  
 
 
-<img src="res/space-partitioning-tree.png" alt="Space-partitioning trees" width="450"></img>
+<img src="res/space-partitioning-tree.png" alt="Space-partitioning trees" width="450">
 
 
 #### 11.3.3. Space-partitioning trees: applications
@@ -3195,7 +3195,7 @@ Recursively partition plane into two halfplanes.
 
 
 
-<img src="res/2d-tree.png" alt="2d tree implementation" width="500"></img>
+<img src="res/2d-tree.png" alt="2d tree implementation" width="500">
 
 #### 11.3.5. Range search in a 2d tree
 
@@ -3288,7 +3288,7 @@ Create BST, where each node stores an interval `(lo, hi)`.
 - Store *max endpoint* in subtree rooted at node.
 
 
-<img src="res/interval-search-tree.png" alt="interval search trees" width="450"></img>
+<img src="res/interval-search-tree.png" alt="interval search trees" width="450">
 
 **Insert**
 
@@ -3582,7 +3582,7 @@ private int hash(Key key)
 
 *Bins and balls*. Throw balls uniformly at random into M bins.
 
-<img src="res/bins-and-balls.png" alt="interval search trees" width="350"></img>
+<img src="res/bins-and-balls.png" alt="interval search trees" width="350">
 
 [**Birthday problem**](https://en.wikipedia.org/wiki/Birthday_problem). Expect two balls in the same bin after ~ *sqrt(π M / 2)* tosses.
 

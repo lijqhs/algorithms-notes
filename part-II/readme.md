@@ -192,11 +192,11 @@ Examples of graph applications:
 - [The Internet as mapped by the Opte Project](https://www.opte.org/the-internet)
 
 
-<img src="res/opte-project-internet.png" alt="The Internet" width="600"></img>
+<img src="res/opte-project-internet.png" alt="The Internet" width="600">
 
 - [Map of science clickstreams](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0004803)
 
-<img src="res/pone.0004803.g005.png" alt="The Internet" width="600"></img>
+<img src="res/pone.0004803.g005.png" alt="The Internet" width="600">
 
 #### 1.1.1. Graph applications
 
@@ -328,7 +328,7 @@ public static int numberOfSelfLoops(Graph G)
 - Adjacency-matrix graph representation: Maintain a two-dimensional `V-by-V` boolean array; `for each edge v–w in graph: adj[v][w] = adj[w][v] = true.`
 - **Adjacency-list graph representation**: Maintain vertex-indexed array of lists.
 
-    <img src="res/adjacency-list-graph-representation.png" alt="adjacency-list-graph-representation" width="450"></img>
+    <img src="res/adjacency-list-graph-representation.png" alt="adjacency-list-graph-representation" width="450">
 
 
 In practice. Use adjacency-lists representation.
@@ -770,7 +770,7 @@ Typical applications involve processing graphs defined in files or on web pages,
 | `Graph G()` | *underlying Graph* |
 
 
-<img src="res/symbol-graph-data-structures.png" alt="symbol-graph-data-structures" width="550"></img>
+<img src="res/symbol-graph-data-structures.png" alt="symbol-graph-data-structures" width="550">
 
 Symbol graph data type
 
@@ -908,7 +908,7 @@ A directed graph (or digraph) is a set of vertices and a collection of directed 
 
 #### 2.2.1. Adjacency-lists digraph representation
 
-<img src="res/adjacency-lists-digraph-representation.png" alt="Adjacency-lists digraph representation" width="450"></img>
+<img src="res/adjacency-lists-digraph-representation.png" alt="Adjacency-lists digraph representation" width="450">
 
 Adjacency-lists digraph representation: Java implementation
 
@@ -1409,7 +1409,7 @@ Recall in section [Graph terminology](#113-graph-terminology), two of the defini
 **Proposition J**. (**Cut property**) Given any cut, the crossing edge of min weight is in the MST.
 
 
-<img src="res/cut-property.png" alt="cut property" width="200"></img>
+<img src="res/cut-property.png" alt="cut property" width="200">
 
 
 **Proposition K**. (**Greedy MST algorithm**) The following method colors *black* all edges in the the MST of any connected edgeweighted graph with V vertices: starting with all edges colored gray, find a cut with no black edges, color its minimum-weight edge black, and continue until `V - 1` edges have been colored black.
@@ -1483,7 +1483,7 @@ This API is very similar to the [API for Graph](#12-graph-api).
 
 
 
-<img src="res/edge-weighted-graph-adjacency-lists-representation.png" alt="edge-weighted-graph-adjacency-lists-representation" width="500"></img>
+<img src="res/edge-weighted-graph-adjacency-lists-representation.png" alt="edge-weighted-graph-adjacency-lists-representation" width="500">
 
 
 
@@ -1629,7 +1629,7 @@ Start with any vertex as a single-vertex tree; then add `V - 1` edges to it, a
 - Repeat until `V - 1` edges.
 
 
-<img src="res/prim-algorithm.png" alt="Prim's algorithm" width="200"></img>
+<img src="res/prim-algorithm.png" alt="Prim's algorithm" width="200">
 
 
 
@@ -1742,7 +1742,7 @@ Implementation.
 *note: pq has at most one entry per vertex*
 
 
-<img src="res/prim-algorithm-eager.png" alt="Prim's algorithm eager implementation" width="250"></img>
+<img src="res/prim-algorithm-eager.png" alt="Prim's algorithm eager implementation" width="250">
 
 
 - `edgeTo[v]` is the shortest edge connecting v to the tree, and `distTo[v]` is the weight of that edge, if `v` is not on the tree but has at least one edge connecting it to the tree.
@@ -2055,7 +2055,7 @@ private void relax(DirectedEdge e)
 ```
 
 
-<img src="res/edge-relaxation.png" alt="Edge relaxation (two cases)" width="550"></img>
+<img src="res/edge-relaxation.png" alt="Edge relaxation (two cases)" width="550">
 
 
 
@@ -2126,7 +2126,7 @@ Then `distTo[]` are the shortest path distances from `s` iff:
 
 > "The tools we use have a profound and devious influence on our thinking habits, and therefore on our thinking abilities." — Edsger W. Dijkstra
 
-<img src="res/Dijkstra_Animation.gif" alt="Dijkstra's algorithm animation" width="230"></img>
+<img src="res/Dijkstra_Animation.gif" alt="Dijkstra's algorithm animation" width="230">
 
 Wikipedia: [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 
@@ -2378,7 +2378,7 @@ Key point. Topological sort algorithm works even with *negative* weights.
 
 Solution. The problem is equivalent to a longest-paths problem in an edge-weighted DAG. Use critical path method (a linear-time algorithm).
 
-<img src="res/critical-path-method.png" alt="critical path method" width="550"></img>
+<img src="res/critical-path-method.png" alt="critical path method" width="550">
 
 **CPM**. To solve a parallel job-scheduling problem, create edge-weighted DAG:
 - Source and sink vertices.
@@ -2687,7 +2687,7 @@ Shortest-paths is a broadly useful problem-solving model.
 
 **Maximum st-flow (maxflow) problem**. Find a flow of maximum value.
 
-<img src="res/maxflow-mincut.png" alt="Maxflow Mincut" width="550"></img>
+<img src="res/maxflow-mincut.png" alt="Maxflow Mincut" width="550">
 
 *Remarkable fact*. These two problems are dual.
 
@@ -2772,7 +2772,7 @@ To compute mincut `(A, B)` from maxflow `f`:
 - Compute `A` = set of vertices connected to `s` by an undirected path with no full forward or empty backward edges.
 
 
-<img src="res/compute-mincut.png" alt="Computing a mincut from a maxflow" width="450"></img>
+<img src="res/compute-mincut.png" alt="Computing a mincut from a maxflow" width="450">
 
 ***Questions***.
 > - How to compute a mincut? 
@@ -2846,12 +2846,12 @@ Include `e` in both `v` and `w`'s adjacency lists.
 
 **Residual network**. A useful view of a flow network.
 
-<img src="res/residual-network.png" alt="Residual network" width="450"></img>
+<img src="res/residual-network.png" alt="Residual network" width="450">
 
 *Key point*. Augmenting path in original network is equivalent to directed path in residual network.
 
 
-<img src="res/residual-network-.png" alt="Residual network" width="450"></img>
+<img src="res/residual-network-.png" alt="Residual network" width="450">
 
 **Flow edge: Java implementation**
 
@@ -2926,7 +2926,7 @@ public class FlowNetwork
 }
 ```
 
-<img src="res/flow-network.png" alt="Flow network" width="550"></img>
+<img src="res/flow-network.png" alt="Flow network" width="550">
 
 **Ford-Fulkerson: Java implementation**
 
@@ -3315,10 +3315,10 @@ Frequency of operations = key compares.
 - Access cumulates using key as index to move items.
 - Copy back into original array.
 
-<img src="res/key-indexed-counting-cumulates.png" alt="cumulates, transforming counts to start indices" width="220"></img>
+<img src="res/key-indexed-counting-cumulates.png" alt="cumulates, transforming counts to start indices" width="220">
 
 
-<img src="res/key-indexed-counting-distributing.png" alt="move items, distributing the records" width="400"></img>
+<img src="res/key-indexed-counting-distributing.png" alt="move items, distributing the records" width="400">
 
 
 ```java
@@ -3429,7 +3429,7 @@ MSD string (radix) sort.
 - Recursively sort all strings that start with each character (key-indexed counts delineate subarrays to sort).
 
 
-<img src="res/msd-radix-sort.png" alt="MSD radix sort" width="550"></img>
+<img src="res/msd-radix-sort.png" alt="MSD radix sort" width="550">
 
 **Variable-length strings**. Treat strings as if they had an extra char at end (smaller than any char).
 
@@ -3541,7 +3541,7 @@ Overview. Do 3-way partitioning on the d<sup>th</sup> character.
 - Less overhead than *R-way* partitioning in MSD string sort.
 - Does not re-examine characters equal to the partitioning char (but does re-examine characters not equal to the partitioning char).
 
-<img src="res/3-way-radix-quicksort.png" alt="3-way radix quicksort" width="550"></img>
+<img src="res/3-way-radix-quicksort.png" alt="3-way radix quicksort" width="550">
 
 #### 6.5.1. 3-way string quicksort: Java implementation
 
@@ -3638,7 +3638,7 @@ Given a string of N characters, find the longest repeated substring.
 > The diagrams in The Shape of Song display musical form as a sequence of translucent arches. Each arch connects two repeated, identical passages of a composition. By using repeated passages as signposts, the diagram illustrates the deep structure of the composition.
 
 
-<img src="res/visual-music.png" alt="Visualize repetitions in music" width="500"></img>
+<img src="res/visual-music.png" alt="Visualize repetitions in music" width="500">
 
 **Brute-force algorithm**.
 - Try all indices `i` and `j` for start of possible match.
@@ -3792,7 +3792,7 @@ Tries. [from re**trie**val, but pronounced "try"]
 - Store characters in nodes (not keys).
 - Each node has R children, one for each possible character.
 
-<img src="res/trie.png" alt="Trie" width="520"></img>
+<img src="res/trie.png" alt="Trie" width="520">
 
 ALGORITHM: Trie symbol table
 
@@ -3873,7 +3873,7 @@ To iterate through all keys in sorted order:
 - Maintain sequence of characters *on path from root to node*.
 - Use `collect()` method to collect keys for both the `keys()` and the `keysWithPrefix()` methods in the API.
 
-<img src="res/trie-collecting.png" alt="collecting keys" width="300"></img>
+<img src="res/trie-collecting.png" alt="collecting keys" width="300">
 
 
 
@@ -3961,7 +3961,7 @@ Ternary search tries: another data structure that responds to the problem of too
 **Search miss**. Reach a null link or node where search ends has null value.
 
 
-<img src="res/trie-TST.png" alt="Ternary search trie" width="250"></img>
+<img src="res/trie-TST.png" alt="Ternary search trie" width="250">
 
 ALGORITHM: TST symbol table
 
@@ -4147,7 +4147,7 @@ In many applications, we want to avoid backup in text stream.
 
 Brute-force algorithm needs backup for every mismatch.
 
-<img src="res/substring-backup.png" alt="brute force backup" width="450"></img>
+<img src="res/substring-backup.png" alt="brute force backup" width="450">
 
 Maintain buffer of last M characters.
 
@@ -4220,7 +4220,7 @@ Running time.
 - Simulate DFA on text: at most N character accesses.
 - Build DFA: how to do efficiently?
 
-<img src="res/kmp-dfa.png" alt="KMP DFA" width="400"></img>
+<img src="res/kmp-dfa.png" alt="KMP DFA" width="400">
 
 #### 8.2.2. Build DFA from pattern
 
@@ -4234,7 +4234,7 @@ NOTE:
 - `dfa['B'][5] = 4`: `ABAB` is the longest prefix of `ABABAC` that is a suffix of `ABABAB`.
 - `dfa['C'][5] = 6`: match transition.
 
-<img src="res/kmp-dfa-x.png" alt="build DFA" width="520"></img>
+<img src="res/kmp-dfa-x.png" alt="build DFA" width="520">
 
 
 **Constructing the DFA for KMP substring search: Java implementation**
@@ -4337,7 +4337,7 @@ Intuition.
 Q. How much to skip?
 A. Precompute index of **rightmost** occurrence of character c in pattern (-1 if character not in pattern).
 
-<img src="res/Boyer-Moore-skip-table.png" alt="Boyer-Moore skip table" width="300"></img>
+<img src="res/Boyer-Moore-skip-table.png" alt="Boyer-Moore skip table" width="300">
 
 ALGORITHM: Boyer-Moore substring search (mismatched character heuristic)
 
@@ -4515,7 +4515,7 @@ public class RabinKarp
 ### 8.5. Cost summary for substring search implementations
 
 
-<img src="res/cost-substring-search.png" alt="Cost summary for substring search" width="540"></img>
+<img src="res/cost-substring-search.png" alt="Cost summary for substring search" width="540">
 
 
 
@@ -4623,7 +4623,7 @@ Writing a RE is like writing a program. REs are amazingly powerful and expressiv
 
 | RE (number of 1's is a multiple of 3) | DFA (number of 1's is a multiple of 3) | 
 | :--: | :--: |
-| `0* \| (0*10*10*10*)*` | <img src="res/dfa.png" alt="DFA" width="130"></img> |
+| `0* \| (0*10*10*10*)*` | <img src="res/dfa.png" alt="DFA" width="130"> |
 
 #### 9.3.1. Pattern matching implementation
 
@@ -4644,7 +4644,7 @@ Regular-expression-matching NFA.
 - One view: machine can guess the proper sequence of state transitions.
 - Another view: sequence is a proof that the machine accepts the text.
 
-<img src="res/nfa.png" alt="NFA" width="500"></img>
+<img src="res/nfa.png" alt="NFA" width="500">
 
 Q. How to determine whether a string is matched by an automaton?
 - DFA. Deterministic ⇒ easy because exactly one applicable transition.
@@ -5720,7 +5720,7 @@ A **basis** is a subset of m of the n variables.
 - If unique and feasible ⇒ BFS.
 - BFS ⇔ extreme point.
 
-<img src="res/pivot.png" alt="pivot" width="500"></img>
+<img src="res/pivot.png" alt="pivot" width="500">
 
 Q. Why pivot on column 2 (corresponding to variable B)?
 - Its objective function coefficient is positive.
@@ -5889,12 +5889,12 @@ Examples.
   - Variables. x<sub>vw</sub> = flow on edge v→w.
   - Constraints. Capacity and flow conservation.
   - Objective function. Net flow into t.
-  - <img src="res/lp-maxflow.png" width="450"></img>
+  - <img src="res/lp-maxflow.png" width="450">
 - Shortest paths.
 - Bipartite matching.
   - LP formulation. One variable per pair.
   - Interpretation. x<sub>ij</sub> = 1 if person i assigned to job j.
-  - <img src="res/lp-bipartite.png" width="400"></img>
+  - <img src="res/lp-bipartite.png" width="400">
   - **Theorem**. [Birkhoff 1946, von Neumann 1953] All extreme points of the above polyhedron have integer (0 or 1) coordinates.
   - **Corollary**. Can solve matching problem by solving LP.
 - 2-person zero-sum games.
@@ -5932,7 +5932,7 @@ Desiderata. Prove that a problem is intractable.
 
 #### 11.3.1. Four fundamental problems
 
-<img src="res/Four-fundamental-problems.png" width="500"></img>
+<img src="res/Four-fundamental-problems.png" width="500">
 
 - **LSOLVE**. Given a system of linear equations, find a solution.
 - **LP**. Given a system of linear inequalities, find a solution.
@@ -6054,7 +6054,7 @@ Problem X poly-time reduces to problem Y if X can be solved with:
 >- 1 ≤ (1 − x<sub>1</sub> ) + (1 − x<sub>2</sub>) + x<sub>4</sub>
 
 
-<img src="res/np-sat.png" width="500"></img>
+<img src="res/np-sat.png" width="500">
 
 **Still more reductions from SAT**
 
@@ -6098,7 +6098,7 @@ Extremely brief proof sketch:
 **Corollary**. Poly-time algorithm for SAT iff P = NP.
 
 
-<img src="res/np-sat2.png" width="500"></img>
+<img src="res/np-sat2.png" width="500">
 
 **Implication**. [SAT captures difficulty of whole class NP]
 - Poly-time algorithm for SAT iff P = NP.
