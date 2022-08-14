@@ -3254,7 +3254,8 @@ Some applications involve strings taken from a restricted alphabet. In such appl
 - Radix. Number of digits R in alphabet.
 
 **Standard alphabets**:
-| name | R() | lgR() | characters |
+
+| name | `R()` | `lgR()` | characters |
 | :--: | :--: | :--: | :--: |
 | BINARY | 2 | 1 | 01 |
 | DNA | 4 | 2 | ACTG |
