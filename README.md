@@ -13,6 +13,3 @@ Resources link:
 - [Introduction to Algorithms](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/) (MIT Open Course)
 
 
-
----
-Notes by Aaron © 2022
